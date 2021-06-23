@@ -1,5 +1,5 @@
 ## 简介
-
+依托于vue-element-admin打造了UT3的网页前端。
 [vue-element-admin](https://panjiachen.github.io/vue-element-admin) 是一个后台前端解决方案，它基于 [vue](https://github.com/vuejs/vue) 和 [element-ui](https://github.com/ElemeFE/element)实现。它使用了最新的前端技术栈，动态路由，权限验证，提炼了典型的业务模型，提供了丰富的功能组件，它可以帮助你快速搭建企业级中后台产品原型。相信不管你的需求是什么，本项目都能帮助到你。
 
 - [在线预览](https://panjiachen.github.io/vue-element-admin)
@@ -47,7 +47,6 @@
 
 **如有问题请先看上述使用文档和文章，若不能满足，欢迎 issue 和 pr**
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/PanJiaChen/vue-element-admin/tree/CodeSandbox)
 
 ## 功能
 
