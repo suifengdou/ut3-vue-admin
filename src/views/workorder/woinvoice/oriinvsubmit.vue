@@ -1261,9 +1261,7 @@ export default {
       this.params.page = val
       this.fetchData()
     },
-    add() {
-      this.dialogVisibleAdd = true
-    },
+
     // 跳出编辑对话框
     handleEdit(values) {
       console.log(values)
@@ -1323,16 +1321,21 @@ export default {
         )
       })
     },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
+
     // 关闭修改界面
     handleCancelEdit() {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
+    },
+    // 添加界面
+    add() {
+      this.dialogVisibleAdd = true
+    },
+    // 关闭添加界面
+    handleCancelAdd() {
+      this.dialogVisibleAdd = false
+      this.$refs.handleFormAdd.resetFields()
     },
     handleSubmitAdd() {
       console.log(this.formAdd)

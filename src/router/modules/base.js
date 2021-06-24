@@ -21,20 +21,26 @@ const baseRouter = {
       redirect: 'noRedirect',
       children: [
         {
+          path: 'goodscategory',
+          component: () => import('@/views/base/goods/goodscategory'),
+          name: '货品类型',
+          meta: { title: '货品类型' }
+        },
+        {
           path: 'parts',
-          component: () => import('@/views/workorder/woinvoice/oriinvapplica'),
+          component: () => import('@/views/base/goods/parts'),
           name: '配件',
           meta: { title: '配件' }
         },
         {
           path: 'product',
-          component: () => import('@/views/workorder/woinvoice/oriinvsubmit'),
+          component: () => import('@/views/base/goods/machine'),
           name: '整机',
           meta: { title: '整机' }
         },
         {
           path: 'gift',
-          component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+          component: () => import('@/views/base/goods/gift'),
           name: '礼品',
           meta: { title: '礼品' }
         },

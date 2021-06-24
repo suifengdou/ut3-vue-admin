@@ -1,11 +1,11 @@
 <template>
-  <div class="company-container">
+  <div class="goods-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入货品名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增平台</el-button>
+              <el-button type="primary" @click="add">新增货品</el-button>
             </el-tooltip>
           </div>
 
@@ -38,7 +38,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="货品名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
@@ -94,7 +94,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="公司简称"
+          label="货品名称"
           prop="name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -104,27 +104,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="公司全称"
-          prop="company"
+          label="货品编码"
+          prop="goods_id"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.company }}</span>
+            <span>{{ scope.row.goods_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="公司税号"
-          prop="tax_fil_number"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tax_fil_number }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="公司类型"
+          label="货品类别"
           prop="category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -134,43 +124,83 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="普票限额"
-          prop="spain_invoice"
+          label="货品属性"
+          prop="goods_attribute"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.spain_invoice }}</span>
+            <span>{{ scope.row.goods_attribute.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="专票限额"
-          prop="special_invoice"
+          label="机器排序"
+          prop="goods_number"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.special_invoice }}</span>
+            <span>{{ scope.row.goods_number }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="折扣率"
-          prop="discount_rate"
+          label="规格"
+          prop="size"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.discount_rate }}</span>
+            <span>{{ scope.row.size }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="状态"
-          prop="order_status"
+          label="长"
+          prop="width"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
+            <span>{{ scope.row.width }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="宽"
+          prop="height"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.height }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="高"
+          prop="depth"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.depth }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="重量"
+          prop="weight"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.weight }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="爆炸图号"
+          prop="catalog_num"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.catalog_num }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -197,7 +227,6 @@
             <span>{{ scope.row.update_time }}</span>
           </template>
         </el-table-column>
-
       </el-table>
     </div>
     <!--新建添加模态窗-->
@@ -217,23 +246,48 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>相关信息</span>
+            <span>平台相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="公司简称" prop="name">
+            <el-col :span="8"><el-form-item label="货品名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="公司类型" prop="category">
+            <el-col :span="8"><el-form-item label="货品编码" prop="goods_id">
+              <el-input v-model="formAdd.goods_id" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="货品类别" prop="category">
               <template>
                 <el-select
                   v-model="formAdd.category"
                   filterable
                   default-first-option
+                  remote
                   reserve-keyword
-                  placeholder="请选择类型"
+                  placeholder="请选择平台"
+                  :remote-method="remoteMethodGoodsCategory"
                 >
                   <el-option
-                    v-for="item in optionsCategory"
+                    v-for="item in optionsGoodsCategory"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="货品属性" prop="goods_attribute">
+              <template>
+                <el-select
+                  v-model="formAdd.goods_attribute"
+                  filterable
+                  default-first-option
+                  reserve-keyword
+                  placeholder="请选择平台"
+                >
+                  <el-option
+                    v-for="item in optionsGoodsAttribute"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -243,24 +297,31 @@
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="公司全称" prop="company">
-              <el-input v-model="formAdd.company" placeholder="请输入名称" />
+
+            <el-col :span="8"><el-form-item label="机器排序" prop="goods_number">
+              <el-input v-model="formAdd.goods_number" placeholder="请输入名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="公司税号" prop="tax_fil_number">
-              <el-input v-model="formAdd.tax_fil_number" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="普票限额" prop="spain_invoice">
-              <el-input v-model="formAdd.spain_invoice" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="专票限额" prop="special_invoice">
-              <el-input v-model="formAdd.special_invoice" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="规格" prop="size">
+              <el-input v-model="formAdd.size" placeholder="请输入规格" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="折扣率" prop="discount_rate">
-              <el-input v-model="formAdd.discount_rate" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="长" prop="width">
+              <el-input v-model="formAdd.width" placeholder="请输入长" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="宽" prop="height">
+              <el-input v-model="formAdd.height" placeholder="请输入宽" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="高" prop="depth">
+              <el-input v-model="formAdd.depth" placeholder="请输入高" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="重量" prop="weight">
+              <el-input v-model="formAdd.weight" placeholder="请输入重量" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="爆炸图号" prop="catalog_num">
+              <el-input v-model="formAdd.catalog_num" placeholder="请输入爆炸图号" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -299,20 +360,45 @@
                 <span>相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="公司简称" prop="name">
+                <el-col :span="8"><el-form-item label="货品名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="公司类型" prop="category">
+                <el-col :span="8"><el-form-item label="货品编码" prop="goods_id">
+                  <el-input v-model="formEdit.goods_id" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="货品类别" prop="category">
                   <template>
                     <el-select
                       v-model="formEdit.category"
                       filterable
                       default-first-option
+                      remote
                       reserve-keyword
-                      placeholder="请选择类型"
+                      placeholder="请选择平台"
+                      :remote-method="remoteMethodGoodsCategory"
                     >
                       <el-option
-                        v-for="item in optionsCategory"
+                        v-for="item in optionsGoodsCategory"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="货品属性" prop="goods_attribute">
+                  <template>
+                    <el-select
+                      v-model="formEdit.goods_attribute"
+                      filterable
+                      default-first-option
+                      reserve-keyword
+                      placeholder="请选择平台"
+                    >
+                      <el-option
+                        v-for="item in optionsGoodsAttribute"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"
@@ -322,24 +408,31 @@
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="公司全称" prop="company">
-                  <el-input v-model="formEdit.company" placeholder="请输入名称" />
+
+                <el-col :span="8"><el-form-item label="机器排序" prop="goods_number">
+                  <el-input v-model="formEdit.goods_number" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="公司税号" prop="tax_fil_number">
-                  <el-input v-model="formEdit.tax_fil_number" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="普票限额" prop="spain_invoice">
-                  <el-input v-model="formEdit.spain_invoice" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="专票限额" prop="special_invoice">
-                  <el-input v-model="formEdit.special_invoice" placeholder="请输入名称" />
+                <el-col :span="8"><el-form-item label="规格" prop="size">
+                  <el-input v-model="formEdit.size" placeholder="请输入规格" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="折扣率" prop="discount_rate">
-                  <el-input v-model="formEdit.discount_rate" placeholder="请输入名称" />
+                <el-col :span="8"><el-form-item label="长" prop="width">
+                  <el-input v-model="formEdit.width" placeholder="请输入长" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="宽" prop="height">
+                  <el-input v-model="formEdit.height" placeholder="请输入宽" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="高" prop="depth">
+                  <el-input v-model="formEdit.depth" placeholder="请输入高" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="重量" prop="weight">
+                  <el-input v-model="formEdit.weight" placeholder="请输入重量" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="爆炸图号" prop="catalog_num">
+                  <el-input v-model="formEdit.catalog_num" placeholder="请输入爆炸图号" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -367,7 +460,7 @@
 </template>
 
 <script>
-import { getCompanyList, createCompany, updateCompany } from '@/api/base/company'
+import { getGoodsList, createGoods, updateGoods, getGoodsCategoryList } from '@/api/base/goods'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -384,30 +477,19 @@ export default {
       dialogVisibleEdit: false,
       formAdd: {},
       formEdit: {},
-      optionsCategory: [
+      optionsGoodsCategory: [],
+      optionsGoodsAttribute: [
         {
-          label: '小狗体系',
+          label: '整机',
           value: 0
         },
         {
-          label: '物流快递',
+          label: '配件',
           value: 1
         },
         {
-          label: '仓库存储',
+          label: '礼品',
           value: 2
-        },
-        {
-          label: '生产制造',
-          value: 3
-        },
-        {
-          label: '经销代理',
-          value: 4
-        },
-        {
-          label: '其他类型',
-          value: 5
         }
       ],
       rules: {
@@ -426,6 +508,7 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
+      this.params.goods_attribute = 2
       // console.log(this.params.create_time)
       if (typeof (this.params.create_time) !== 'undefined') {
         if (this.params.create_time.length === 2) {
@@ -433,7 +516,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getCompanyList(this.params).then(
+      getGoodsList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -458,7 +541,7 @@ export default {
     // 提交添加
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createCompany(this.formAdd).then(
+      createGoods(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
@@ -476,8 +559,12 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
-      this.formEdit.order_status = this.formEdit.order_status.id
+
+      this.optionsGoodsCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
       this.formEdit.category = this.formEdit.category.id
+
+      this.formEdit.goods_attribute = this.formEdit.goods_attribute.id
+
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
@@ -488,7 +575,7 @@ export default {
         }
         const { id, ...data } = this.formEdit
         console.log(data)
-        updateCompany(id, data).then(
+        updateGoods(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -537,6 +624,24 @@ export default {
     resetParams() {
       this.params = {
         page: 1
+      }
+    },
+    remoteMethodGoodsCategory(query) {
+      console.log(query)
+      if (query !== '') {
+        setTimeout(() => {
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getGoodsCategoryList(paramsSearch).then(
+            res => {
+              this.optionsPlatform = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.options = []
       }
     }
   }

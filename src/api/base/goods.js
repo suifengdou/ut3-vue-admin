@@ -34,3 +34,29 @@ export function excelImportGoods(data) {
     data
   })
 }
+
+export function getGoodsCategoryList(params) {
+  return request({
+    url: '/base/goodscategory/',
+    method: 'get',
+    params
+  })
+}
+
+// 创建用户组
+export function createGoodsCategory(data) {
+  return request({
+    url: '/base/goodscategory/',
+    method: 'post',
+    data
+  })
+}
+
+// 修改用户组
+export function updateGoodsCategory(id, data) {
+  return request({
+    url: `/base/goodscategory/${id}/`,
+    method: 'patch',
+    data
+  })
+}

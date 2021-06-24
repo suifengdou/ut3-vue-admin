@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入货品名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增平台</el-button>
+              <el-button type="primary" @click="add">新增货品</el-button>
             </el-tooltip>
           </div>
 
@@ -38,7 +38,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="货品名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
@@ -94,13 +94,113 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="平台名称"
+          label="货品名称"
           prop="name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品编码"
+          prop="goods_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品类别"
+          prop="category"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品属性"
+          prop="goods_attribute"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_attribute.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="机器排序"
+          prop="goods_number"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_number }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="规格"
+          prop="size"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.size }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="长"
+          prop="width"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.width }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="宽"
+          prop="height"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.height }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="高"
+          prop="depth"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.depth }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="重量"
+          prop="weight"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.weight }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="爆炸图号"
+          prop="catalog_num"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.catalog_num }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -127,7 +227,6 @@
             <span>{{ scope.row.update_time }}</span>
           </template>
         </el-table-column>
-
       </el-table>
     </div>
     <!--新建添加模态窗-->
@@ -150,11 +249,79 @@
             <span>平台相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="平台名称" prop="name">
+            <el-col :span="8"><el-form-item label="货品名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <el-input v-model="formAdd.category" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="货品编码" prop="goods_id">
+              <el-input v-model="formAdd.goods_id" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="货品类别" prop="category">
+              <template>
+                <el-select
+                  v-model="formAdd.category"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请选择平台"
+                  :remote-method="remoteMethodGoodsCategory"
+                >
+                  <el-option
+                    v-for="item in optionsGoodsCategory"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="货品属性" prop="goods_attribute">
+              <template>
+                <el-select
+                  v-model="formAdd.goods_attribute"
+                  filterable
+                  default-first-option
+                  reserve-keyword
+                  placeholder="请选择平台"
+                >
+                  <el-option
+                    v-for="item in optionsGoodsAttribute"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+
+            <el-col :span="8"><el-form-item label="机器排序" prop="goods_number">
+              <el-input v-model="formAdd.goods_number" placeholder="请输入名称" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="规格" prop="size">
+              <el-input v-model="formAdd.size" placeholder="请输入规格" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="长" prop="width">
+              <el-input v-model="formAdd.width" placeholder="请输入长" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="宽" prop="height">
+              <el-input v-model="formAdd.height" placeholder="请输入宽" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="高" prop="depth">
+              <el-input v-model="formAdd.depth" placeholder="请输入高" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="重量" prop="weight">
+              <el-input v-model="formAdd.weight" placeholder="请输入重量" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="爆炸图号" prop="catalog_num">
+              <el-input v-model="formAdd.catalog_num" placeholder="请输入爆炸图号" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -193,11 +360,79 @@
                 <span>相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="平台名称" prop="name">
+                <el-col :span="8"><el-form-item label="货品名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="类型" prop="category">
-                  <el-input v-model="formEdit.category" placeholder="请输入类型" />
+                <el-col :span="8"><el-form-item label="货品编码" prop="goods_id">
+                  <el-input v-model="formEdit.goods_id" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="货品类别" prop="category">
+                  <template>
+                    <el-select
+                      v-model="formEdit.category"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请选择平台"
+                      :remote-method="remoteMethodGoodsCategory"
+                    >
+                      <el-option
+                        v-for="item in optionsGoodsCategory"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="货品属性" prop="goods_attribute">
+                  <template>
+                    <el-select
+                      v-model="formEdit.goods_attribute"
+                      filterable
+                      default-first-option
+                      reserve-keyword
+                      placeholder="请选择平台"
+                    >
+                      <el-option
+                        v-for="item in optionsGoodsAttribute"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+
+                <el-col :span="8"><el-form-item label="机器排序" prop="goods_number">
+                  <el-input v-model="formEdit.goods_number" placeholder="请输入名称" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="规格" prop="size">
+                  <el-input v-model="formEdit.size" placeholder="请输入规格" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="长" prop="width">
+                  <el-input v-model="formEdit.width" placeholder="请输入长" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="宽" prop="height">
+                  <el-input v-model="formEdit.height" placeholder="请输入宽" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="高" prop="depth">
+                  <el-input v-model="formEdit.depth" placeholder="请输入高" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="重量" prop="weight">
+                  <el-input v-model="formEdit.weight" placeholder="请输入重量" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="爆炸图号" prop="catalog_num">
+                  <el-input v-model="formEdit.catalog_num" placeholder="请输入爆炸图号" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -225,7 +460,8 @@
 </template>
 
 <script>
-import { getGoodsList, createGoods, updateGoods } from '@/api/base/goods'
+import { getGoodsList, createGoods, updateGoods, getGoodsCategoryList } from '@/api/base/goods'
+import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
   data() {
@@ -241,6 +477,21 @@ export default {
       dialogVisibleEdit: false,
       formAdd: {},
       formEdit: {},
+      optionsGoodsCategory: [],
+      optionsGoodsAttribute: [
+        {
+          label: '整机',
+          value: 0
+        },
+        {
+          label: '配件',
+          value: 1
+        },
+        {
+          label: '礼品',
+          value: 2
+        }
+      ],
       rules: {
         name: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
@@ -307,6 +558,12 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
+
+      this.optionsGoodsCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
+      this.formEdit.category = this.formEdit.category.id
+
+      this.formEdit.goods_attribute = this.formEdit.goods_attribute.id
+
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
@@ -366,6 +623,24 @@ export default {
     resetParams() {
       this.params = {
         page: 1
+      }
+    },
+    remoteMethodGoodsCategory(query) {
+      console.log(query)
+      if (query !== '') {
+        setTimeout(() => {
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getGoodsCategoryList(paramsSearch).then(
+            res => {
+              this.optionsPlatform = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.options = []
       }
     }
   }

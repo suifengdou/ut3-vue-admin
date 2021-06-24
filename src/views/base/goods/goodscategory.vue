@@ -1,11 +1,11 @@
 <template>
-  <div class="company-container">
+  <div class="goods-category-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入货品名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增平台</el-button>
+              <el-button type="primary" @click="add">新增货品类型</el-button>
             </el-tooltip>
           </div>
 
@@ -38,7 +38,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="货品名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
@@ -94,7 +94,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="公司简称"
+          label="货品名称"
           prop="name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -104,73 +104,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="公司全称"
-          prop="company"
+          label="类型编码"
+          prop="code"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.company }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="公司税号"
-          prop="tax_fil_number"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tax_fil_number }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="公司类型"
-          prop="category"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="普票限额"
-          prop="spain_invoice"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.spain_invoice }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="专票限额"
-          prop="special_invoice"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.special_invoice }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="折扣率"
-          prop="discount_rate"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.discount_rate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
+            <span>{{ scope.row.code }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -197,7 +137,6 @@
             <span>{{ scope.row.update_time }}</span>
           </template>
         </el-table-column>
-
       </el-table>
     </div>
     <!--新建添加模态窗-->
@@ -217,50 +156,14 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>相关信息</span>
+            <span>平台相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="公司简称" prop="name">
+            <el-col :span="8"><el-form-item label="类型名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="公司类型" prop="category">
-              <template>
-                <el-select
-                  v-model="formAdd.category"
-                  filterable
-                  default-first-option
-                  reserve-keyword
-                  placeholder="请选择类型"
-                >
-                  <el-option
-                    v-for="item in optionsCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="公司全称" prop="company">
-              <el-input v-model="formAdd.company" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="公司税号" prop="tax_fil_number">
-              <el-input v-model="formAdd.tax_fil_number" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="普票限额" prop="spain_invoice">
-              <el-input v-model="formAdd.spain_invoice" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="专票限额" prop="special_invoice">
-              <el-input v-model="formAdd.special_invoice" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="折扣率" prop="discount_rate">
-              <el-input v-model="formAdd.discount_rate" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="类型编码" prop="code">
+              <el-input v-model="formAdd.code" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -299,47 +202,11 @@
                 <span>相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="公司简称" prop="name">
+                <el-col :span="8"><el-form-item label="类型名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="公司类型" prop="category">
-                  <template>
-                    <el-select
-                      v-model="formEdit.category"
-                      filterable
-                      default-first-option
-                      reserve-keyword
-                      placeholder="请选择类型"
-                    >
-                      <el-option
-                        v-for="item in optionsCategory"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="公司全称" prop="company">
-                  <el-input v-model="formEdit.company" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="公司税号" prop="tax_fil_number">
-                  <el-input v-model="formEdit.tax_fil_number" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="普票限额" prop="spain_invoice">
-                  <el-input v-model="formEdit.spain_invoice" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="专票限额" prop="special_invoice">
-                  <el-input v-model="formEdit.special_invoice" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="折扣率" prop="discount_rate">
-                  <el-input v-model="formEdit.discount_rate" placeholder="请输入名称" />
+                <el-col :span="8"><el-form-item label="类型编码" prop="code">
+                  <el-input v-model="formEdit.code" placeholder="请输入类型" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -367,7 +234,7 @@
 </template>
 
 <script>
-import { getCompanyList, createCompany, updateCompany } from '@/api/base/company'
+import { getGoodsCategoryList, createGoodsCategory, updateGoodsCategory } from '@/api/base/goods'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -384,35 +251,12 @@ export default {
       dialogVisibleEdit: false,
       formAdd: {},
       formEdit: {},
-      optionsCategory: [
-        {
-          label: '小狗体系',
-          value: 0
-        },
-        {
-          label: '物流快递',
-          value: 1
-        },
-        {
-          label: '仓库存储',
-          value: 2
-        },
-        {
-          label: '生产制造',
-          value: 3
-        },
-        {
-          label: '经销代理',
-          value: 4
-        },
-        {
-          label: '其他类型',
-          value: 5
-        }
-      ],
       rules: {
         name: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入编码', trigger: 'blur' }
         ]
       }
     }
@@ -433,7 +277,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getCompanyList(this.params).then(
+      getGoodsCategoryList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -458,7 +302,7 @@ export default {
     // 提交添加
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createCompany(this.formAdd).then(
+      createGoodsCategory(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
@@ -476,8 +320,6 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
-      this.formEdit.order_status = this.formEdit.order_status.id
-      this.formEdit.category = this.formEdit.category.id
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
@@ -488,7 +330,7 @@ export default {
         }
         const { id, ...data } = this.formEdit
         console.log(data)
-        updateCompany(id, data).then(
+        updateGoodsCategory(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
