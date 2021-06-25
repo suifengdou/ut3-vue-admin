@@ -440,7 +440,7 @@
 
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>开票货品相关信息</span>
+            <span>货品相关信息</span>
           </div>
           <el-row :gutter="20">
             <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
@@ -635,7 +635,7 @@
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票货品相关信息</span>
+                <span>货品相关信息</span>
               </div>
               <el-row :gutter="20">
                 <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsEdit">添加</el-button></el-col>
@@ -1110,7 +1110,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOritailorder(this.params).then(
+            exportOritailorderSubmit(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {

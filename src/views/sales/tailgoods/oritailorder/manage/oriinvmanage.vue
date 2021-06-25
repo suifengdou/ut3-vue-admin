@@ -386,7 +386,7 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票订单相关信息</span>
+                <span>订单相关信息</span>
               </div>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="店铺" prop="shop">
@@ -469,7 +469,7 @@
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票货品相关信息</span>
+                <span>货品相关信息</span>
               </div>
               <el-table
                 ref="tableEdit"

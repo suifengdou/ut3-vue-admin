@@ -88,12 +88,12 @@
         </el-table-column>
         <el-table-column
           label="关联支出"
-          prop="expense"
+          prop="Statements"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.expense }}</span>
+            <span>{{ scope.row.Statements }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -210,7 +210,7 @@
 
 <script>
 import { getExpendlistList, exportExpendlist } from '@/api/sales/advance/expendlist'
-
+import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
   data() {

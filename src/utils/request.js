@@ -77,12 +77,12 @@ service.interceptors.response.use(
     }
     // console.log('err' + error)// for debug
     // console.log("I'm processing")
-    ElementUI.Notification({
-      title: '警告',
-      message: error.response.data,
-      type: 'warning',
-      duration: 0
-    })
+    // ElementUI.Notification({
+    //   title: '警告',
+    //   message: error.response.data,
+    //   type: 'warning',
+    //   duration: 0
+    // })
     return Promise.reject(error)
   }
 )
