@@ -15,7 +15,7 @@ const baseRouter = {
   children: [
     {
       path: 'goods',
-      component: () => import('@/views/workorder/menu1/index'), // Parent router-view
+      component: () => import('@/views/base/goods/goodsroot'), // Parent router-view
       name: 'goods',
       meta: { title: '货品' },
       redirect: 'noRedirect',
