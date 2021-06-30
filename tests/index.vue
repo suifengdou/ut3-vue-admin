@@ -212,15 +212,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="快递单号"
-          prop="express_id"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.track_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="处理标签"
           prop="process_tag"
           sortable="custom"
@@ -370,14 +361,9 @@
               </template>
             </el-form-item></el-col>
           </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="快递单号" prop="track_id">
-              <el-input v-model="formAdd.track_id" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
 
           <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
+            <el-col :span="16"><el-form-item label="初始问题信息" prop="information">
               <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
@@ -388,27 +374,6 @@
             <span>其他信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_return"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_losing"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-          <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="工单留言" prop="memo">
               <el-input v-model="formAdd.memo" placeholder="请输入名称" />
             </el-form-item></el-col>
@@ -417,8 +382,71 @@
         </el-card>
 
         <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>单号相关信息</span>
+          </div>
           <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
+            <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="success"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteDetails"
+            >删除</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteAllDetails"
+            >清空</el-button></el-col>
+            <el-col :span="10" />
+            <el-col :span="4" />
+            <el-col :span="4" />
+          </el-row>
+          <el-table
+            ref="tableAdd"
+            border
+            :data="dataDetailList"
+            :row-class-name="rowClassName"
+            @selection-change="handleDetailSelectionChange"
+          >
+            <el-table-column type="selection" width="30" align="center" />
+            <el-table-column label="序号" align="center" prop="xh" width="50" />
+            <el-table-column label="快递单号" width="200" prop="express_id">
+              <template slot-scope="scope">
+                <el-input v-model="dataDetailList[scope.row.xh-1].express_id" type="text" />
+              </template>
+            </el-table-column>
+            <el-table-column label="名称" width="250" prop="goods_name">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="dataDetailList[scope.row.xh-1].goods_name"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择货品"
+                  :remote-method="remoteMethodGoods"
+                >
+                  <el-option
+                    v-for="item in optionsGoods"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="货品备注" width="300" prop="memorandum">
+              <template slot-scope="scope">
+                <el-input v-model="dataDetailList[scope.row.xh-1].memorandum" type="text" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-card class="box-card">
+          <el-row :gutter="20">
+            <el-col :span="8" :offset="12"><el-form-item size="large">
               <div class="btn-warpper">
                 <el-button type="danger" @click="handleCancelAdd">取消</el-button>
                 <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
@@ -482,14 +510,10 @@
                   </template>
                 </el-form-item></el-col>
               </el-row>
+
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="快递单号" prop="track_id">
-                  <el-input v-model="formEdit.track_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入名称" />
+                <el-col :span="16"><el-form-item label="初始问题信息" prop="information">
+                  <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -499,27 +523,6 @@
                 <span>其他信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_return"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_losing"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="工单留言" prop="memo">
                   <el-input v-model="formEdit.memo" placeholder="请输入名称" />
                 </el-form-item></el-col>
@@ -528,8 +531,71 @@
             </el-card>
 
             <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>单号相关信息</span>
+              </div>
               <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
+                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="success"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteDetails"
+                >删除</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteAllDetails"
+                >清空</el-button></el-col>
+                <el-col :span="10" />
+                <el-col :span="4" />
+                <el-col :span="4" />
+              </el-row>
+              <el-table
+                ref="tableAdd"
+                border
+                :data="dataDetailListEdit"
+                :row-class-name="rowClassName"
+                @selection-change="handleDetailSelectionChange"
+              >
+                <el-table-column type="selection" width="30" align="center" />
+                <el-table-column label="序号" align="center" prop="xh" width="50" />
+                <el-table-column label="快递单号" width="200" prop="express_id">
+                  <template slot-scope="scope">
+                    <el-input v-model="dataDetailListEdit[scope.row.xh-1].express_id" type="text" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="名称" width="250" prop="goods_name">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="dataDetailListEdit[scope.row.xh-1].goods_name"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择货品"
+                      :remote-method="remoteMethodGoods"
+                    >
+                      <el-option
+                        v-for="item in optionsGoods"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="货品备注" width="300" prop="memorandum">
+                  <template slot-scope="scope">
+                    <el-input v-model="dataDetailList[scope.row.xh-1].memorandum" type="text" />
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+            <el-card class="box-card">
+              <el-row :gutter="20">
+                <el-col :span="8" :offset="12"><el-form-item size="large">
                   <div class="btn-warpper">
                     <el-button type="danger" @click="handleCancelEdit">取消</el-button>
                     <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
@@ -754,6 +820,8 @@ export default {
           { required: true, trigger: ['blur', 'change'], message: '请选择' }
         ]
       },
+      dataDetailList: [],
+      dataDetailListEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -797,8 +865,12 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
 
+      // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
+      // console.log(currentShop)
       this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
       this.formEdit.shop = this.formEdit.shop.id
+      // console.log(this.optionsShop)
+      // console.log(this.formEdit.shop)
 
       this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
       this.formEdit.company = this.formEdit.company.id
@@ -811,6 +883,14 @@ export default {
       })
       console.log(this.optionsGoods)
       this.formEdit.order_category = this.formEdit.order_category.id
+      this.dataDetailListEdit = []
+      let goods
+      for (goods in this.formEdit.goods_details) {
+        this.formEdit.goods_details[goods].xh = goods + 1
+        this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
+        this.dataDetailListEdit.push(this.formEdit.goods_details[goods])
+      }
+      console.log(this.dataDetailListEdit)
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -818,6 +898,7 @@ export default {
         if (!valid) {
           return
         }
+        this.formEdit.goods_details = this.dataDetailListEdit
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
@@ -855,6 +936,8 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
+      console.log(this.dataDetailList)
+      this.formAdd.express_details = this.dataDetailList
       createReverseWorkOrder(this.formAdd).then(
         () => {
           this.fetchData()
@@ -1361,7 +1444,80 @@ export default {
         }
       }
     },
+    // 货品列表顺序
+    rowClassName({ row, rowIndex }) {
+      row.xh = rowIndex + 1
+    },
+    // 选中新建表单货品项
+    handleDetailSelectionChange(selection) {
+      if (selection.length > 1) {
+        this.$refs.tableAdd.clearSelection()
+        this.$refs.tableAdd.toggleRowSelection(selection.pop())
+      } else {
+        this.checkedDetail = selection
+      }
+    },
 
+    // 删除选中表单货品项
+    handleDeleteDetails() {
+      if (this.checkedDetail.length === 0) {
+        this.$alert('请先选择要删除的数据', '提示', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        this.dataDetailList.splice(this.checkedDetail[0].xh - 1, 1)
+      }
+    },
+    // 添加表单货品项
+    handleAddDetails() {
+      if (this.dataDetailList === undefined) {
+        this.dataDetailList = []
+      }
+      const obj = {
+        id: 'n'
+      }
+      this.dataDetailList.push(obj)
+    },
+    // 删除全部表单货品项
+    handleDeleteAllDetails() {
+      this.dataDetailList = undefined
+    },
+
+    // 添加编辑表单货品项
+    handleAddDetailsEdit() {
+      if (this.dataDetailListEdit === undefined) {
+        this.dataDetailListEdit = []
+      }
+      const obj = {
+        id: 'n'
+      }
+      this.dataDetailList.push(obj)
+      console.log(this.dataDetailListEdit)
+    },
+    // 选中编辑表单货品项
+    handleDetailSelectionChangeEdit(selection) {
+      if (selection.length > 1) {
+        this.$refs.tableEdit.clearSelection()
+        this.$refs.tableEdit.toggleRowSelection(selection.pop())
+      } else {
+        this.checkedDetailEdit = selection
+      }
+    },
+    // 删除选中编辑表单货品项
+    handleDeleteDetailsEdit() {
+      if (this.checkedDetailEdit.length === 0) {
+        this.$alert('请先选择要删除的数据', '提示', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        this.dataDetailListEdit.splice(this.checkedDetailEdit[0].xh - 1, 1)
+      }
+    },
+    // 删除编辑全部表单货品项
+    handleDeleteAllDetailsEdit() {
+      this.dataDetailListEdit = undefined
+    },
+    // 重置筛选
     resetParams() {
       this.params = {
         page: 1

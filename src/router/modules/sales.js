@@ -162,16 +162,42 @@ const salesChannelRouter = {
           ]
         },
         {
-          path: 'check',
-          component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
-          name: '预存单审核',
-          meta: { title: '原始发票工单处理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          path: 'refund',
+          component: () => import('@/views/sales/tailgoods/tailorder/index'),
+          name: '退款单',
+          meta: { title: '退款单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'submit',
+              component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
+              name: '退款单提交',
+              meta: { title: '退款单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'check',
+              component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
+              name: '退款单审核',
+              meta: { title: '退款单审核', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+              name: '退款单管理',
+              meta: { title: '退款单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'verifyprestore',
+              component: () => import('@/views/sales/tailgoods/tailorder/verifyexpense/index'),
+              name: '退款单校验管理',
+              meta: { title: '退款单验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
+            }
+          ]
         },
         {
-          path: 'manage',
+          path: 'check',
           component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
-          name: '预存单管理',
-          meta: { title: '原始发票工单处理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          name: '对账单明细',
+          meta: { title: '对账单明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
       ]
     }

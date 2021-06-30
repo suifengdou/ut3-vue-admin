@@ -65,6 +65,7 @@ service.interceptors.response.use(
         // console.log(error)
         return Promise.reject(error)
       }
+      location.reload()
     }
     if (error.response.status === 403) {
       MessageBox.confirm('您没有使用的权限，请联系管理员获得权限后操作', '权限不足', {
@@ -83,7 +84,7 @@ service.interceptors.response.use(
     //   type: 'warning',
     //   duration: 0
     // })
-    return Promise.reject(error)
+    return Promise.reject(error.response)
   }
 )
 

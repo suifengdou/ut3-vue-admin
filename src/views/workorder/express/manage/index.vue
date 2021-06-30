@@ -582,14 +582,14 @@
 
 <script>
 import {
-  getReverseWorkOrder,
-  createReverseWorkOrder,
-  updateReverseWorkOrder,
-  exportReverseWorkOrder,
-  excelImportReverseWorkOrder,
-  checkReverseWorkOrder,
-  rejectReverseWorkOrder
-} from '@/api/wop/express/reversecreate'
+  getWorkOrderManage,
+  createWorkOrderManage,
+  updateWorkOrderManage,
+  exportWorkOrderManage,
+  excelImportWorkOrderManage,
+  checkWorkOrderManage,
+  rejectWorkOrderManage
+} from '@/api/wop/express/manage'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
@@ -773,7 +773,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getReverseWorkOrder(this.params).then(
+      getWorkOrderManage(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -826,7 +826,7 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateReverseWorkOrder(id, data).then(
+        updateWorkOrderManage(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -855,13 +855,20 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createReverseWorkOrder(this.formAdd).then(
+      createWorkOrderManage(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
         }
       ).catch((res) => {
         console.log(res)
+        this.$notify({
+          title: '错误详情',
+          message: res.data,
+          type: 'error',
+          offset: 70,
+          duration: 0
+        })
       })
     },
     // 检索用户组选项
@@ -885,7 +892,7 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }
-      excelImportReverseWorkOrder(importformData, config).then(
+      excelImportWorkOrderManage(importformData, config).then(
         res => {
           this.$notify({
             title: '导入结果',
@@ -939,7 +946,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportReverseWorkOrder(this.params).then(
+            exportWorkOrderManage(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1029,7 +1036,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkReverseWorkOrder(this.params).then(
+        checkWorkOrderManage(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1085,7 +1092,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkReverseWorkOrder(this.params).then(
+        checkWorkOrderManage(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1160,7 +1167,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectReverseWorkOrder(this.params).then(
+              rejectWorkOrderManage(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1227,7 +1234,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectReverseWorkOrder(this.params).then(
+              rejectWorkOrderManage(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
