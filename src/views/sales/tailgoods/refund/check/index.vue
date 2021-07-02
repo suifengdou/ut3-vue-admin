@@ -44,14 +44,6 @@
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增退款单</el-button>
-            </el-tooltip>
-          </div>
-
-        </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">
@@ -346,64 +338,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增工单"
-      width="80%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>订单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="尾货订单" prop="tail_order">
-              <template>
-                <el-select
-                  v-model="formAdd.tail_order"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择尾货单"
-                  :remote-method="remoteMethodTailOrder"
-                >
-                  <el-option
-                    v-for="item in optionsTailOrder"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="返回快递信息" prop="track_no">
-              <el-input v-model="formAdd.track_no" placeholder="请输入快递信息" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--修改信息模态窗-->
     <el-dialog
       title="编辑"
@@ -573,7 +507,6 @@
 <script>
 import {
   getOritailorderSubmitList,
-  createOritailorderSubmit,
   updateOritailorderSubmit,
   exportOritailorderSubmit,
   excelImportOritailorderSubmit,
@@ -585,12 +518,11 @@ import {
   recoverOritailorderSubmit
 } from '@/api/sales/tailgoods/oritailorder'
 import {
-  getRefundOrderSubmitList,
-  createRefundOrderSubmit,
-  updateRefundOrderSubmit,
-  exportRefundOrderSubmit,
-  checkRefundOrderSubmit,
-  rejectRefundOrderSubmit,
+  getRefundOrderCheckList,
+  updateRefundOrderCheck,
+  exportRefundOrderCheck,
+  checkRefundOrderCheck,
+  rejectRefundOrderCheck,
 } from '@/api/sales/tailgoods/refund'
 import { getTailOrderList } from '@/api/sales/tailgoods/tailorder'
 import { getShopList } from '@/api/base/shop'
@@ -618,14 +550,6 @@ export default {
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       importVisible: false,
-      formAdd: {
-        type: Object,
-        default() {
-          return {
-            order_category: 1
-          }
-        }
-      },
       formEdit: {
         type: Object,
         default() {
@@ -668,38 +592,6 @@ export default {
           label: '否'
         }
       ],
-      rules: {
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        mode_warehouse: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
       rulesEdit: {
         id: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
@@ -732,7 +624,6 @@ export default {
           { required: true, trigger: ['blur', 'change'], message: '请选择' }
         ]
       },
-      oriInvoiceGoodsList: [],
       oriInvoiceGoodsListEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []
@@ -753,7 +644,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getRefundOrderSubmitList(this.params).then(
+      getRefundOrderCheckList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -823,7 +714,7 @@ export default {
           delete data[attrStr]
         }
         console.log(data)
-        updateRefundOrderSubmit(id, data).then(
+        updateRefundOrderCheck(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -845,35 +736,6 @@ export default {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
-    },
-    // 添加
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 递交添加
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      console.log(this.oriInvoiceGoodsList)
-      this.formAdd.goods_details = this.oriInvoiceGoodsList
-      createRefundOrderSubmit(this.formAdd).then(
-        () => {
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        this.$notify({
-          title: '错误详情',
-          message: res.data,
-          type: 'error',
-          offset: 210,
-          duration: 0
-        })
-      })
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
     },
     // 检索用户组选项
     unique(arr) {
@@ -1040,7 +902,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkRefundOrderSubmit(this.params).then(
+        checkRefundOrderCheck(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1096,7 +958,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkRefundOrderSubmit(this.params).then(
+        checkRefundOrderCheck(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({

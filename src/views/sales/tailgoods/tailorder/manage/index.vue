@@ -192,6 +192,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="尾货订单"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="错误原因"
           prop="mistake_tag"
           sortable="custom"
@@ -212,55 +222,14 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="工单反馈"
-          prop="memorandum"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memorandum }}</span>
+            <span>{{ scope.row.feedback }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="收款开票公司"
-          prop="company"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="开票单号"
-          prop="order_id"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客户昵称"
-          prop="nickname"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.nickname }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="发票类型"
+          label="订单类型"
           prop="order_category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -269,26 +238,14 @@
             <span>{{ scope.row.order_category.name }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="申请税前开票总额"
+          label="发货模式"
+          prop="mode_warehouse"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="发票抬头"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="纳税人识别号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tax_id }}</span>
+            <span>{{ scope.row.mode_warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -306,39 +263,43 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否顺丰"
+          label="收件城市"
+          prop="sent_city"
+          sortable="custom"
         >
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_deliver"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
+            <span>{{ scope.row.sent_city.name }}</span>
           </template>
-
         </el-table-column>
-
         <el-table-column
-          label="工单留言"
+          label="收件地址"
+          prop="sent_address"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.sent_address }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="尾货订单总价"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品总数"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="订单留言"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="创建公司"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建部门"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_department.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -518,9 +479,9 @@
 
 <script>
 import {
-  getOriInvoiceListManage,
-  exportOriInvoiceManage
-} from '@/api/wop/woinvoice'
+  getTailOrderList,
+  exportTailOrder
+} from '@/api/sales/tailgoods/tailorder'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -642,7 +603,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriInvoiceListManage(this.params).then(
+      getTailOrderList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -711,7 +672,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriInvoiceManage(this.params).then(
+            exportTailOrder(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {

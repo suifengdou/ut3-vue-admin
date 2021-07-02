@@ -149,7 +149,7 @@ const salesChannelRouter = {
             },
             {
               path: 'manage',
-              component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+              component: () => import('@/views/sales/tailgoods/tailorder/manage'),
               name: '尾货单管理',
               meta: { title: '尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
@@ -163,25 +163,25 @@ const salesChannelRouter = {
         },
         {
           path: 'refund',
-          component: () => import('@/views/sales/tailgoods/tailorder/index'),
+          component: () => import('@/views/sales/tailgoods/refund/index'),
           name: '退款单',
           meta: { title: '退款单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
-              component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
+              component: () => import('@/views/sales/tailgoods/refund/submit'),
               name: '退款单提交',
               meta: { title: '退款单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'check',
-              component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
+              component: () => import('@/views/sales/tailgoods/refund/check'),
               name: '退款单审核',
               meta: { title: '退款单审核', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'manage',
-              component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+              component: () => import('@/views/sales/tailgoods/refund/manage'),
               name: '退款单管理',
               meta: { title: '退款单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },

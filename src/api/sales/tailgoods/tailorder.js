@@ -177,12 +177,32 @@ export function recovertailorderCheck(data) {
   })
 }
 
-// 原始发票申请单（外埠）操作API
+// 尾货冲销明细验证表操作API
 // 获取列表
 export function gettailtoexpenseList(params) {
   return request({
     url: '/sales/tailgoods/tailtoexpense/',
     method: 'get',
     params
+  })
+}
+
+
+// 尾货管理明细操作API
+// 获取列表
+export function getTailOrderList(params) {
+  return request({
+    url: '/sales/tailgoods/tailorder/',
+    method: 'get',
+    params
+  })
+}
+
+// 导出工单
+export function exportTailOrder(data) {
+  return request({
+    url: `/sales/tailgoods/tailordercommon/export/`,
+    method: 'patch',
+    data
   })
 }
