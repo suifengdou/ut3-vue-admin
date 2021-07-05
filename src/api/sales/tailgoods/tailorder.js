@@ -21,6 +21,15 @@ export function updatetailorderCommon(id, data) {
   })
 }
 
+// 导入工单
+export function excelImportTailOrderCommon(data) {
+  return request({
+    url: `/sales/tailgoods/tailordercommon/excel_import/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 导出工单
 export function exporttailorderCommon(data) {
   return request({
@@ -92,6 +101,65 @@ export function recovertailorderCommon(data) {
     data
   })
 }
+
+
+// 回流二手发货单操作API
+// 获取列表
+export function gettailorderSpecialList(params) {
+  return request({
+    url: '/sales/tailgoods/tailorderspecial/',
+    method: 'get',
+    params
+  })
+}
+
+// 更新工单
+export function updatetailorderSpecial(id, data) {
+  delete data.create_time
+  delete data.update_time
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/${id}/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 导出工单
+export function exporttailorderSpecial(data) {
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/export/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 审核工单
+export function checktailorderSpecial(data) {
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/check/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 修复工单
+export function fixTailOrderSpecial(data) {
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/fix/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 取消工单
+export function rejecttailorderSpecial(data) {
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/reject/`,
+    method: 'patch',
+    data
+  })
+}
+
 
 // 原始发票申请单（外埠）操作API
 // 获取列表
@@ -206,3 +274,5 @@ export function exportTailOrder(data) {
     data
   })
 }
+
+

@@ -31,8 +31,12 @@
           </div>
 
         </el-col>
+
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
+              <el-button type="success" @click="handleImport">导入</el-button>
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="open">导出</el-button>
             </el-tooltip>
@@ -219,6 +223,13 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="快递信息"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.track_no }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -522,6 +533,37 @@
         </div>
       </template>
     </el-dialog>
+    <!--导入模态窗-->
+    <el-dialog
+      title="导入"
+      :visible.sync="importVisible"
+      width="33%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form ref="importForm" label-width="10%" :data="importFile">
+        <div>
+          <h3>特别注意</h3>
+          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
+          <p>只需要导入“原始单号”（UT生成的尾货单单号）和“物流单号”这两个字段即可。</p>
+        </div>
+        <hr>
+        <el-form-item label="文件">
+          <input ref="files" type="file" @change="getFile($event)">
+        </el-form-item>
+        <hr>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="6">
+            <el-form-item>
+              <el-button type="primary" @click="importExcel">导入文件</el-button>
+              <el-button type="error" @click="closeImport">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -535,6 +577,7 @@
 import {
   gettailorderCommonList,
   updatetailorderCommon,
+  excelImportTailOrderCommon,
   exporttailorderCommon,
   checktailorderCommon,
   fixTailOrderCommon,
@@ -648,10 +691,8 @@ export default {
   },
   methods: {
     fetchData() {
-      // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
       if (typeof (this.params.create_time) !== 'undefined') {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
@@ -664,10 +705,6 @@ export default {
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
         }
       ).catch(
         () => {
@@ -686,8 +723,6 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
 
-      // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
-      // console.log(currentShop)
       this.formEdit.order_category = this.formEdit.order_category.id
       this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
       this.formEdit.shop = this.formEdit.shop.id
@@ -748,6 +783,60 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
+    // 导入
+    handleImport() {
+      this.importVisible = true
+    },
+    getFile(event) {
+      this.importFile.file = event.target.files[0]
+    },
+    importExcel() {
+      const importformData = new FormData()
+      importformData.append('file', this.importFile.file)
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      excelImportTailOrderCommon(importformData, config).then(
+        res => {
+          this.$notify({
+            title: '导入结果',
+            message: res.data,
+            type: 'success',
+            duration: 0
+          })
+        },
+        error => {
+          this.$notify({
+            title: '导入错误',
+            message: error,
+            type: 'error',
+            duration: 0
+          })
+        }
+      ).catch(
+        (res) => {
+          this.$notify({
+            title: '导入错误',
+            message: res.data,
+            type: 'error',
+            duration: 0
+          })
+        }
+      )
+      console.log("我运行清理程序了")
+      this.$refs.files.type = 'text'
+      this.$refs.files.value = ''
+      this.$refs.files.type = 'file'
+      this.closeImport()
+      console.log("我运行完清理程序了")
+    },
+    closeImport() {
+      this.importVisible = false
+      this.fetchData()
+    },
+    // 导出
     open() {
       const h = this.$createElement
       let resultMessage, resultType

@@ -138,14 +138,26 @@ const salesChannelRouter = {
             {
               path: 'common',
               component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
-              name: '二手发货',
-              meta: { title: '二手发货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              name: '重损发货',
+              meta: { title: '重损发货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'commongoodsdetails',
               component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
-              name: '二手发货明细',
-              meta: { title: '二手发货明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              name: '重损发货明细',
+              meta: { title: '重损发货明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'special',
+              component: () => import('@/views/sales/tailgoods/tailorder/special/index'),
+              name: '非重损发货',
+              meta: { title: '非重损发货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'specilgoodsdetails',
+              component: () => import('@/views/sales/tailgoods/tailorder/special/goodsdetails'),
+              name: '非重损发货明细',
+              meta: { title: '非重损发货明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'manage',

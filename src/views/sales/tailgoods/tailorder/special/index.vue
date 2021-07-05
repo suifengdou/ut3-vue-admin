@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-tailorder-submit-container">
+  <div class="tailorder-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -9,12 +9,9 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetUsed">标记重损</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetRetread">标非重损</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetSpecial">标特殊单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">恢复无标</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核单据</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复单据</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回单据</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -36,21 +33,10 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="open">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增尾货订单</el-button>
-            </el-tooltip>
-          </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -199,6 +185,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="尾货订单"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="错误原因"
           prop="mistake_tag"
           sortable="custom"
@@ -326,199 +322,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增工单"
-      width="80%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>订单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺" prop="shop">
-              <template>
-                <el-select
-                  v-model="formAdd.shop"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择店铺"
-                  :remote-method="remoteMethodShop"
-                >
-                  <el-option
-                    v-for="item in optionsShop"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="源单号" prop="order_id">
-              <el-input v-model="formAdd.order_id" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="发货模式" prop="mode_warehouse">
-              <el-select v-model="formAdd.mode_warehouse" placeholder="请选择发票类型">
-                <el-option
-                  v-for="item in optionsMode"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>发货信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-              <el-input v-model="formAdd.sent_consignee" placeholder="请输入收件人" />
-            </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="手机" prop="sent_smartphone">
-              <el-input v-model="formAdd.sent_smartphone" placeholder="请输入手机" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-              <template>
-                <el-select
-                  v-model="formAdd.sent_city"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择城市"
-                  :remote-method="remoteMethodCity"
-                >
-                  <el-option
-                    v-for="item in optionsCity"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-              <el-input v-model="formAdd.sent_district" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
-              <el-input v-model="formAdd.sent_address" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="订单留言" prop="message">
-              <el-input v-model="formAdd.message" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>货品相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
-            <el-col :span="2"><el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              @click="handleDeleteDetails"
-            >删除</el-button></el-col>
-            <el-col :span="2"><el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              @click="handleDeleteAllDetails"
-            >清空</el-button></el-col>
-            <el-col :span="10" />
-            <el-col :span="4" />
-            <el-col :span="4" />
-          </el-row>
-          <el-table
-            ref="tableAdd"
-            border
-            :data="oriInvoiceGoodsList"
-            :row-class-name="rowClassName"
-            @selection-change="handleDetailSelectionChange"
-          >
-            <el-table-column type="selection" width="30" align="center" />
-            <el-table-column label="序号" align="center" prop="xh" width="50" />
-            <el-table-column label="名称" width="250" prop="goods_name">
-              <template slot-scope="scope">
-                <el-select
-                  v-model="oriInvoiceGoodsList[scope.row.xh-1].goods_name"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择货品"
-                  :remote-method="remoteMethodGoods"
-                >
-                  <el-option
-                    v-for="item in optionsGoods"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column label="货品数量" width="250" prop="quantity">
-              <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].quantity" type="number" />
-              </template>
-            </el-table-column>
-            <el-table-column label="含税单价" width="250" prop="price">
-              <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].price" type="text" />
-              </template>
-            </el-table-column>
-            <el-table-column label="货品备注" width="250" prop="memorandum">
-              <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].memorandum" type="text" />
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="8" :offset="16"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--修改信息模态窗-->
     <el-dialog
       title="编辑"
@@ -719,36 +522,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -760,20 +533,15 @@
 
 <script>
 import {
-  getOritailorderSubmitList,
-  createOritailorderSubmit,
-  updateOritailorderSubmit,
-  exportOritailorderSubmit,
-  excelImportOritailorderSubmit,
-  checkOritailorderSubmit,
-  rejectOritailorderSubmit,
-  setUsedOritailorderSubmit,
-  setRetreadOritailorderSubmit,
-  setSpecialOritailorderSubmit,
-  recoverOritailorderSubmit
-} from '@/api/sales/tailgoods/oritailorder'
+  gettailorderSpecialList,
+  updatetailorderSpecial,
+  exporttailorderSpecial,
+  checktailorderSpecial,
+  fixTailOrderSpecial,
+  rejecttailorderSpecial
+} from '@/api/sales/tailgoods/tailorder'
+
 import { getShopList } from '@/api/base/shop'
-import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import { getCityList } from '@/api/utils/geography'
 import moment from 'moment'
@@ -794,17 +562,8 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       importVisible: false,
-      formAdd: {
-        type: Object,
-        default() {
-          return {
-            order_category: 1
-          }
-        }
-      },
       formEdit: {
         type: Object,
         default() {
@@ -846,38 +605,6 @@ export default {
           label: '否'
         }
       ],
-      rules: {
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        mode_warehouse: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
       rulesEdit: {
         id: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
@@ -931,7 +658,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOritailorderSubmitList(this.params).then(
+      gettailorderSpecialList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -995,18 +722,13 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateOritailorderSubmit(id, data).then(
+        updatetailorderSpecial(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
           },
           err => {
-            this.$notify({
-              title: '更新错误',
-              message: err.data,
-              type: 'error',
-              duration: 0
-            })
+            console.log(err.message)
           }
         )
       })
@@ -1017,34 +739,6 @@ export default {
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
     },
-    // 添加
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 递交添加
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      console.log(this.oriInvoiceGoodsList)
-      this.formAdd.goods_details = this.oriInvoiceGoodsList
-      createOritailorderSubmit(this.formAdd).then(
-        () => {
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        this.$notify({
-          title: '创建错误',
-          message: res.data,
-          type: 'error',
-          duration: 0
-        })
-      })
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -1053,52 +747,6 @@ export default {
       // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
-    importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      excelImportOritailorderSubmit(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
-        () => {
-          console.log('1')
-        }
-      )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
-    },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
     },
     open() {
       const h = this.$createElement
@@ -1120,7 +768,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOritailorderSubmit(this.params).then(
+            exporttailorderSpecial(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1210,7 +858,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOritailorderSubmit(this.params).then(
+        checktailorderSpecial(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1244,7 +892,7 @@ export default {
             console.log('我是全选错误返回')
             this.$notify({
               title: '错误详情',
-              message: error.data,
+              message: error.response.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -1266,7 +914,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOritailorderSubmit(this.params).then(
+        checktailorderSpecial(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1302,115 +950,6 @@ export default {
           error => {
             console.log('我是单选错误返回')
             console.log(this)
-            console.log(error)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleSetUsed() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        setUsedOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法标记',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        setUsedOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
             console.log(error.response)
             delete this.params.ids
             this.$notify({
@@ -1430,15 +969,15 @@ export default {
         )
       }
     },
-    handleSetRetread() {
+    handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        setRetreadOritailorderSubmit(this.params).then(
+        fixTailOrderSpecial(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                title: '修复成功',
+                message: `修复成功条数：${res.data.success}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1446,8 +985,8 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
+                title: '修复失败',
+                message: `修复失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1489,12 +1028,12 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        setRetreadOritailorderSubmit(this.params).then(
+        fixTailOrderSpecial(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                title: '修复成功',
+                message: `修复成功条数：${res.data.success}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1502,236 +1041,8 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
-    handleSetSpecial() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        setSpecialOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        setSpecialOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
-    handleSetRecover() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        recoverOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        recoverOritailorderSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
+                title: '修复失败',
+                message: `修复失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1774,13 +1085,11 @@ export default {
     },
     handleReject() {
       const h = this.$createElement
-      let resultMessage, resultType
       this.$msgbox({
         title: '取消工单',
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+          h('span', null, '驳回单据到递交界面！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1792,12 +1101,12 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOritailorderSubmit(this.params).then(
+              rejecttailorderSpecial(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.success}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1805,8 +1114,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -1859,12 +1168,12 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOritailorderSubmit(this.params).then(
+              rejecttailorderSpecial(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.success}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1872,8 +1181,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
