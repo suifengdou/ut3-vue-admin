@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div class="tailorder-goods-common-container">
     <div class="tableTitle">
@@ -20,15 +21,26 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.sent_smartphone" class="grid-content bg-purple" placeholder="请输入收件人手机" @keyup.enter.native="fetchData">
-                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
-              </el-input>
+                <template>
+                  <el-select
+                    v-model="params.process_tag"
+                    clearable
+                    placeholder="选择快捷标签"
+                    @change="fetchData"
+                  >
+                    <el-option
+                      v-for="item in optionsProcessTag"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
             </el-tooltip>
           </div>
-
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -118,6 +130,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -126,9 +139,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
               <el-button class="page-button" type="success" size="mini"><span>{{ scope.row.id }}</span></el-button>
-            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column
@@ -327,7 +338,7 @@
 </template>
 
 <script>
-import { getTailOrderGoodsSpecialList, exportTailOrderGoodsSpecial } from '@/api/sales/tailgoods/togoods'
+import { getTailOrderGoodsCommonList, exportTailOrderGoodsCommon, setTailOrderGoodsCommon, recoverTailOrderGoodsCommon } from '@/api/sales/tailgoods/togoods'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -349,7 +360,11 @@ export default {
       params: {
         page: 1,
         allSelectTag: 0
-      }
+      },
+      optionsProcessTag: [
+        { label: '未处理', value: 0 },
+        { label: '已处理', value: 4 }
+      ]
     }
   },
   created() {
@@ -367,16 +382,12 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getTailOrderGoodsSpecialList(this.params).then(
+      getTailOrderGoodsCommonList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
         }
       ).catch(
         () => {
@@ -417,7 +428,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportTailOrderGoodsSpecial(this.params).then(
+            exportTailOrderGoodsCommon(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -516,7 +527,7 @@ export default {
     handleSetSpecial() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        setSpecialOritailorderSubmit(this.params).then(
+        setTailOrderGoodsCommon(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -572,7 +583,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        setSpecialOritailorderSubmit(this.params).then(
+        setTailOrderGoodsCommon(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -630,7 +641,7 @@ export default {
     handleSetRecover() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        recoverOritailorderSubmit(this.params).then(
+        recoverTailOrderGoodsCommon(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -686,7 +697,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        recoverOritailorderSubmit(this.params).then(
+        recoverTailOrderGoodsCommon(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -756,6 +767,18 @@ export default {
       this.params.allSelectTag = 1
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
+    },
+    // 显示行的颜色变化
+    rowStyle({ row, rowIndex}) {
+      console.log(row)
+      console.log(rowIndex)
+      let row_style = {}
+      if (row.process_tag !== 0) {
+        row_style = {
+          backgroundColor: "#77FFA4"
+        }
+      }
+      return row_style
     }
   }
 }

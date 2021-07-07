@@ -13,8 +13,8 @@
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetRetread">标非重损</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetSpecial">标特殊单</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">恢复无标</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核单据</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消单据</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -781,6 +781,18 @@ import XLSX from 'xlsx'
 export default {
   name: 'TailorderSubmit',
   data() {
+    const validateMobile = (rule, value, callback) => {
+      const reg = RegExp(/^[1][3-9][0-9]{9}$/)
+      if (value == '' || value == undefined || value == null) {
+        callback()
+      } else {
+        if ((!reg.test(value)) && value != '') {
+          callback(new Error('请输入正确手机号'))
+        } else {
+          callback()
+        }
+      }
+    }
     return {
       DataList: [],
       tableLoading: false,
@@ -863,7 +875,7 @@ export default {
           { required: true, message: '请输入收件人姓名', trigger: 'blur' }
         ],
         sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
+          { validator: validateMobile, trigger: 'blur' }
         ],
         sent_city: [
           { required: true, message: '请输选择城市', trigger: 'blur' }
@@ -895,7 +907,7 @@ export default {
           { required: true, message: '请输入收件人姓名', trigger: 'blur' }
         ],
         sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
+          { validator: validateMobile, trigger: 'blur' }
         ],
         sent_city: [
           { required: true, message: '请输选择城市', trigger: 'blur' }

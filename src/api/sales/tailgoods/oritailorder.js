@@ -159,3 +159,30 @@ export function rejectOritailorderCheck(data) {
   })
 }
 
+// 设置特殊订单
+export function setLogisticsOritailorderCheck(data) {
+  return request({
+    url: `/sales/tailgoods/oritailordercheck/set_logistics/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 恢复订单标签
+export function recoverOritailorderCheck(data) {
+  return request({
+    url: `/sales/tailgoods/oritailordercheck/recover/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 原始尾货单管理操作API
+// 获取列表
+export function getOritailorderManageList(params) {
+  return request({
+    url: '/sales/tailgoods/oritailorder/',
+    method: 'get',
+    params
+  })
+}

@@ -87,23 +87,53 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="关联支出"
-          prop="Statements"
+          label="关联流水单号"
+          prop="statements"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.Statements }}</span>
+            <span>{{ scope.row.statements.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="关联流水"
-          prop="statement"
+          label="关联流水支出金额"
+          prop="statment_expense"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.statement }}</span>
+            <span>{{ scope.row.statment_expense }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="关联预存单号"
+          prop="prestore"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.prestore.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="关联预存单金额"
+          prop="prestore_amount"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.prestore_amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="实际支出金额"
+          prop="amount"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.amount }}</span>
           </template>
         </el-table-column>
         <el-table-column

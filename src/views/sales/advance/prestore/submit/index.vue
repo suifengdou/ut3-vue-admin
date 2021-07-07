@@ -371,7 +371,13 @@ export default {
           this.handleCancelAdd()
         }
       ).catch((res) => {
-        console.log(res)
+        this.$notify({
+          title: '创建失败',
+          message: res.data,
+          type: 'error',
+          offset: 140,
+          duration: 0
+        })
       })
     },
     // 关闭添加界面

@@ -123,7 +123,7 @@ const salesChannelRouter = {
             },
             {
               path: 'manage',
-              component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+              component: () => import('@/views/sales/tailgoods/oritailorder/manage'),
               name: '原始尾货单管理',
               meta: { title: '原始尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             }
@@ -206,8 +206,8 @@ const salesChannelRouter = {
           ]
         },
         {
-          path: 'check',
-          component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
+          path: 'bills',
+          component: () => import('@/views/sales/tailgoods/bills'),
           name: '对账单明细',
           meta: { title: '对账单明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }

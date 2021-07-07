@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="tailorder-manage-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
@@ -222,10 +222,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
+          label="处理标签"
+          prop="order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -489,7 +492,7 @@ import { getCityList } from '@/api/utils/geography'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'TailOrderManage',
   data() {
     return {
       DataList: [],

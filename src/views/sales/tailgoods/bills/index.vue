@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="bills-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
@@ -176,9 +176,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
               <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
-            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column
@@ -192,13 +190,23 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
+          label="关联公司"
+          prop="sign_company"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.sign_company.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="尾货订单"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -212,55 +220,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="工单反馈"
-          prop="memorandum"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memorandum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收款开票公司"
-          prop="company"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="开票单号"
-          prop="order_id"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客户昵称"
-          prop="nickname"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.nickname }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="发票类型"
+          label="订单类型"
           prop="order_category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -269,26 +229,14 @@
             <span>{{ scope.row.order_category.name }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="申请税前开票总额"
+          label="发货模式"
+          prop="mode_warehouse"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="发票抬头"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="纳税人识别号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tax_id }}</span>
+            <span>{{ scope.row.mode_warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -306,39 +254,46 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否顺丰"
+          label="货品名称"
         >
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_deliver"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
+            <span>{{ scope.row.goods_nickname }}</span>
           </template>
-
+        </el-table-column>
+        <el-table-column
+          label="货品编码"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品单价"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.settlement_price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品总数"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品总价"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.settlement_amount }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column
-          label="工单留言"
+          label="订单留言"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="创建公司"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建部门"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_department.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -386,7 +341,7 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>订单相关信息</span>
+                <span>开票订单相关信息</span>
               </div>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="店铺" prop="shop">
@@ -469,7 +424,7 @@
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>货品相关信息</span>
+                <span>开票货品相关信息</span>
               </div>
               <el-table
                 ref="tableEdit"
@@ -518,9 +473,9 @@
 
 <script>
 import {
-  getOriInvoiceListManage,
-  exportOriInvoiceManage
-} from '@/api/wop/woinvoice'
+  getBillsList,
+  exportBills
+} from '@/api/sales/tailgoods/bills'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -642,7 +597,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriInvoiceListManage(this.params).then(
+      getBillsList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -711,7 +666,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriInvoiceManage(this.params).then(
+            exportBills(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
