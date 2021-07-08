@@ -568,19 +568,6 @@
 
 <script>
 import {
-  getOritailorderSubmitList,
-  createOritailorderSubmit,
-  updateOritailorderSubmit,
-  exportOritailorderSubmit,
-  excelImportOritailorderSubmit,
-  checkOritailorderSubmit,
-  rejectOritailorderSubmit,
-  setUsedOritailorderSubmit,
-  setRetreadOritailorderSubmit,
-  setSpecialOritailorderSubmit,
-  recoverOritailorderSubmit
-} from '@/api/sales/tailgoods/oritailorder'
-import {
   getRefundOrderSubmitList,
   createRefundOrderSubmit,
   updateRefundOrderSubmit,
@@ -596,7 +583,7 @@ import { getCityList } from '@/api/utils/geography'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'TailorderSubmit',
+  name: 'refund-submit',
   data() {
     return {
       DataList: [],
@@ -1155,7 +1142,8 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消单据即为此源单号的退款申请彻底取消！无法再次用此源单号创建退款申请，请慎重选择！'),
+          h('span', null, '取消单据即为此源单号的退款申请彻底取消！无法再次用此源单号创建退款申请！'),
+          h('p', { style: 'color: red' }, '务必确认需要取消退款单，取消之后无法恢复，并且此源单号无法创建！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1167,7 +1155,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOritailorderSubmit(this.params).then(
+              rejectRefundOrderSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1234,7 +1222,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOritailorderSubmit(this.params).then(
+              rejectRefundOrderSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

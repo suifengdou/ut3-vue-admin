@@ -192,6 +192,12 @@ const salesChannelRouter = {
               meta: { title: '退款单审核', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
+              path: 'receival',
+              component: () => import('@/views/sales/tailgoods/refund/receival'),
+              name: '退款单收货',
+              meta: { title: '退款单收货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
               path: 'manage',
               component: () => import('@/views/sales/tailgoods/refund/manage'),
               name: '退款单管理',

@@ -984,7 +984,6 @@ export default {
       if (this.params.allSelectTag === 1) {
         recoverRefundOrderCheck(this.params).then(
           res => {
-            console.log(res)
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
@@ -1041,7 +1040,6 @@ export default {
         this.params.ids = ids
         recoverRefundOrderCheck(this.params).then(
           res => {
-            console.log(res)
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',

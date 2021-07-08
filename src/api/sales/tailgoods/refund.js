@@ -101,22 +101,13 @@ export function recoverRefundOrderSubmit(data) {
   })
 }
 
-// 原始发票申请单（外埠）操作API
+// 退款单审核操作API
 // 获取列表
 export function getRefundOrderCheckList(params) {
   return request({
     url: '/sales/tailgoods/refundordercheck/',
     method: 'get',
     params
-  })
-}
-
-// 创建工单
-export function createRefundOrderCheck(data) {
-  return request({
-    url: `/sales/tailgoods/refundordercheck/`,
-    method: 'post',
-    data
   })
 }
 
@@ -140,15 +131,6 @@ export function exportRefundOrderCheck(data) {
   })
 }
 
-// 导入工单
-export function excelImportRefundOrderCheck(data) {
-  return request({
-    url: `/sales/tailgoods/refundordercheck/excel_import/`,
-    method: 'post',
-    data
-  })
-}
-
 // 审核工单
 export function checkRefundOrderCheck(data) {
   return request({
@@ -158,7 +140,7 @@ export function checkRefundOrderCheck(data) {
   })
 }
 
-// 取消工单
+// 驳回单据
 export function rejectRefundOrderCheck(data) {
   return request({
     url: `/sales/tailgoods/refundordercheck/reject/`,
@@ -167,29 +149,96 @@ export function rejectRefundOrderCheck(data) {
   })
 }
 
-// 取消工单
-export function setLogisticsRefundOrderCheck(data) {
+// 设置处理标记
+export function setHandledRefundOrderCheck(data) {
   return request({
-    url: `/sales/tailgoods/refundordercheck/reject/`,
+    url: `/sales/tailgoods/refundordercheck/set_handled/`,
     method: 'patch',
     data
   })
 }
 
-// 取消工单
+// 恢复标记
 export function recoverRefundOrderCheck(data) {
   return request({
-    url: `/sales/tailgoods/refundordercheck/reject/`,
+    url: `/sales/tailgoods/refundordercheck/recover/`,
     method: 'patch',
     data
   })
 }
 
-// 原始发票申请单（外埠）操作API
+// 尾货退款单管理操作API
 // 获取列表
 export function getRefundOrderManageList(params) {
   return request({
     url: '/sales/tailgoods/refundordermanage/',
+    method: 'get',
+    params
+  })
+}
+
+// 退款单收货操作API
+// 获取列表
+export function getROGoodsReceivalList(params) {
+  return request({
+    url: '/sales/tailgoods/rogoodsreceival/',
+    method: 'get',
+    params
+  })
+}
+
+// 更新工单
+export function updateROGoodsReceival(id, data) {
+  delete data.create_time
+  delete data.update_time
+  return request({
+    url: `/sales/tailgoods/rogoodsreceival/${id}/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置处理标记
+export function setHandledROGoodsReceival(data) {
+  return request({
+    url: `/sales/tailgoods/rogoodsreceival/set_handled/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 初始化单据
+export function recoverROGoodsReceival(data) {
+  return request({
+    url: `/sales/tailgoods/rogoodsreceival/recover/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 审核单据
+export function checkROGoodsReceival(data) {
+  return request({
+    url: `/sales/tailgoods/rogoodsreceival/check/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 导出工单
+export function exportROGoodsReceival(data) {
+  return request({
+    url: `/sales/tailgoods/rogoodsreceival/export/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 退款单收货管理API
+// 获取列表
+export function getROGoodsManageList(params) {
+  return request({
+    url: '/sales/tailgoods/rogoodsmanage/',
     method: 'get',
     params
   })

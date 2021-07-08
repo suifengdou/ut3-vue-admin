@@ -10,9 +10,8 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetHandled">标记处理</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">恢复无标</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">恢复初始</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核单据</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -177,13 +176,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="店铺"
-          prop="shop"
+          label="货品"
+          prop="goods_name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop.name }}</span>
+            <span>{{ scope.row.goods_name.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -198,12 +197,12 @@
         </el-table-column>
         <el-table-column
           label="来源单号"
-          prop="tail_order"
+          prop="refund_order"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.tail_order.name }}</span>
+            <span>{{ scope.row.refund_order.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -217,7 +216,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="货品总数"
+          label="退换货数量"
           prop="quantity"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -227,15 +226,38 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="货品名称"
-          prop="goods_details"
+          label="退换货数量"
+          prop="quantity"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
-            </div>
+            <el-input
+              v-model="scope.row.receipted_quantity"
+              type="number"
+              placeholder="请输入收货数量"
+              @change="submitReceived(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="goods_nickname"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_nickname }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品编码"
+          prop="goods_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -259,31 +281,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="退换货信息原因"
-          prop="info_refund"
+          label="备注"
+          prop="memorandum"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.info_refund }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="工单反馈"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单类型"
-          prop="order_category"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_category.name }}</span>
+            <span>{{ scope.row.memorandum }}</span>
           </template>
         </el-table-column>
 
@@ -299,39 +303,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.sent_smartphone }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件城市"
-          prop="sent_city"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sent_city.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件地址"
-          prop="sent_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sent_address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="尾货订单总价"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单留言"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.message }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -462,13 +433,12 @@
 
 <script>
 import {
-  getRefundOrderCheckList,
-  updateRefundOrderCheck,
-  exportRefundOrderCheck,
-  checkRefundOrderCheck,
-  rejectRefundOrderCheck,
-  setHandledRefundOrderCheck,
-  recoverRefundOrderCheck
+  getROGoodsReceivalList,
+  updateROGoodsReceival,
+  exportROGoodsReceival,
+  setHandledROGoodsReceival,
+  recoverROGoodsReceival,
+  checkROGoodsReceival,
 } from '@/api/sales/tailgoods/refund'
 import { getTailOrderList } from '@/api/sales/tailgoods/tailorder'
 import { getShopList } from '@/api/base/shop'
@@ -543,7 +513,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getRefundOrderCheckList(this.params).then(
+      getROGoodsReceivalList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -664,7 +634,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOritailorderSubmit(this.params).then(
+            exportROGoodsReceival(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -754,7 +724,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkRefundOrderCheck(this.params).then(
+        checkROGoodsReceival(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -810,7 +780,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkRefundOrderCheck(this.params).then(
+        checkROGoodsReceival(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -868,7 +838,7 @@ export default {
     handleSetHandled() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        setHandledRefundOrderCheck(this.params).then(
+        setHandledROGoodsReceival(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -924,7 +894,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        setHandledRefundOrderCheck(this.params).then(
+        setHandledROGoodsReceival(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -982,9 +952,8 @@ export default {
     handleSetRecover() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        recoverRefundOrderCheck(this.params).then(
+        recoverROGoodsReceival(this.params).then(
           res => {
-            console.log(res)
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
@@ -1039,9 +1008,8 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        recoverRefundOrderCheck(this.params).then(
+        recoverROGoodsReceival(this.params).then(
           res => {
-            console.log(res)
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
@@ -1094,157 +1062,6 @@ export default {
           }
         )
       }
-    },
-    handleReject() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '驳回工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '驳回单据，需要确保单据下所有货品单无入库！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectOritailorderSubmit(this.params).then(
-                res => {
-                  if (res.data.success !== 0) {
-                    this.$notify({
-                      title: '驳回功',
-                      message: `驳回成功条数：${res.data.success}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法取消',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectOritailorderSubmit(this.params).then(
-                res => {
-                  if (res.data.success !== 0) {
-                    this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.success}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        () => {
-          this.fetchData()
-        }
-      )
     },
     // 货品搜索
     remoteMethodGoods(query) {
@@ -1379,6 +1196,51 @@ export default {
     rowClassName({ row, rowIndex }) {
       row.xh = rowIndex + 1
     },
+    // 快捷收货
+    submitReceived(row) {
+      console.log(row.id)
+      let id = row.id
+      let quantity = row.quantity
+      let receipted_quantity = row.receipted_quantity
+      const data = {
+        receipted_quantity: receipted_quantity,
+        process_tag: 2
+      }
+      if (receipted_quantity < 1) {
+        this.$notify({
+          title: '异常错误详情',
+          message: '输入的数量错误',
+          type: 'error',
+          offset: 210,
+          duration: 0
+        })
+      } else if (receipted_quantity > quantity) {
+        this.$notify({
+          title: '异常错误详情',
+          message: '输入的数量大于待收货数量',
+          type: 'error',
+          offset: 210,
+          duration: 0
+        })
+      } else {
+        updateROGoodsReceival(id, data).then(
+          () => {
+            this.dialogVisibleEdit = false
+            this.fetchData()
+          }
+        ).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+          }
+        )
+      }
+    },
     // 重置筛选
     resetParams() {
       this.params = {
@@ -1399,6 +1261,7 @@ export default {
       }
       return row_style
     }
+
   }
 }
 </script>
