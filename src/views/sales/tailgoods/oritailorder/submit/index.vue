@@ -286,12 +286,25 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="货品名称"
+          prop="goods_details"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, index) in scope.row.goods_details">
+              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="货品总数"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="订单留言"
         >

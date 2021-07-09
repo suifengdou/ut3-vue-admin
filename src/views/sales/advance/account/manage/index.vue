@@ -180,11 +180,31 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>平台相关信息</span>
+            <span>账户相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="账户名称" prop="name">
+            <el-col :span="10"><el-form-item label="账户名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入账户名称" />
+            </el-form-item></el-col>
+            <el-col :span="10"><el-form-item label="用户名"  prop="user">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="formAdd.user"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择用户"
+                  :remote-method="remoteMethodUsers"
+                >
+                  <el-option
+                    v-for="item in optionsUsers"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -256,6 +276,7 @@
 
 <script>
 import { getAccountList, createAccount, updateAccount } from '@/api/sales/advance/account'
+import { getUserList } from '@/api/auth/user'
 export default {
   name: 'OriInvoiceSubmit',
   data() {
@@ -271,6 +292,7 @@ export default {
       dialogVisibleEdit: false,
       formAdd: {},
       formEdit: {},
+      optionsUsers: [],
       rules: {
         name: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
@@ -363,6 +385,27 @@ export default {
       this.dialogVisibleEdit = false
       this.$refs.FormEdit.resetFields()
     },
+    // 店铺搜索
+    remoteMethodUsers(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.username = query
+          getUserList(paramsSearch).then(
+            res => {
+              this.optionsUsers = res.data.results.map(item => {
+                return { label: item.username, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.options = []
+      }
+    },
+    // 店铺搜索
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)

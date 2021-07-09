@@ -359,7 +359,9 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        t_order_status: 1,
+        t_mode_warehouse: 0
       },
       optionsProcessTag: [
         { label: '未处理', value: 0 },

@@ -478,7 +478,7 @@ import { getCityList } from '@/api/utils/geography'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'TailorderSubmit',
+  name: 'TailorderCheck',
   data() {
     return {
       DataList: [],
@@ -587,7 +587,7 @@ export default {
         let goods
         for (goods in this.formEdit.goods_details) {
           this.formEdit.goods_details[goods].xh = goods + 1
-          this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
+          this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.name
           this.dataDetailsEdit.push(this.formEdit.goods_details[goods])
         }
       }
@@ -1115,7 +1115,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOritailorderSubmit(this.params).then(
+              rejectRefundOrderCheck(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1161,7 +1161,7 @@ export default {
                   this.fetchData()
                 }
               ).catch(
-                () => {
+                (error) => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -1182,7 +1182,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOritailorderSubmit(this.params).then(
+              rejectRefundOrderCheck(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

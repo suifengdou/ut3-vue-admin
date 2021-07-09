@@ -195,6 +195,58 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="发货模式"
+          prop="mode_warehouse"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mode_warehouse.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="来源单号"
+          prop="tail_order"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.tail_order.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="返回快递"
+          prop="track_no"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.track_no }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品总数"
+          prop="quantity"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="goods_details"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, index) in scope.row.goods_details">
+              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="错误原因"
           prop="mistake_tag"
           sortable="custom"
@@ -224,16 +276,7 @@
             <span>{{ scope.row.info_refund }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="返回快递"
-          prop="track_no"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.track_no }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="工单反馈"
         >
@@ -251,16 +294,7 @@
             <span>{{ scope.row.order_category.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="发货模式"
-          prop="mode_warehouse"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mode_warehouse.name }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="收件人姓名"
         >
@@ -299,13 +333,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品总数"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -466,20 +493,20 @@
               <el-table
                 ref="tableEdit"
                 border
-                :data="oriInvoiceGoodsListEdit"
+                :data="dataDetailsEdit"
                 :row-class-name="rowClassName"
                 @selection-change="handleDetailSelectionChangeEdit"
               >
                 <el-table-column type="selection" width="30" align="center" />
                 <el-table-column label="序号" align="center" prop="xh" width="50">
                   <template slot-scope="scope">
-                    <span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].xh }}</span>
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].xh }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="名称" width="250" prop="goods_name">
                   <template slot-scope="scope">
                     <el-select
-                      v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].goods_name"
+                      v-model="dataDetailsEdit[scope.row.xh-1].goods_name"
                       filterable
                       default-first-option
                       remote
@@ -498,17 +525,17 @@
                 </el-table-column>
                 <el-table-column label="货品数量" width="250" prop="quantity">
                   <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].quantity" type="number" />
+                    <el-input v-model="dataDetailsEdit[scope.row.xh-1].quantity" type="number" />
                   </template>
                 </el-table-column>
                 <el-table-column label="结算单价" width="250" prop="settlement_price">
                   <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].settlement_price" type="text" />
+                    <el-input v-model="dataDetailsEdit[scope.row.xh-1].settlement_price" type="text" />
                   </template>
                 </el-table-column>
                 <el-table-column label="货品备注" width="250" prop="memorandum">
                   <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].memorandum" type="text" />
+                    <el-input v-model="dataDetailsEdit[scope.row.xh-1].memorandum" type="text" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -716,7 +743,7 @@ export default {
         ]
       },
       oriInvoiceGoodsList: [],
-      oriInvoiceGoodsListEdit: [],
+      dataDetailsEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -776,12 +803,12 @@ export default {
         this.optionsGoods = this.formEdit.goods_details.map(item => {
           return { label: item.name.name, value: item.name.id }
         })
-        this.oriInvoiceGoodsListEdit = []
+        this.dataDetailsEdit = []
         let goods
         for (goods in this.formEdit.goods_details) {
           this.formEdit.goods_details[goods].xh = goods + 1
           this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
-          this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[goods])
+          this.dataDetailsEdit.push(this.formEdit.goods_details[goods])
         }
       }
     },
@@ -791,7 +818,7 @@ export default {
         if (!valid) {
           return
         }
-        this.formEdit.goods_details = this.oriInvoiceGoodsListEdit
+        this.formEdit.goods_details = this.dataDetailsEdit
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
@@ -800,11 +827,7 @@ export default {
         delete data.order_category
         delete data.order_status
         delete data.mode_warehouse
-
-        const transFieldStr = ['mistake_tag', 'process_tag', 'order_category', 'order_status', 'mode_warehouse']
-        for (attrStr in transFieldStr) {
-          delete data[attrStr]
-        }
+        delete data.tail_order
         console.log(data)
         updateRefundOrderSubmit(id, data).then(
           () => {
@@ -1454,7 +1477,7 @@ export default {
           confirmButtonText: '确定'
         })
       } else {
-        this.oriInvoiceGoodsListEdit.splice(this.checkedDetailEdit[0].xh - 1, 1)
+        this.dataDetailsEdit.splice(this.checkedDetailEdit[0].xh - 1, 1)
       }
     },
     // 删除全部表单货品项
@@ -1463,7 +1486,7 @@ export default {
     },
     // 删除编辑全部表单货品项
     handleDeleteAllDetailsEdit() {
-      this.oriInvoiceGoodsListEdit = undefined
+      this.dataDetailsEdit = undefined
     },
     // 添加表单货品项
     handleAddDetails() {
@@ -1477,14 +1500,14 @@ export default {
     },
     // 添加编辑表单货品项
     handleAddDetailsEdit() {
-      if (this.oriInvoiceGoodsListEdit === undefined) {
-        this.oriInvoiceGoodsListEdit = []
+      if (this.dataDetailsEdit === undefined) {
+        this.dataDetailsEdit = []
       }
       const obj = {
         id: 'n'
       }
-      this.oriInvoiceGoodsListEdit.push(obj)
-      console.log(this.oriInvoiceGoodsListEdit)
+      this.dataDetailsEdit.push(obj)
+      console.log(this.dataDetailsEdit)
     },
     // 重置筛选
     resetParams() {

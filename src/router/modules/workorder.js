@@ -79,44 +79,44 @@ const workOrderRouter = {
         {
           path: 'reversecreate',
           component: () => import('@/views/workorder/express/reversecreate/index'),
-          name: '逆向提交',
-          meta: { title: '逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递逆向提交',
+          meta: { title: '快递逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'create',
           component: () => import('@/views/workorder/express/create/index'),
-          name: '正向提交',
-          meta: { title: '正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递正向提交',
+          meta: { title: '快递正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/express/handle/index'),
-          name: '逆向处理',
-          meta: { title: '逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递逆向处理',
+          meta: { title: '快递逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'supplierhandle',
           component: () => import('@/views/workorder/express/supplierhandle/index'),
-          name: '正向处理',
-          meta: { title: '正向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递正向处理',
+          meta: { title: '快递正向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'check',
           component: () => import('@/views/workorder/express/check/index'),
-          name: '工单审核',
-          meta: { title: '工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递工单审核',
+          meta: { title: '快递工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'financehandle',
           component: () => import('@/views/workorder/express/financehandle/index'),
-          name: '工单财审',
-          meta: { title: '工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递工单财审',
+          meta: { title: '快递工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/express/manage/index'),
-          name: '工单管理',
-          meta: { title: '工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递工单管理',
+          meta: { title: '快递工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         }
       ]
     },
@@ -130,44 +130,44 @@ const workOrderRouter = {
         {
           path: 'reversecreate',
           component: () => import('@/views/workorder/storage/reversecreate/index'),
-          name: '逆向提交',
-          meta: { title: '逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储逆向提交',
+          meta: { title: '仓储逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'create',
           component: () => import('@/views/workorder/storage/create/index'),
-          name: '正向提交',
-          meta: { title: '正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储正向提交',
+          meta: { title: '仓储正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/storage/handle/index'),
-          name: '逆向处理',
-          meta: { title: '逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储逆向处理',
+          meta: { title: '仓储逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'supplierhandle',
           component: () => import('@/views/workorder/storage/supplierhandle/index'),
-          name: '正向处理',
-          meta: { title: '正向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储正向处理',
+          meta: { title: '仓储正向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'check',
           component: () => import('@/views/workorder/storage/check/index'),
-          name: '工单审核',
-          meta: { title: '工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单审核',
+          meta: { title: '仓储工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'financehandle',
           component: () => import('@/views/workorder/storage/financehandle/index'),
-          name: '工单财审',
-          meta: { title: '工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单财审',
+          meta: { title: '仓储工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/storage/manage/index'),
-          name: '工单管理',
-          meta: { title: '工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单管理',
+          meta: { title: '仓储工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         }
       ]
     },
@@ -181,32 +181,32 @@ const workOrderRouter = {
         {
           path: 'create',
           component: () => import('@/views/workorder/dealer/submit'),
-          name: '工单提交',
-          meta: { title: '工单提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '经销商工单提交',
+          meta: { title: '经销商工单提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/dealer/handle'),
-          name: '工单处理',
-          meta: { title: '工单处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '经销商工单处理',
+          meta: { title: '经销商工单处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'Check',
           component: () => import('@/views/workorder/dealer/check'),
-          name: '工单复核',
-          meta: { title: '工单复核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '经销商工单复核',
+          meta: { title: '经销商工单复核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'confirm',
           component: () => import('@/views/workorder/dealer/confirm'),
-          name: '运营确认',
-          meta: { title: '运营确认', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '经销商运营确认',
+          meta: { title: '经销商运营确认', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/dealer/manage'),
-          name: '工单管理',
-          meta: { title: '工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '经销商工单管理',
+          meta: { title: '经销商工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         }
       ]
     }

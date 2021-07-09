@@ -602,6 +602,7 @@ export default {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
+          console.log(this.DataList)
         }
       ).catch(
         () => {
@@ -671,36 +672,20 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.city,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    关联公司: item.sign_company.name,
+                    对账单号: item.order_id,
+                    单据类型: item.order_category.name,
+                    发货模式: item.mode_warehouse.name,
+                    收件人: item.sent_consignee,
+                    手机: item.sent_smartphone,
+                    货品名称: item.goods_nickname,
+                    货品编码: item.goods_id,
+                    货品单价: item.settlement_price,
+                    货品数量: item.quantity,
+                    货品总价: item.settlement_amount,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    创建者: item.creator
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

@@ -15,7 +15,7 @@ const salesChannelRouter = {
     {
       path: 'advance',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
-      name: 'invoice',
+      name: 'advance',
       meta: { title: '预存系统' },
       redirect: 'noRedirect',
       children: [
@@ -84,10 +84,10 @@ const salesChannelRouter = {
           meta: { title: '预存校验管理', roles: ['advancepayment.view_verificationprestore', 'AllPrivileges'] }
         },
         {
-          path: 'verifyexpense',
+          path: 'adverifyexpense',
           component: () => import('@/views/sales/advance/verifyexpense/index'),
-          name: '支出校验管理',
-          meta: { title: '支出校验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
+          name: '预支出校验管理',
+          meta: { title: '预支出校验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
         },
         {
           path: 'expendlist',
@@ -167,7 +167,7 @@ const salesChannelRouter = {
             },
             {
               path: 'verifyexpense',
-              component: () => import('@/views/sales/tailgoods/tailorder/verifyexpense/index'),
+              component: () => import('@/views/sales/tailgoods/tailorder/verifyexpense'),
               name: '支出校验管理',
               meta: { title: '支出校验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
             }
@@ -205,10 +205,16 @@ const salesChannelRouter = {
             },
             {
               path: 'verifyprestore',
-              component: () => import('@/views/sales/tailgoods/tailorder/verifyexpense/index'),
-              name: '退款单校验管理',
-              meta: { title: '退款单验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
-            }
+              component: () => import('@/views/sales/tailgoods/refund/verifyprestore'),
+              name: '退款单校验预存',
+              meta: { title: '退款单校验预存', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
+            },
+            {
+              path: 'verifyaccount',
+              component: () => import('@/views/sales/tailgoods/refund/verifyaccount'),
+              name: '退款单校验对账',
+              meta: { title: '退款单校验对账', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
+            },
           ]
         },
         {

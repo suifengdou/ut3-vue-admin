@@ -359,7 +359,9 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        t_order_status: 1,
+        t_mode_warehouse: 1
       },
       optionsProcessTag: [
         { label: '未处理', value: 0 },
@@ -523,7 +525,6 @@ export default {
         page: 1
       }
     },
-
     handleSetSpecial() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {

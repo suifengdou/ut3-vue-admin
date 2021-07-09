@@ -177,6 +177,15 @@ export function getRefundOrderManageList(params) {
   })
 }
 
+// 导出单据
+export function exportRefundOrderManage(data) {
+  return request({
+    url: `/sales/tailgoods/refundordersubmit/export/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 退款单收货操作API
 // 获取列表
 export function getROGoodsReceivalList(params) {
@@ -243,3 +252,4 @@ export function getROGoodsManageList(params) {
     params
   })
 }
+

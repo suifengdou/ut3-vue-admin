@@ -292,6 +292,18 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="货品名称"
+          prop="goods_details"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, index) in scope.row.goods_details">
+              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="货品总数"
         >
           <template slot-scope="scope">
@@ -334,9 +346,9 @@
     </div>
     <!--修改信息模态窗-->
     <el-dialog
-      title="详情"
-      :visible.sync="dialogVisibleEdit"
+      title="编辑"
       width="80%"
+      :visible.sync="dialogVisibleEdit"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
@@ -350,111 +362,98 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票订单相关信息</span>
+                <span>订单相关信息</span>
               </div>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="店铺" prop="shop">
-                  <span> {{ formEdit.shop }}</span>
+                  <template>
+                    <span>{{ formEdit.shop }}</span>
+                  </template>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="源单号" prop="order_id">
-                  <span> {{ formEdit.order_id }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
-                  <span>{{ formEdit.nickname }}</span>
+                  <span>{{ formEdit.order_id }}</span>
                 </el-form-item></el-col>
               </el-row>
 
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收款公司" prop="company">
-                  <span> {{ formEdit.company }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="发票类型" prop="order_category">
-                  <span>{{ formEdit.order_category }}</span>
+                <el-col :span="8"><el-form-item label="发货模式" prop="mode_warehouse">
+                  <span>{{ formEdit.mode_warehouse }}</span>
                 </el-form-item></el-col>
               </el-row>
             </el-card>
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>客户公司信息</span>
+                <span>发货信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="发票抬头" prop="title">
-                  <span>{{ formEdit.title }}</span>
+                <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
+                  <span>{{ formEdit.sent_consignee }}</span>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="税号" prop="tax_id">
-                  <span>{{ formEdit.tax_id }}</span>
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="银行名称" prop="bank">
-                  <span>{{ formEdit.bank }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="银行账号" prop="account">
-                  <span>{{ formEdit.account }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="联系电话" prop="phone">
-                  <span>{{ formEdit.phone }}</span>
+                <el-col :span="16"><el-form-item label="手机" prop="sent_smartphone">
+                  <span>{{ formEdit.sent_smartphone }}</span>
                 </el-form-item></el-col>
               </el-row>
 
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="地址" prop="address">
-                  <span>{{ formEdit.address }}</span>
+                <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
+                  <template>
+                    <span> {{ formEdit.sent_city }}</span>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
+                  <span> {{ formEdit.sent_district }}</span>
+                </el-form-item></el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
+                  <span> {{ formEdit.sent_address }}</span>
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="发票备注" prop="remark">
-                  <span>{{ formEdit.remark }}</span>
+                <el-col :span="16"><el-form-item label="订单留言" prop="message">
+                  <span> {{ formEdit.message }}</span>
                 </el-form-item></el-col>
                 <el-col :span="8" />
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="message">
-                  <span>{{ formEdit.message }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-form-item label="发票单号" prop="invoice_id">
-                    <span>{{ formEdit.invoice_id }}</span>
-                  </el-form-item>
-                </el-col>
               </el-row>
             </el-card>
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票货品相关信息</span>
+                <span>货品相关信息</span>
               </div>
               <el-table
                 ref="tableEdit"
                 border
-                :data="oriInvoiceGoodsListEdit"
+                :data="dataDetailsEdit"
                 :row-class-name="rowClassName"
               >
                 <el-table-column label="序号" align="center" prop="xh" width="50">
-                  <template slot-scope="scope"><span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].xh }}</span></template>
+                  <template slot-scope="scope">
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].xh }}</span>
+                  </template>
                 </el-table-column>
-                <el-table-column label="名称" align="center" prop="goods_name">
-                  <template slot-scope="scope"><span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].name }}</span></template>
+                <el-table-column label="名称" width="250" prop="goods_name">
+                  <template slot-scope="scope">
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].name.name }}</span>
+                  </template>
                 </el-table-column>
-                <el-table-column label="货品数量" align="center" prop="quantity">
-                  <template slot-scope="scope"><span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].quantity }}</span></template>
+                <el-table-column label="货品数量" width="250" prop="quantity">
+                  <template slot-scope="scope">
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].quantity }}</span>
+                  </template>
                 </el-table-column>
-                <el-table-column label="含税单价" align="center" prop="price">
-                  <template slot-scope="scope"><span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].price }}</span></template>
+                <el-table-column label="结算单价" width="250" prop="settlement_price">
+                  <template slot-scope="scope">
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].settlement_price }}</span>
+                  </template>
                 </el-table-column>
-                <el-table-column label="货品备注" align="center" prop="memorandum">
-                  <template slot-scope="scope"><span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].memorandum }}</span></template>
+                <el-table-column label="货品备注" width="250" prop="memorandum">
+                  <template slot-scope="scope">
+                    <span>{{ dataDetailsEdit[scope.row.xh-1].memorandum }}</span>
+                  </template>
                 </el-table-column>
               </el-table>
             </el-card>
@@ -462,7 +461,7 @@
               <el-row :gutter="20">
                 <el-col :span="8" :offset="16"><el-form-item size="large">
                   <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消显示</el-button>
+                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
                   </div>
                 </el-form-item></el-col>
               </el-row>
@@ -585,10 +584,7 @@ export default {
           label: '否'
         }
       ],
-      oriInvoiceGoodsList: [],
-      oriInvoiceGoodsListEdit: [],
-      checkedDetail: [],
-      checkedDetailEdit: []
+      dataDetailsEdit: [],
     }
   },
   created() {
@@ -596,7 +592,6 @@ export default {
   },
   methods: {
     fetchData() {
-      // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
       // console.log(this.params.create_time)
@@ -611,6 +606,7 @@ export default {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
+          console.log(this.DataList)
         }
       ).catch(
         () => {
@@ -628,23 +624,25 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
       this.formEdit.shop = this.formEdit.shop.name
-      this.formEdit.company = this.formEdit.company.name
+      this.formEdit.mode_warehouse = this.formEdit.mode_warehouse.name
       this.formEdit.sent_city = this.formEdit.sent_city.name
-      this.formEdit.order_category = this.formEdit.order_category.name
-      this.oriInvoiceGoodsListEdit = []
-      let goods
-      for (goods in this.formEdit.goods_details) {
-        this.formEdit.goods_details[goods].xh = goods + 1
-        this.formEdit.goods_details[goods].name = this.formEdit.goods_details[goods].name.name
-        this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[goods])
+      if (this.formEdit.goods_details != undefined) {
+        this.optionsGoods = this.formEdit.goods_details.map(item => {
+          return { label: item.name.name, value: item.name.id }
+        })
+        this.dataDetailsEdit = []
+        let goods
+        for (goods in this.formEdit.goods_details) {
+          this.formEdit.goods_details[goods].xh = goods + 1
+          this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.name
+          this.dataDetailsEdit.push(this.formEdit.goods_details[goods])
+        }
       }
-      console.log(this.oriInvoiceGoodsListEdit)
     },
     // 关闭修改界面
     handleCancelEdit() {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetailsEdit()
     },
     // 检索用户组选项
     unique(arr) {
@@ -874,11 +872,6 @@ export default {
     // 货品列表顺序
     rowClassName({ row, rowIndex }) {
       row.xh = rowIndex + 1
-    },
-
-    // 删除编辑全部表单货品项
-    handleDeleteAllDetailsEdit() {
-      this.oriInvoiceGoodsListEdit = undefined
     },
     // 重置筛选
     resetParams() {
