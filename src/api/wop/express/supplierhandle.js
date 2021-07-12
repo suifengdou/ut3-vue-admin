@@ -10,15 +10,6 @@ export function getWorkOrderSupplierHandle(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderSupplierHandle(data) {
-  return request({
-    url: `/workorder/express/ewosupplierhandle/`,
-    method: 'post',
-    data
-  })
-}
-
 // 更新工单
 export function updateWorkOrderSupplierHandle(id, data) {
   delete data.create_time
@@ -35,15 +26,6 @@ export function exportWorkOrderSupplierHandle(data) {
   return request({
     url: `/workorder/express/ewosupplierhandle/export/`,
     method: 'patch',
-    data
-  })
-}
-
-// 导入工单
-export function excelImportWorkOrderSupplierHandle(data) {
-  return request({
-    url: `/workorder/express/ewosupplierhandle/excel_import/`,
-    method: 'post',
     data
   })
 }

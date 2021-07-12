@@ -32,21 +32,10 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="open">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增快递工单</el-button>
-            </el-tooltip>
-          </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -129,16 +118,6 @@
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否顺丰">
-                        <el-select v-model="params.is_deliver" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
@@ -181,6 +160,7 @@
         style="width: 100%"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -221,6 +201,31 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="初始问题信息"
+          prop="information"
+
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.information }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="工单反馈"
+          prop="feedback"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.feedback }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="返回单号"
+          prop="return_express_id"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_express_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="处理标签"
           prop="process_tag"
           sortable="custom"
@@ -228,24 +233,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="工单反馈"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="初始问题信息"
-          prop="information"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.information }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -257,7 +244,7 @@
               v-model="scope.row.is_losing"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
@@ -271,7 +258,7 @@
               v-model="scope.row.is_return"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
@@ -319,116 +306,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增工单"
-      width="60%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>工单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择发票类型">
-                <el-option
-                  v-for="item in optionsCategory"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="快递公司" prop="company">
-              <template>
-                <el-select
-                  v-model="formAdd.company"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodCompany"
-                >
-                  <el-option
-                    v-for="item in optionsCompany"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="快递单号" prop="track_id">
-              <el-input v-model="formAdd.track_id" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>其他信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_return"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_losing"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--修改信息模态窗-->
     <el-dialog
       title="编辑"
@@ -444,7 +321,6 @@
             label-width="80px"
             size="mini"
             :model="formEdit"
-            :rules="rulesEdit"
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -541,36 +417,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -583,10 +429,8 @@
 <script>
 import {
   getWorkOrderHandle,
-  createWorkOrderHandle,
   updateWorkOrderHandle,
   exportWorkOrderHandle,
-  excelImportWorkOrderHandle,
   checkWorkOrderHandle,
   rejectWorkOrderHandle
 } from '@/api/wop/express/handle'
@@ -597,15 +441,6 @@ import XLSX from 'xlsx'
 export default {
   name: 'submitExpressWorkOrder',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       DataList: [],
       tableLoading: false,
@@ -619,12 +454,8 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      importVisible: false,
-      formAdd: {},
       formEdit: {},
-      importFile: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -641,119 +472,6 @@ export default {
         { value: 6, label: '丢件破损' },
         { value: 7, label: '其他异常' }
       ],
-      optionsIsDeliver: [
-        {
-          value: true,
-          label: '是'
-        },
-        {
-          value: false,
-          label: '否'
-        }
-      ],
-      rules: {
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        company: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        title: [
-          { required: true, message: '请输入抬头', trigger: 'blur' }
-        ],
-        tax_id: [
-          { required: true, message: '请输入税号', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        bank: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        account: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        address: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
-      rulesEdit: {
-        id: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        company: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        title: [
-          { required: true, message: '请输入抬头', trigger: 'blur' }
-        ],
-        tax_id: [
-          { required: true, message: '请输入税号', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        bank: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        account: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        address: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -773,7 +491,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getWorkOrderHandle(this.params).then(
+      getWorkOrderSupplierHandle(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -826,7 +544,7 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateWorkOrderHandle(id, data).then(
+        updateWorkOrderSupplierHandle(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -844,33 +562,6 @@ export default {
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
     },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      createWorkOrderHandle(this.formAdd).then(
-        () => {
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        console.log(res)
-        this.$notify({
-          title: '错误详情',
-          message: res.data,
-          type: 'error',
-          offset: 70,
-          duration: 0
-        })
-      })
-    },
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -879,52 +570,6 @@ export default {
       // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
-    importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      excelImportWorkOrderHandle(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
-        () => {
-          console.log('1')
-        }
-      )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
-    },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
     },
     open() {
       const h = this.$createElement
@@ -946,7 +591,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportWorkOrderHandle(this.params).then(
+            exportWorkOrderSupplierHandle(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1036,7 +681,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkWorkOrderHandle(this.params).then(
+        checkWorkOrderSupplierHandle(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1092,7 +737,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkWorkOrderHandle(this.params).then(
+        checkWorkOrderSupplierHandle(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1167,7 +812,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectWorkOrderHandle(this.params).then(
+              rejectWorkOrderSupplierHandle(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1234,7 +879,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectWorkOrderHandle(this.params).then(
+              rejectWorkOrderSupplierHandle(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1369,6 +1014,133 @@ export default {
       }
     },
 
+    // 编辑丢件返回信息
+    handleEditBoolean(row) {
+      let id = row.id
+      const data = {
+        is_return: row.is_return,
+        is_losing: row.is_losing
+      }
+      updateWorkOrderSupplierHandle(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${err.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+        }
+      )
+    },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'feedback') {
+        this.handleFeedback(row)
+      } else if (column.property === 'return_express_id') {
+        this.handleReturnTrack(row)
+      }
+    },
+    handleFeedback(row) {
+
+      this.$prompt('请输入反馈内容', '添加反馈', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.feedback,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+        if(!value) {
+          return '输入不能为空';
+        }
+      }
+      }).then(
+        ({ value }) => {
+          let id = row.id
+          let data = {
+            feedback: value
+          }
+          updateWorkOrderSupplierHandle(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+          )
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleReturnTrack(row) {
+
+      this.$prompt('请输入返回单号', '添加单号', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: row.return_express_id,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+        if(!value) {
+          return '输入不能为空';
+        }
+      }
+      }).then(
+        ({ value }) => {
+          let id = row.id
+          let data = {
+            return_express_id: value
+          }
+          updateWorkOrderSupplierHandle(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+          )
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
     resetParams() {
       this.params = {
         page: 1

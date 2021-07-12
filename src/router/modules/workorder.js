@@ -21,52 +21,77 @@ const workOrderRouter = {
       children: [
         {
           path: 'oriinvoiceapp',
-          component: () => import('@/views/workorder/woinvoice/oriinvapplica'),
-          name: '原始发票工单申请',
-          meta: { title: '原始发票工单申请', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          component: () => import('@/views/workorder/woinvoice/oriinvoice/index'),
+          name: '原始发票工单',
+          meta: { title: '原始发票工单', roles: ['woinvoice.view_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {path: 'oriinvoiceapp',
+              component: () => import('@/views/workorder/woinvoice/oriinvoice/oriinvapplica'),
+              name: '原始工单申请',
+              meta: { title: '原始工单申请', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'oriinvoicesubmit',
+              component: () => import('@/views/workorder/woinvoice/oriinvoice/oriinvsubmit'),
+              name: '原始工单提交',
+              meta: { title: '原始工单提交', roles: ['woinvoice.view_user_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'oriinvoicehandle',
+              component: () => import('@/views/workorder/woinvoice/oriinvoice/oriinvhandle'),
+              name: '原始工单处理',
+              meta: { title: '原始工单处理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'oriinvoicemanage',
+              component: () => import('@/views/workorder/woinvoice/oriinvoice/oriinvmanage'),
+              name: '原始工单管理',
+              meta: { title: '原始工单管理', roles: ['woinvoice.view_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
         },
-        {
-          path: 'oriinvoicesubmit',
-          component: () => import('@/views/workorder/woinvoice/oriinvsubmit'),
-          name: '原始发票工单提交',
-          meta: { title: '原始发票工单提交', icon: 'workorder', roles: ['woinvoice.view_user_oriinvoice', 'AllPrivileges'] }
-        },
-        {
-          path: 'oriinvoicehandle',
-          component: () => import('@/views/workorder/woinvoice/oriinvhandle'),
-          name: '原始发票工单处理',
-          meta: { title: '原始发票工单处理', icon: 'workorder', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
-        },
-        {
-          path: 'oriinvoicemanage',
-          component: () => import('@/views/workorder/woinvoice/oriinvmanage'),
-          name: '原始发票工单管理',
-          meta: { title: '原始发票工单管理', icon: 'workorder', roles: ['woinvoice.view_oriinvoice', 'AllPrivileges'] }
-        },
+
         {
           path: 'invoicehandle',
-          component: () => import('@/views/workorder/woinvoice/invhandle'),
-          name: '发票开票工单处理',
-          meta: { title: '发票开票工单处理', icon: 'workorder', roles: ['woinvoice.view_handler_invoice', 'AllPrivileges'] }
+          component: () => import('@/views/workorder/woinvoice/invoice/index'),
+          name: '开票工单',
+          meta: { title: '开票工单', roles: ['woinvoice.view_invoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'invoicehandle',
+              component: () => import('@/views/workorder/woinvoice/invoice/invhandle'),
+              name: '开票工单处理',
+              meta: { title: '开票工单处理', roles: ['woinvoice.view_handler_invoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'invoicemanage',
+              component: () => import('@/views/workorder/woinvoice/invoice/invmanage'),
+              name: '开票工单管理',
+              meta: { title: '开票工单管理', roles: ['woinvoice.view_invoice', 'AllPrivileges'] }
+            }
+          ]
         },
-        {
-          path: 'invoicemanage',
-          component: () => import('@/views/workorder/woinvoice/invmanage'),
-          name: '发票开票工单管理',
-          meta: { title: '发票开票工单管理', icon: 'workorder', roles: ['woinvoice.view_invoice', 'AllPrivileges'] }
-        },
+
         {
           path: 'deliverhandle',
-          component: () => import('@/views/workorder/woinvoice/invdeliver'),
-          name: '发票快递单处理',
-          meta: { title: '发票快递单处理', icon: 'workorder', roles: ['woinvoice.view_deliverorder', 'AllPrivileges'] }
+          component: () => import('@/views/workorder/woinvoice/deliver/index'),
+          name: '发票快递单',
+          meta: { title: '发票快递单', roles: ['woinvoice.view_deliverorder', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'deliverhandle',
+              component: () => import('@/views/workorder/woinvoice/deliver/invdeliver'),
+              name: '快递单处理',
+              meta: { title: '快递单处理', roles: ['woinvoice.view_deliverorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'delivermanage',
+              component: () => import('@/views/workorder/woinvoice/deliver/invdelivermanage'),
+              name: '快递单管理',
+              meta: { title: '快递单管理', roles: ['woinvoice.view_deliverorder', 'AllPrivileges'] }
+            }
+          ]
         },
-        {
-          path: 'delivermanage',
-          component: () => import('@/views/workorder/woinvoice/invdelivermanage'),
-          name: '发票快递单管理',
-          meta: { title: '发票快递单管理', icon: 'workorder', roles: ['woinvoice.view_deliverorder', 'AllPrivileges'] }
-        }
       ]
     },
     {

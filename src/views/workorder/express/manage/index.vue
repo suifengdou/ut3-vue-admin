@@ -193,6 +193,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="工单状态"
+          prop="order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_status.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="事项类型"
           prop="category"
           sortable="custom"

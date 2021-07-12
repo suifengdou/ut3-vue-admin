@@ -10,15 +10,6 @@ export function getWorkOrderHandle(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderHandle(data) {
-  return request({
-    url: `/workorder/express/ewohandle/`,
-    method: 'post',
-    data
-  })
-}
-
 // 更新工单
 export function updateWorkOrderHandle(id, data) {
   delete data.create_time
