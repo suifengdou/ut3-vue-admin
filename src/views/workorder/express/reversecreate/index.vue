@@ -66,7 +66,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
+                      <el-col :span="6"><el-form-item label="快递公司" prop="company">
                         <template>
                           <el-select
                             v-model="params.company"
@@ -249,6 +249,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="返回单号"
+          prop="return_express_id"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_express_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="是否丢件"
           prop="is_losing"
         >
@@ -339,8 +347,8 @@
             <span>工单相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择发票类型">
+            <el-col :span="8"><el-form-item label="工单类型" prop="category">
+              <el-select v-model="formAdd.category" placeholder="请选择类型">
                 <el-option
                   v-for="item in optionsCategory"
                   :key="item.value"
@@ -349,36 +357,21 @@
                 />
               </el-select>
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="快递公司" prop="company">
-              <template>
-                <el-select
-                  v-model="formAdd.company"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodCompany"
-                >
-                  <el-option
-                    v-for="item in optionsCompany"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="快递单号" prop="track_id">
-              <el-input v-model="formAdd.track_id" placeholder="请输入名称" />
+              <el-input v-model="formAdd.track_id" placeholder="请输入单号" />
             </el-form-item></el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
+              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入信息" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="返回单号" prop="return_express_id">
+              <el-input v-model="formAdd.return_express_id" placeholder="请输入单号" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -410,7 +403,7 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入名称" />
+              <el-input v-model="formAdd.memo" placeholder="请输入留言" />
             </el-form-item></el-col>
             <el-col :span="8" />
           </el-row>
@@ -451,8 +444,8 @@
                 <span>工单相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
+                <el-col :span="8"><el-form-item label="工单类型" prop="category">
+                  <el-select v-model="formEdit.category" placeholder="请选择类型">
                     <el-option
                       v-for="item in optionsCategory"
                       :key="item.value"
@@ -461,35 +454,20 @@
                     />
                   </el-select>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="快递公司" prop="company">
-                  <template>
-                    <el-select
-                      v-model="formEdit.company"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
-                    >
-                      <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="快递单号" prop="track_id">
-                  <el-input v-model="formEdit.track_id" placeholder="请输入名称" />
+                  <el-input v-model="formEdit.track_id" placeholder="请输入单号" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入名称" />
+                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入信息" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="返回单号" prop="return_express_id">
+                  <el-input v-model="formEdit.return_express_id" placeholder="请输入单号" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -521,7 +499,7 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入名称" />
+                  <el-input v-model="formEdit.memo" placeholder="请输入留言" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
@@ -622,7 +600,10 @@ export default {
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       importVisible: false,
-      formAdd: {},
+      formAdd: {
+        is_losing: false,
+        is_return: false
+      },
       formEdit: {},
       importFile: {},
       optionsShop: [],
@@ -630,7 +611,6 @@ export default {
       optionsCompany: [],
       optionsPlatform: [],
       optionsCity: [],
-      optionsGoods: [],
       optionsCategory: [
         { value: 0, label: '截单退回' },
         { value: 1, label: '无人收货' },
@@ -779,6 +759,7 @@ export default {
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
+
         }
       ).catch(
         () => {
@@ -797,45 +778,37 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
 
-      this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
-      this.formEdit.shop = this.formEdit.shop.id
-
       this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
       this.formEdit.company = this.formEdit.company.id
 
-      this.optionsCity = [{ label: this.formEdit.sent_city.name, value: this.formEdit.sent_city.id }]
-      this.formEdit.sent_city = this.formEdit.sent_city.id
-
-      this.optionsGoods = this.formEdit.goods_details.map(item => {
-        return { label: item.name.name, value: item.name.id }
-      })
-      console.log(this.optionsGoods)
-      this.formEdit.order_category = this.formEdit.order_category.id
+      this.formEdit.category = this.formEdit.category.id
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
-      this.$refs.handleFormEdit.validate(valid => {
-        if (!valid) {
-          return
+      const { id, ...data } = this.formEdit
+      let attrStr
+      console.log(data)
+      const transFieldStr = ['wo_category', 'order_status', 'process_tag', 'mid_handler']
+      for (attrStr in transFieldStr) {
+        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
+      }
+      console.log(data)
+      updateReverseWorkOrder(id, data).then(
+        () => {
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '创建出错',
+            message: err.data,
+            type: 'success',
+            offset: 0,
+            duration: 0
+          })
         }
-        const { id, ...data } = this.formEdit
-        let attrStr
-        console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_category', 'order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
-        console.log(data)
-        updateReverseWorkOrder(id, data).then(
-          () => {
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
-      })
+      )
+
     },
 
     // 关闭修改界面
@@ -855,13 +828,22 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
+      this.formAdd.company = this.$store.state.user.company.id
+      this.formAdd.wo_category = 1
+      console.log(this.formAdd)
       createReverseWorkOrder(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
         }
       ).catch((res) => {
-        console.log(res)
+        this.$notify({
+          title: '创建出错',
+          message: res.data,
+          type: 'success',
+          offset: 0,
+          duration: 0
+        })
       })
     },
     // 检索用户组选项

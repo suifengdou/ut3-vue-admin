@@ -543,7 +543,6 @@
 import {
   gettailorderSpecialList,
   updatetailorderSpecial,
-  excelImportTailOrderSpecial,
   exporttailorderSpecial,
   checktailorderSpecial,
   fixTailOrderSpecial,

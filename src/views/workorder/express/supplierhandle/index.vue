@@ -158,6 +158,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
         @cell-dblclick="handelDoubleClick"
@@ -167,9 +168,33 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
-            </el-tooltip>
+            <el-button class="page-button" type="success" size="mini" ><span>{{ scope.row.id }}</span></el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="工单类型"
+          prop="wo_category"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.wo_category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理标签"
+          prop="process_tag"
+          sortable="custom"
+          width="110px"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.process_tag.id" placeholder="请选择类型" @change="handleChangeProcess(scope.row)">
+              <el-option
+                v-for="item in optionsProcessTag"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -218,6 +243,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="逆向结单备注"
+          prop="memo"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="返回单号"
           prop="return_express_id"
         >
@@ -225,16 +258,7 @@
             <span>{{ scope.row.return_express_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="是否丢件"
           prop="is_losing"
@@ -264,21 +288,7 @@
 
         </el-table-column>
 
-        <el-table-column
-          label="工单类型"
-          prop="wo_category"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="备注"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="创建者"
           prop="creator"
@@ -306,117 +316,6 @@
 
       </el-table>
     </div>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>工单相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="快递公司" prop="company">
-                  <template>
-                    <el-select
-                      v-model="formEdit.company"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
-                    >
-                      <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="快递单号" prop="track_id">
-                  <el-input v-model="formEdit.track_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_return"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_losing"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -471,6 +370,17 @@ export default {
         { value: 5, label: '虚假签收' },
         { value: 6, label: '丢件破损' },
         { value: 7, label: '其他异常' }
+      ],
+      optionsProcessTag: [
+        { value: 0, label: '未分类' },
+        { value: 1, label: '待截单' },
+        { value: 2, label: '签复核' },
+        { value: 3, label: '改地址' },
+        { value: 4, label: '催派查' },
+        { value: 5, label: '丢件核' },
+        { value: 6, label: '纠纷中' },
+        { value: 7, label: '其他类' },
+        { value: 8, label: '已丢件' }
       ],
       checkedDetail: [],
       checkedDetailEdit: []
@@ -1044,14 +954,20 @@ export default {
       )
     },
     handelDoubleClick(row, column, cell, event) {
+      console.log(row)
       if (column.property === 'feedback') {
-        this.handleFeedback(row)
+        if (row.wo_category.id === 0) {
+          this.handleFeedback(row)
+        }
       } else if (column.property === 'return_express_id') {
         this.handleReturnTrack(row)
+      } else if (column.property === 'memo') {
+        if (row.wo_category.id === 1) {
+          this.handleMemo(row)
+        }
       }
     },
     handleFeedback(row) {
-
       this.$prompt('请输入反馈内容', '添加反馈', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1065,6 +981,9 @@ export default {
       }
       }).then(
         ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
             feedback: value
@@ -1097,7 +1016,6 @@ export default {
       })
     },
     handleReturnTrack(row) {
-
       this.$prompt('请输入返回单号', '添加单号', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1110,6 +1028,9 @@ export default {
       }
       }).then(
         ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
             return_express_id: value
@@ -1140,6 +1061,112 @@ export default {
           message: '取消输入'
         })
       })
+    },
+    handleMemo(row) {
+      this.$prompt('请输入逆向结单备注', '添加内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: row.memo,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            memo: value
+          }
+          updateWorkOrderSupplierHandle(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleChangeProcess(row) {
+      let id = row.id
+      console.log(row)
+      const data = {
+        process_tag: row.process_tag.id
+      }
+      updateWorkOrderSupplierHandle(id, data).then(
+        (res) => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            duration: 0
+          })
+          this.fetchData()
+        }
+      ).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+        }
+      )
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.process_tag.id === 8) {
+        row_style = {
+          backgroundColor: 'Salmon'
+        }
+      } else if (row.process_tag.id === 1) {
+        row_style = {
+          backgroundColor: 'PapayaWhip'
+        }
+      } else if (row.process_tag.id === 2) {
+        row_style = {
+          backgroundColor: 'LightYellow'
+        }
+      } else if (row.process_tag.id === 3) {
+        row_style = {
+          backgroundColor: 'Thistle'
+        }
+      } else if (row.process_tag.id === 4) {
+        row_style = {
+          backgroundColor: 'LightCyan'
+        }
+      } else if (row.process_tag.id === 5) {
+        row_style = {
+          backgroundColor: 'Tan'
+        }
+      } else if (row.process_tag.id === 6) {
+        row_style = {
+          backgroundColor: 'Orchid'
+        }
+      }
+      return row_style
     },
     resetParams() {
       this.params = {

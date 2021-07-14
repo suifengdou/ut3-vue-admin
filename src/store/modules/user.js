@@ -7,6 +7,8 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
+  company: '',
+  department: '',
   roles: []
 }
 
@@ -16,6 +18,12 @@ const mutations = {
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
+  },
+  SET_COMPANY: (state, company) => {
+    state.company = company
+  },
+  SET_DEPARTMENT: (state, department) => {
+    state.department = department
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -52,7 +60,7 @@ const actions = {
           reject('登陆超时，请重新登录.')
         }
 
-        const { roles, name, avatar, introduction } = data
+        const { roles, name, avatar, introduction, company, department } = data
         console.log(roles)
 
         // roles must be a non-empty array
@@ -64,6 +72,8 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
+        commit('SET_COMPANY', company)
+        commit('SET_DEPARTMENT', department)
         resolve(data)
       }).catch(error => {
         reject(error)

@@ -56,3 +56,21 @@ export function rejectWorkOrderHandle(data) {
     data
   })
 }
+
+// 设置丢失
+export function setLossingWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/set_lossing/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置重置
+export function recoverWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/recover/`,
+    method: 'patch',
+    data
+  })
+}

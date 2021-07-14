@@ -9,6 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetLossing">设置丢失</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">设置重置</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
@@ -158,6 +160,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
         @cell-dblclick="handelDoubleClick"
@@ -218,6 +221,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="逆向结单备注"
+          prop="memo"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="返回单号"
           prop="return_express_id"
         >
@@ -272,13 +283,7 @@
             <span>{{ scope.row.wo_category.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="备注"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="创建者"
           prop="creator"
@@ -432,7 +437,9 @@ import {
   updateWorkOrderHandle,
   exportWorkOrderHandle,
   checkWorkOrderHandle,
-  rejectWorkOrderHandle
+  rejectWorkOrderHandle,
+  setLossingWorkOrderHandle,
+  recoverWorkOrderHandle
 } from '@/api/wop/express/handle'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -491,7 +498,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getWorkOrderSupplierHandle(this.params).then(
+      getWorkOrderHandle(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -544,7 +551,7 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateWorkOrderSupplierHandle(id, data).then(
+        updateWorkOrderHandle(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -591,7 +598,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportWorkOrderSupplierHandle(this.params).then(
+            exportWorkOrderHandle(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -664,7 +671,7 @@ export default {
     // 选择器，单选和多选（主表的）
     handleSelectionChange(val) {
       this.multipleSelection = val
-      if (this.selectNum !== this.totalNum || this.multipleSelection.length < 30) {
+      if (this.selectNum !== this.totalNum || this.multipleSelection.length < 2) {
         this.selectNum = this.multipleSelection.length
         this.params.allSelectTag = 0
       }
@@ -678,10 +685,10 @@ export default {
       console.log('我是全选的' + this.selectNum)
     },
     // 审核单据
-    handleCheck() {
+    handleSetLossing() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkWorkOrderSupplierHandle(this.params).then(
+        setLossingWorkOrderHandle(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -715,7 +722,7 @@ export default {
             console.log('我是全选错误返回')
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -737,7 +744,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkWorkOrderSupplierHandle(this.params).then(
+        setLossingWorkOrderHandle(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -777,7 +784,235 @@ export default {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        ).catch(
+          (error) => {
+            console.log('######')
+            console.log(error)
+          }
+        )
+      }
+    },
+    handleSetRecover() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        recoverWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.success !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.success}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        recoverWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.success !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.success}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          },
+          error => {
+            console.log('我是单选错误返回')
+            console.log(this)
+            console.log(error.response)
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        ).catch(
+          (error) => {
+            console.log('######')
+            console.log(error)
+          }
+        )
+      }
+    },
+    handleCheck() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        checkWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.success !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.success}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        checkWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.success !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.success}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          },
+          error => {
+            console.log('我是单选错误返回')
+            console.log(this)
+            console.log(error.response)
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -812,7 +1047,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectWorkOrderSupplierHandle(this.params).then(
+              rejectWorkOrderHandle(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -848,7 +1083,7 @@ export default {
                   console.log('我是全选错误返回')
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
@@ -879,7 +1114,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectWorkOrderSupplierHandle(this.params).then(
+              rejectWorkOrderHandle(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -915,7 +1150,7 @@ export default {
                   console.log('我是全选错误返回')
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
@@ -1021,7 +1256,7 @@ export default {
         is_return: row.is_return,
         is_losing: row.is_losing
       }
-      updateWorkOrderSupplierHandle(id, data).then(
+      updateWorkOrderHandle(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1051,7 +1286,6 @@ export default {
       }
     },
     handleFeedback(row) {
-
       this.$prompt('请输入反馈内容', '添加反馈', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1065,11 +1299,14 @@ export default {
       }
       }).then(
         ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
             feedback: value
           }
-          updateWorkOrderSupplierHandle(id, data).then(
+          updateWorkOrderHandle(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
@@ -1083,7 +1320,7 @@ export default {
               this.$notify({
                 title: '修改失败',
                 message: `修改失败：${err.data}`,
-                type: 'success',
+                type: 'error',
                 offset: 70,
                 duration: 0
               })
@@ -1097,7 +1334,6 @@ export default {
       })
     },
     handleReturnTrack(row) {
-
       this.$prompt('请输入返回单号', '添加单号', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -1114,7 +1350,7 @@ export default {
           let data = {
             return_express_id: value
           }
-          updateWorkOrderSupplierHandle(id, data).then(
+          updateWorkOrderHandle(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
@@ -1128,7 +1364,7 @@ export default {
               this.$notify({
                 title: '修改失败',
                 message: `修改失败：${err.data}`,
-                type: 'success',
+                type: 'error',
                 offset: 70,
                 duration: 0
               })
@@ -1141,10 +1377,24 @@ export default {
         })
       })
     },
+
     resetParams() {
       this.params = {
         page: 1
       }
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.process_tag.id === 8) {
+        row_style = {
+          backgroundColor: 'lightpink'
+        }
+      } else if (row.process_tag.id === 4) {
+        row_style = {
+          backgroundColor: 'palegreen'
+        }
+      }
+      return row_style
     }
   }
 }

@@ -340,7 +340,7 @@
           </div>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择发票类型">
+              <el-select v-model="formAdd.order_category" placeholder="请选择类型">
                 <el-option
                   v-for="item in optionsCategory"
                   :key="item.value"
@@ -372,13 +372,13 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="快递单号" prop="track_id">
-              <el-input v-model="formAdd.track_id" placeholder="请输入名称" />
+              <el-input v-model="formAdd.track_id" placeholder="请输入单号" />
             </el-form-item></el-col>
           </el-row>
 
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
+              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入信息" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -410,7 +410,7 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入名称" />
+              <el-input v-model="formAdd.memo" placeholder="请输入留言" />
             </el-form-item></el-col>
             <el-col :span="8" />
           </el-row>
@@ -451,8 +451,8 @@
                 <span>工单相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
+                <el-col :span="8"><el-form-item label="工单类型" prop="category">
+                  <el-select v-model="formEdit.category" placeholder="请选择类型">
                     <el-option
                       v-for="item in optionsCategory"
                       :key="item.value"
@@ -484,12 +484,12 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="快递单号" prop="track_id">
-                  <el-input v-model="formEdit.track_id" placeholder="请输入名称" />
+                  <el-input v-model="formEdit.track_id" placeholder="请输入单号" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入名称" />
+                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入信息" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -521,7 +521,7 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入名称" />
+                  <el-input v-model="formEdit.memo" placeholder="请输入留言" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
