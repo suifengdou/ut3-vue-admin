@@ -257,7 +257,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">
@@ -390,7 +390,7 @@
                 />
               </template>
             </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+            <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_losing"
@@ -486,7 +486,7 @@
                     />
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"

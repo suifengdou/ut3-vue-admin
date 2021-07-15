@@ -10,15 +10,6 @@ export function getWorkOrderFinanceHandle(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderFinanceHandle(data) {
-  return request({
-    url: `/workorder/express/ewofinancehandle/`,
-    method: 'post',
-    data
-  })
-}
-
 // 更新工单
 export function updateWorkOrderFinanceHandle(id, data) {
   delete data.create_time

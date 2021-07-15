@@ -247,7 +247,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">
@@ -389,7 +389,7 @@
                     />
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"
@@ -671,7 +671,7 @@ export default {
     // 选择器，单选和多选（主表的）
     handleSelectionChange(val) {
       this.multipleSelection = val
-      if (this.selectNum !== this.totalNum || this.multipleSelection.length < 2) {
+      if (this.selectNum !== this.totalNum || this.multipleSelection.length < 30) {
         this.selectNum = this.multipleSelection.length
         this.params.allSelectTag = 0
       }
@@ -1021,8 +1021,13 @@ export default {
           }
         ).catch(
           (error) => {
-            console.log('######')
-            console.log(error)
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
           }
         )
       }

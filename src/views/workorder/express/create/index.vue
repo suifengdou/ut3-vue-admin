@@ -249,7 +249,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">
@@ -397,7 +397,7 @@
                 />
               </template>
             </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+            <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_losing"
@@ -508,7 +508,7 @@
                     />
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"
@@ -652,110 +652,36 @@ export default {
         }
       ],
       rules: {
-        shop: [
+        category: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
         ],
-        order_id: [
+        track_id: [
           { required: true, message: '请输入源单号', trigger: 'blur' }
         ],
         company: [
+          { required: true, message: '请输入源单号', trigger: 'blur' }
+        ],
+        information: [
           { required: true, message: '请选择公司', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        title: [
-          { required: true, message: '请输入抬头', trigger: 'blur' }
-        ],
-        tax_id: [
-          { required: true, message: '请输入税号', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        bank: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        account: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        address: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
         ]
       },
       rulesEdit: {
         id: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+          {required: true, message: '请选择店铺', trigger: 'blur'}
         ],
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+        category: [
+          {required: true, message: '请选择店铺', trigger: 'blur'}
         ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
+        track_id: [
+          {required: true, message: '请输入源单号', trigger: 'blur'}
         ],
         company: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
+          {required: true, message: '请输入源单号', trigger: 'blur'}
         ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        title: [
-          { required: true, message: '请输入抬头', trigger: 'blur' }
-        ],
-        tax_id: [
-          { required: true, message: '请输入税号', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        bank: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        account: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        address: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
+        information: [
+          {required: true, message: '请选择公司', trigger: 'blur'}
         ]
-      },
-      checkedDetail: [],
-      checkedDetailEdit: []
+      }
     }
   },
   created() {
@@ -797,20 +723,10 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
 
-      this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
-      this.formEdit.shop = this.formEdit.shop.id
-
       this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
       this.formEdit.company = this.formEdit.company.id
 
-      this.optionsCity = [{ label: this.formEdit.sent_city.name, value: this.formEdit.sent_city.id }]
-      this.formEdit.sent_city = this.formEdit.sent_city.id
-
-      this.optionsGoods = this.formEdit.goods_details.map(item => {
-        return { label: item.name.name, value: item.name.id }
-      })
-      console.log(this.optionsGoods)
-      this.formEdit.order_category = this.formEdit.order_category.id
+      this.formEdit.category = this.formEdit.category.id
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -821,7 +737,7 @@ export default {
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_category', 'order_status']
+        const transFieldStr = ['process_tag', 'mid_handler', 'wo_category', 'order_status']
         for (attrStr in transFieldStr) {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
@@ -832,7 +748,13 @@ export default {
             this.fetchData()
           },
           err => {
-            console.log(err.message)
+            this.$notify({
+              title: '错误详情',
+              message: err.data,
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
           }
         )
       })
@@ -910,8 +832,13 @@ export default {
           })
         }
       ).catch(
-        () => {
-          console.log('1')
+        (error) => {
+          this.$notify({
+            title: '导入错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
         }
       )
       this.importVisible = false

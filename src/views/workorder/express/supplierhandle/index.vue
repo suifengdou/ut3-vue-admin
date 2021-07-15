@@ -260,7 +260,7 @@
         </el-table-column>
 
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">

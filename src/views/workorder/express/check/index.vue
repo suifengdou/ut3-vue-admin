@@ -221,6 +221,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="返回单号"
+          prop="return_express_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_express_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="处理标签"
           prop="process_tag"
           sortable="custom"
@@ -249,7 +258,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">
@@ -397,7 +406,7 @@
                 />
               </template>
             </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+            <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_losing"
@@ -508,7 +517,7 @@
                     />
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
+                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"
@@ -1141,8 +1150,13 @@ export default {
           }
         ).catch(
           (error) => {
-            console.log('######')
-            console.log(error)
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
           }
         )
       }
