@@ -10,15 +10,6 @@ export function getWorkOrderConfirm(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderConfirm(data) {
-  return request({
-    url: `/workorder/dealers/dwoconfirm/`,
-    method: 'post',
-    data
-  })
-}
-
 // 更新工单
 export function updateWorkOrderConfirm(id, data) {
   delete data.create_time
@@ -39,14 +30,15 @@ export function exportWorkOrderConfirm(data) {
   })
 }
 
-// 导入工单
-export function excelImportWorkOrderConfirm(data) {
+// 设置工单
+export function setConfirmWorkOrderConfirm(data) {
   return request({
-    url: `/workorder/dealers/dwoconfirm/excel_import/`,
-    method: 'post',
+    url: `/workorder/dealers/dwoconfirm/set_confirm/`,
+    method: 'patch',
     data
   })
 }
+
 
 // 审核工单
 export function checkWorkOrderConfirm(data) {

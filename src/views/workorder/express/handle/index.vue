@@ -12,7 +12,7 @@
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetLossing">设置丢失</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">设置重置</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -25,7 +25,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -57,7 +57,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
+                      <el-col :span="6"><el-form-item label="快递公司" prop="company">
                         <template>
                           <el-select
                             v-model="params.company"
@@ -77,8 +77,8 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发票类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
+                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
+                        <el-select v-model="params.category" placeholder="请选择事项类型">
                           <el-option
                             v-for="item in optionsCategory"
                             :key="item.value"
@@ -90,39 +90,37 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4" />
-                      <el-col :span="4" />
-                    </el-row>
-                    <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
+                        <el-input v-model="params.information" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="是否理赔">
+                        <el-select v-model="params.is_losing" placeholder="是否理赔">
+                          <el-option
+                            v-for="item in optionsJudgment"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="是否返回">
+                        <el-select v-model="params.is_return" placeholder="是否返回">
+                          <el-option
+                            v-for="item in optionsJudgment"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
@@ -171,7 +169,7 @@
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -479,6 +477,16 @@ export default {
         { value: 6, label: '丢件破损' },
         { value: 7, label: '其他异常' }
       ],
+      optionsJudgment: [
+        {
+          value: true,
+          label: '是'
+        },
+        {
+          value: false,
+          label: '否'
+        }
+      ],
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -615,7 +623,7 @@ export default {
                     发票备注: item.remark,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.city,
+                    收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
                     申请税前开票总额: item.amount,
@@ -1036,11 +1044,10 @@ export default {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '取消工单',
+        title: '驳回工单',
         message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+          h('span', null, '驳回工单到快递！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,

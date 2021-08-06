@@ -9,6 +9,7 @@ import workOrderRouter from './modules/workorder'
 import usersRouter from './modules/users'
 import baseRouter from './modules/base'
 import salesChannelRouter from './modules/sales'
+import crmChannelRouter from './modules/crm'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -91,6 +92,7 @@ export const asyncRoutes = [
   usersRouter,
   workOrderRouter,
   salesChannelRouter,
+  crmChannelRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

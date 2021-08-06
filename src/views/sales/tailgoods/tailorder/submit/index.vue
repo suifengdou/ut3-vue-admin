@@ -184,7 +184,7 @@
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -1139,7 +1139,7 @@ export default {
                     发票备注: item.remark,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.city,
+                    收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
                     申请税前开票总额: item.amount,
@@ -1977,11 +1977,11 @@ export default {
         setTimeout(() => {
           // console.log("我是真正的开始检索啦")
           const paramsSearch = {}
-          paramsSearch.city = query
+          paramsSearch.name = query
           getCityList(paramsSearch).then(
             res => {
               this.optionsCity = res.data.results.map(item => {
-                return { label: item.city, value: item.id }
+                return { label: item.name, value: item.id }
               })
             }
           )

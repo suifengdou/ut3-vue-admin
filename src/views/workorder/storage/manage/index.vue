@@ -187,9 +187,26 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
-            </el-tooltip>
+            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="快递单号"
+          prop="keyword"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.keyword }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="工单状态"
+          prop="order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -212,25 +229,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="快递单号"
-          prop="express_id"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.track_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="工单反馈"
         >
           <template slot-scope="scope">
@@ -249,7 +247,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="是否丢件"
+          label="是否理赔"
           prop="is_losing"
         >
           <template slot-scope="scope">
@@ -262,21 +260,6 @@
           </template>
 
         </el-table-column>
-        <el-table-column
-          label="是否返回"
-          prop="is_return"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_return"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
-          </template>
-
-        </el-table-column>
-
         <el-table-column
           label="工单类型"
           prop="wo_category"
@@ -319,258 +302,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增工单"
-      width="60%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>工单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择发票类型">
-                <el-option
-                  v-for="item in optionsCategory"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="快递公司" prop="company">
-              <template>
-                <el-select
-                  v-model="formAdd.company"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodCompany"
-                >
-                  <el-option
-                    v-for="item in optionsCompany"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="快递单号" prop="track_id">
-              <el-input v-model="formAdd.track_id" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-              <el-input type="textarea" v-model="formAdd.information" placeholder="请输入名称" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>其他信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_return"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_losing"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rulesEdit"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>工单相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="快递公司" prop="company">
-                  <template>
-                    <el-select
-                      v-model="formEdit.company"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
-                    >
-                      <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="快递单号" prop="track_id">
-                  <el-input v-model="formEdit.track_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="初始问题描述信息" prop="information">
-                  <el-input type="textarea" v-model="formEdit.information" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_return"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否丢件" prop="is_losing">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_losing"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -583,15 +314,9 @@
 <script>
 import {
   getWorkOrderManage,
-  createWorkOrderManage,
-  updateWorkOrderManage,
   exportWorkOrderManage,
-  excelImportWorkOrderManage,
-  checkWorkOrderManage,
-  rejectWorkOrderManage
 } from '@/api/wop/storage/manage'
 import { getCompanyList } from '@/api/base/company'
-import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -632,14 +357,12 @@ export default {
       optionsCity: [],
       optionsGoods: [],
       optionsCategory: [
-        { value: 0, label: '截单退回' },
-        { value: 1, label: '无人收货' },
-        { value: 2, label: '客户拒签' },
-        { value: 3, label: '修改地址' },
-        { value: 4, label: '催件派送' },
-        { value: 5, label: '虚假签收' },
-        { value: 6, label: '丢件破损' },
-        { value: 7, label: '其他异常' }
+        { value: 0, label: '入库错误' },
+        { value: 1, label: '系统问题' },
+        { value: 2, label: '单据问题' },
+        { value: 3, label: '订单类别' },
+        { value: 4, label: '入库咨询' },
+        { value: 5, label: '出库咨询' }
       ],
       optionsIsDeliver: [
         {
@@ -963,7 +686,7 @@ export default {
                     发票备注: item.remark,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.city,
+                    收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
                     申请税前开票总额: item.amount,
@@ -1297,26 +1020,6 @@ export default {
           this.fetchData()
         }
       )
-    },
-    // 货品搜索
-    remoteMethodGoods(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getGoodsList(paramsSearch).then(
-            res => {
-              this.optionsGoods = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
     },
     // 公司搜索
     remoteMethodCompany(query) {

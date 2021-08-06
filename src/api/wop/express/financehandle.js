@@ -48,11 +48,3 @@ export function checkWorkOrderFinanceHandle(data) {
   })
 }
 
-// 取消工单
-export function rejectWorkOrderFinanceHandle(data) {
-  return request({
-    url: `/workorder/express/ewofinancehandle/reject/`,
-    method: 'patch',
-    data
-  })
-}

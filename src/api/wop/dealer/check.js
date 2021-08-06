@@ -10,15 +10,6 @@ export function getWorkOrderCheck(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderCheck(data) {
-  return request({
-    url: `/workorder/dealers/dwocheck/`,
-    method: 'post',
-    data
-  })
-}
-
 // 更新工单
 export function updateWorkOrderCheck(id, data) {
   delete data.create_time
@@ -38,12 +29,11 @@ export function exportWorkOrderCheck(data) {
     data
   })
 }
-
-// 导入工单
-export function excelImportWorkOrderCheck(data) {
+// 设置工单
+export function setConfirmWorkOrderCheck(data) {
   return request({
-    url: `/workorder/dealers/dwocheck/excel_import/`,
-    method: 'post',
+    url: `/workorder/dealers/dwocheck/set_confirm/`,
+    method: 'patch',
     data
   })
 }

@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 获取列表
 export function getWorkOrderCheck(params) {
   return request({
-    url: '/workorder/storage/ewocheck/',
+    url: '/workorder/storage/swocheck/',
     method: 'get',
     params
   })
@@ -13,7 +13,7 @@ export function getWorkOrderCheck(params) {
 // 创建工单
 export function createWorkOrderCheck(data) {
   return request({
-    url: `/workorder/storage/ewocheck/`,
+    url: `/workorder/storage/swocheck/`,
     method: 'post',
     data
   })

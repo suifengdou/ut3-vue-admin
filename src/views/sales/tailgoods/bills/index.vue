@@ -176,7 +176,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-              <el-button class="page-button" type="success" size="mini" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-button>
+            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -805,11 +805,11 @@ export default {
         setTimeout(() => {
           // console.log("我是真正的开始检索啦")
           const paramsSearch = {}
-          paramsSearch.city = query
+          paramsSearch.name = query
           getCityList(paramsSearch).then(
             res => {
               this.optionsCity = res.data.results.map(item => {
-                return { label: item.city, value: item.id }
+                return { label: item.name, value: item.id }
               })
             }
           )

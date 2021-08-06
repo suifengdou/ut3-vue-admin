@@ -173,8 +173,8 @@ const workOrderRouter = {
         {
           path: 'supplierhandle',
           component: () => import('@/views/workorder/storage/supplierhandle/index'),
-          name: '仓储正向处理',
-          meta: { title: '仓储正向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储综合处理',
+          meta: { title: '仓储综合处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'check',

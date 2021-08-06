@@ -139,7 +139,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-              <el-button class="page-button" type="success" size="mini"><span>{{ scope.row.id }}</span></el-button>
+            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column

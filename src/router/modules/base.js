@@ -65,6 +65,27 @@ const baseRouter = {
       meta: { title: '店铺管理' }
     },
     {
+      path: 'warehouse',
+      component: () => import('@/views/base/warehouse'), // Parent router-view
+      name: 'warehouse',
+      meta: { title: '仓库' },
+      redirect: 'noRedirect',
+      children: [
+        {
+          path: 'warehousetype',
+          component: () => import('@/views/base/warehouse/warehousetype'),
+          name: '类型管理',
+          meta: { title: '类型管理' }
+        },
+        {
+          path: 'warehousemanage',
+          component: () => import('@/views/base/warehouse/warehouse'),
+          name: '仓库管理',
+          meta: { title: '仓库管理' }
+        }
+      ]
+    },
+    {
       path: 'company',
       name: '公司管理',
       component: () => import('@/views/base/company/index'),

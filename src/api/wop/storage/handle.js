@@ -10,14 +10,6 @@ export function getWorkOrderHandle(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderHandle(data) {
-  return request({
-    url: `/workorder/storage/swohandle/`,
-    method: 'post',
-    data
-  })
-}
 
 // 更新工单
 export function updateWorkOrderHandle(id, data) {
@@ -39,14 +31,6 @@ export function exportWorkOrderHandle(data) {
   })
 }
 
-// 导入工单
-export function excelImportWorkOrderHandle(data) {
-  return request({
-    url: `/workorder/storage/swohandle/excel_import/`,
-    method: 'post',
-    data
-  })
-}
 
 // 审核工单
 export function checkWorkOrderHandle(data) {
