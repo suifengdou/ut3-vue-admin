@@ -596,7 +596,7 @@
           <el-table
             ref="tableAdd"
             border
-            :data="oriInvoiceGoodsList"
+            :data="OrderDetailsList"
             :row-class-name="rowClassName"
             @selection-change="handleDetailSelectionChange"
           >
@@ -605,7 +605,7 @@
             <el-table-column label="名称" width="250" prop="goods_name">
               <template slot-scope="scope">
                 <el-select
-                  v-model="oriInvoiceGoodsList[scope.row.xh-1].goods_name"
+                  v-model="OrderDetailsList[scope.row.xh-1].goods_name"
                   filterable
                   default-first-option
                   remote
@@ -624,17 +624,17 @@
             </el-table-column>
             <el-table-column label="货品数量" width="250" prop="quantity">
               <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].quantity" type="number" />
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
               </template>
             </el-table-column>
             <el-table-column label="含税单价" width="250" prop="price">
               <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].price" type="text" />
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
               </template>
             </el-table-column>
             <el-table-column label="货品备注" width="250" prop="memorandum">
               <template slot-scope="scope">
-                <el-input v-model="oriInvoiceGoodsList[scope.row.xh-1].memorandum" type="text" />
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
               </template>
             </el-table-column>
           </el-table>
@@ -1217,7 +1217,7 @@ export default {
           { required: true, trigger: ['blur', 'change'], message: '请选择' }
         ]
       },
-      oriInvoiceGoodsList: [],
+      OrderDetailsList: [],
       oriInvoiceGoodsListEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []
@@ -1334,8 +1334,8 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      console.log(this.oriInvoiceGoodsList)
-      this.formAdd.goods_details = this.oriInvoiceGoodsList
+      console.log(this.OrderDetailsList)
+      this.formAdd.goods_details = this.OrderDetailsList
       createOriInvoiceApplicate(this.formAdd).then(
         () => {
           this.fetchData()
@@ -1908,7 +1908,7 @@ export default {
           confirmButtonText: '确定'
         })
       } else {
-        this.oriInvoiceGoodsList.splice(this.checkedDetail[0].xh - 1, 1)
+        this.OrderDetailsList.splice(this.checkedDetail[0].xh - 1, 1)
       }
     },
     // 删除选中编辑表单货品项
@@ -1923,7 +1923,7 @@ export default {
     },
     // 删除全部表单货品项
     handleDeleteAllDetails() {
-      this.oriInvoiceGoodsList = undefined
+      this.OrderDetailsList = undefined
     },
     // 删除编辑全部表单货品项
     handleDeleteAllDetailsEdit() {
@@ -1931,13 +1931,13 @@ export default {
     },
     // 添加表单货品项
     handleAddDetails() {
-      if (this.oriInvoiceGoodsList === undefined) {
-        this.oriInvoiceGoodsList = []
+      if (this.OrderDetailsList === undefined) {
+        this.OrderDetailsList = []
       }
       const obj = {
         id: 'n'
       }
-      this.oriInvoiceGoodsList.push(obj)
+      this.OrderDetailsList.push(obj)
     },
     // 添加编辑表单货品项
     handleAddDetailsEdit() {

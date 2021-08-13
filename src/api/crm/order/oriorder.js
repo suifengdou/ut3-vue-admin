@@ -48,6 +48,15 @@ export function excelImportOriOrder(data) {
   })
 }
 
+// 校正
+export function fixOriOrder(data) {
+  return request({
+    url: `/crm/order/oriordersubmit/fix/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 审核工单
 export function checkOriOrder(data) {
   return request({

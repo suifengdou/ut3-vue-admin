@@ -84,12 +84,6 @@ const crmChannelRouter = {
               meta: { title: '预存单管理', roles: ['advancepayment.view_user_prestore', 'advancepayment.view_prestore', 'AllPrivileges'] }
             }
           ]
-        },
-        {
-          path: 'expendlist',
-          component: () => import('@/views/sales/advance/expendlist/index'),
-          name: '支出冲销管理',
-          meta: { title: '支出冲销管理', roles: ['advancepayment.view_expendlist', 'AllPrivileges'] }
         }
       ]
     },

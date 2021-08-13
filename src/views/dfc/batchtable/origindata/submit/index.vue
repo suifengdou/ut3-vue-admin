@@ -34,17 +34,17 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
+              <el-button type="success" @click="importExcel">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增发票工单</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -214,6 +214,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="订单号"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           label="店铺"
           prop="shop"
           sortable="custom"
@@ -244,124 +252,46 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memorandum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收款开票公司"
-          prop="company"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="源单号"
-          prop="order_id"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客户昵称"
+          label="网名"
           prop="nickname"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.nickname }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="发票类型"
-          prop="order_category"
+          label="收件人"
+          prop="receiver"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_category.name }}</span>
+            <span>{{ scope.row.receiver }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="地址"
+          prop="address"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.address }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
-          label="申请税前开票总额"
+          label="手机"
+          prop="mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="发票抬头"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="纳税人识别号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.tax_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件人姓名"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sent_consignee }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件人手机"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sent_smartphone }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否顺丰"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_deliver"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
-          </template>
-
-        </el-table-column>
-
-        <el-table-column
-          label="工单留言"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.message }}</span>
+            <span>{{ scope.row.mobile }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column
-          label="创建公司"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_company.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建部门"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign_department.name }}</span>
-          </template>
-        </el-table-column>
         <el-table-column
           label="创建者"
           prop="creator"
@@ -391,7 +321,7 @@
     </div>
     <!--新建添加模态窗-->
     <el-dialog
-      title="新增工单"
+      title="新增"
       width="80%"
       :visible.sync="dialogVisibleAdd"
       :close-on-click-modal="false"
@@ -668,7 +598,7 @@
             label-width="80px"
             size="mini"
             :model="formEdit"
-            :rules="rulesEdit"
+            :rules="rules"
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -924,36 +854,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -965,15 +865,14 @@
 
 <script>
 import {
-  getOriInvoiceListSubmit,
-  createOriInvoiceSubmit,
-  updateOriInvoiceSubmit,
-  exportOriInvoiceSubmit,
-  excelImportOriInvoiceSubmit,
-  checkOriInvoiceSubmit,
-  rejectOriInvoiceSubmit,
-  rejectDealerOriInvoiceSubmit
-} from '@/api/wop/woinvoice'
+  getOriginDataSubmitList,
+  createOriginDataSubmit,
+  updateOriginDataSubmit,
+  exportOriginDataSubmit,
+  excelImportOriginDataSubmit,
+  checkOriginDataSubmit,
+  rejectOriginDataSubmit
+} from '@/api/dfc/batchtable/origindata'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -1007,89 +906,8 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      importVisible: false,
-      formAdd: {
-        type: Object,
-        default() {
-          return {
-            shop: '',
-            company: '',
-            order_id: '',
-            order_category: '',
-            title: '',
-            tax_id: '',
-            phone: '',
-            bank: '',
-            account: '',
-            address: '',
-            remark: '',
-            sent_consignee: '',
-            sent_smartphone: '',
-            sent_city: '',
-            sent_district: '',
-            sent_address: '',
-            amount: '',
-            is_deliver: '',
-            submit_time: '',
-            handle_time: '',
-            handle_interval: '',
-            message: '',
-            memorandum: '',
-            sign_company: '',
-            sign_department: '',
-            nickname: '',
-            create_time: '',
-            update_time: '',
-            is_delete: false,
-            creator: '',
-            process_tag: '',
-            mistake_tag: '',
-            order_status: ''
-          }
-        }
-      },
-      formEdit: {
-        type: Object,
-        default() {
-          return {
-            id: '',
-            shop: '',
-            company: '',
-            order_id: '',
-            order_category: '',
-            title: '',
-            tax_id: '',
-            phone: '',
-            bank: '',
-            account: '',
-            address: '',
-            remark: '',
-            sent_consignee: '',
-            sent_smartphone: '',
-            sent_city: '',
-            sent_district: '',
-            sent_address: '',
-            amount: '',
-            is_deliver: '',
-            submit_time: '',
-            handle_time: '',
-            handle_interval: '',
-            message: '',
-            memorandum: '',
-            sign_company: '',
-            sign_department: '',
-            nickname: '',
-            create_time: '',
-            update_time: '',
-            is_delete: false,
-            creator: '',
-            process_tag: '',
-            mistake_tag: '',
-            order_status: ''
-          }
-        }
-      },
-      importFile: {},
+      formAdd: {},
+      formEdit: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -1166,59 +984,6 @@ export default {
           { required: true, trigger: ['blur', 'change'], message: '请选择' }
         ]
       },
-      rulesEdit: {
-        id: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        company: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        title: [
-          { required: true, message: '请输入抬头', trigger: 'blur' }
-        ],
-        tax_id: [
-          { required: true, message: '请输入税号', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { required: true, message: '请输入收件电话', trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        bank: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        account: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        address: [
-          { validator: validateTicket, trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
       OrderDetailsList: [],
       oriInvoiceGoodsListEdit: [],
       checkedDetail: [],
@@ -1240,7 +1005,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriInvoiceListSubmit(this.params).then(
+      getOriginDataSubmitList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -1310,7 +1075,7 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateOriInvoiceSubmit(id, data).then(
+        updateOriginDataSubmit(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -1341,7 +1106,7 @@ export default {
       console.log(this.formAdd)
       console.log(this.OrderDetailsList)
       this.formAdd.goods_details = this.OrderDetailsList
-      createOriInvoiceSubmit(this.formAdd).then(
+      createOriginDataSubmit(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
@@ -1360,52 +1125,81 @@ export default {
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
     // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
+    // 导入
     importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportOriginDataSubmit(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
         }
-      }
-      excelImportOriInvoiceSubmit(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
-        () => {
-          console.log('1')
+      }).then(action => {
+        console.log(action)
+      }).catch(
+        (error) => {
+          console.log(error)
         }
       )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
     },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
-    },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -1425,7 +1219,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriInvoiceSubmit(this.params).then(
+            exportOriginDataSubmit(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1515,7 +1309,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriInvoiceSubmit(this.params).then(
+        checkOriginDataSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1571,7 +1365,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriInvoiceSubmit(this.params).then(
+        checkOriginDataSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1646,7 +1440,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriInvoiceSubmit(this.params).then(
+              rejectOriginDataSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1713,7 +1507,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriInvoiceSubmit(this.params).then(
+              rejectOriginDataSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1797,7 +1591,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectDealerOriInvoiceSubmit(this.params).then(
+              rejectOriginDataSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1864,7 +1658,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectDealerOriInvoiceSubmit(this.params).then(
+              rejectOriginDataSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

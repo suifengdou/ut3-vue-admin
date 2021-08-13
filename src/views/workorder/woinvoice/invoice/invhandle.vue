@@ -696,7 +696,7 @@ export default {
           label: '否'
         }
       ],
-      oriInvoiceGoodsList: [],
+      OrderDetailsList: [],
       oriInvoiceGoodsListEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []

@@ -2,65 +2,65 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getBMSOrderList(params) {
+export function getManualOrderSubmitList(params) {
   return request({
-    url: '/crm/order/bmsordersubmit/',
+    url: '/dfc/manualorder/mosubmit/',
     method: 'get',
     params
   })
 }
 
 // 创建工单
-export function createBMSOrder(data) {
+export function createManualOrderSubmit(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/`,
+    url: `/dfc/manualorder/mosubmit/`,
     method: 'post',
     data
   })
 }
 
 // 更新工单
-export function updateBMSOrder(id, data) {
+export function updateManualOrderSubmit(id, data) {
   delete data.create_time
   delete data.update_time
   return request({
-    url: `/crm/order/bmsordersubmit/${id}/`,
+    url: `/dfc/manualorder/mosubmit/${id}/`,
     method: 'patch',
     data
   })
 }
 
 // 导出工单
-export function exportBMSOrder(data) {
+export function exportManualOrderSubmit(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/`,
+    url: `/dfc/manualorder/mosubmit/`,
     method: 'patch',
     data
   })
 }
 
 // 导入工单
-export function excelImportBMSOrder(data) {
+export function excelImportManualOrderSubmit(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/excel_import/`,
+    url: `/dfc/manualorder/mosubmit/excel_import/`,
     method: 'patch',
     data
   })
 }
 
 // 审核工单
-export function checkBMSOrder(data) {
+export function checkManualOrderSubmit(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/check/`,
+    url: `/dfc/manualorder/mosubmit/check/`,
     method: 'patch',
     data
   })
 }
 
 // 取消工单
-export function rejectBMSOrder(data) {
+export function rejectManualOrderSubmit(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/reject/`,
+    url: `/dfc/manualorder/mosubmit/reject/`,
     method: 'patch',
     data
   })
@@ -68,9 +68,9 @@ export function rejectBMSOrder(data) {
 
 // 原始ERP订单管理操作API
 // 获取列表
-export function getBMSOrderManageList(params) {
+export function getManualOrderManageList(params) {
   return request({
-    url: '/crm/order/bmsordermanage/',
+    url: '/dfc/manualorder/momanage/',
     method: 'get',
     params
   })

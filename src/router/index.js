@@ -10,6 +10,8 @@ import usersRouter from './modules/users'
 import baseRouter from './modules/base'
 import salesChannelRouter from './modules/sales'
 import crmChannelRouter from './modules/crm'
+import dfcRouter from './modules/dfc'
+import utilsRouter from './modules/utils'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -88,11 +90,13 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  baseRouter,
   usersRouter,
+  baseRouter,
+  utilsRouter,
   workOrderRouter,
   salesChannelRouter,
   crmChannelRouter,
+  dfcRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
