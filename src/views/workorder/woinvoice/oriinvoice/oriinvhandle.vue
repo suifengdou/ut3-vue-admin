@@ -564,7 +564,7 @@ import {
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {

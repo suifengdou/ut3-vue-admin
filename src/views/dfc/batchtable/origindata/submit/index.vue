@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="originData-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -289,6 +289,36 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品编码"
+          prop="goods_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品数量"
+          prop="quantity"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
 
@@ -876,11 +906,11 @@ import {
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'originDataManage',
   data() {
     const validateTicket = (rule, value, callback) => {
       console.log(this.formAdd.order_category)

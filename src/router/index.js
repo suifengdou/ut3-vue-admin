@@ -12,6 +12,7 @@ import salesChannelRouter from './modules/sales'
 import crmChannelRouter from './modules/crm'
 import dfcRouter from './modules/dfc'
 import utilsRouter from './modules/utils'
+import psiChannelRouter from './modules/psi'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -97,6 +98,7 @@ export const asyncRoutes = [
   salesChannelRouter,
   crmChannelRouter,
   dfcRouter,
+  psiChannelRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

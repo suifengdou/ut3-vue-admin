@@ -307,11 +307,11 @@
 </template>
 
 <script>
-import { getMODetialList, exportMODetial } from '@/api/dfc/manualorder/modetial'
+import { getMODetailList, exportMODetail } from '@/api/dfc/manualorder/modetail'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -370,7 +370,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getMODetialList(this.params).then(
+      getMODetailList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -411,7 +411,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportMODetial(this.params).then(
+            exportMODetail(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {

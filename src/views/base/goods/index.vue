@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增货品</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -231,7 +231,7 @@
     </div>
     <!--新建添加模态窗-->
     <el-dialog
-      title="新增工单"
+      title="新增"
       width="80%"
       :visible.sync="dialogVisibleAdd"
       :close-on-click-modal="false"
@@ -253,7 +253,7 @@
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="货品编码" prop="goods_id">
-              <el-input v-model="formAdd.goods_id" placeholder="请输入名称" />
+              <el-input v-model="formAdd.goods_id" placeholder="请输入编码" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
@@ -265,7 +265,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请选择平台"
+                  placeholder="请选择类别"
                   :remote-method="remoteMethodGoodsCategory"
                 >
                   <el-option
@@ -284,7 +284,7 @@
                   filterable
                   default-first-option
                   reserve-keyword
-                  placeholder="请选择平台"
+                  placeholder="请选择属性"
                 >
                   <el-option
                     v-for="item in optionsGoodsAttribute"
@@ -299,7 +299,7 @@
           <el-row :gutter="20">
 
             <el-col :span="8"><el-form-item label="机器排序" prop="goods_number">
-              <el-input v-model="formAdd.goods_number" placeholder="请输入名称" />
+              <el-input v-model="formAdd.goods_number" placeholder="请输入排序" />
             </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="规格" prop="size">
               <el-input v-model="formAdd.size" placeholder="请输入规格" />
@@ -376,7 +376,7 @@
                       default-first-option
                       remote
                       reserve-keyword
-                      placeholder="请选择平台"
+                      placeholder="请选择类别"
                       :remote-method="remoteMethodGoodsCategory"
                     >
                       <el-option
@@ -395,7 +395,7 @@
                       filterable
                       default-first-option
                       reserve-keyword
-                      placeholder="请选择平台"
+                      placeholder="请选择属性"
                     >
                       <el-option
                         v-for="item in optionsGoodsAttribute"
@@ -633,7 +633,7 @@ export default {
           paramsSearch.name = query
           getGoodsCategoryList(paramsSearch).then(
             res => {
-              this.optionsPlatform = res.data.results.map(item => {
+              this.optionsGoodsCategory = res.data.results.map(item => {
                 return { label: item.name, value: item.id }
               })
             }

@@ -8,7 +8,7 @@ const crmChannelRouter = {
   redirect: 'noRedirect',
   name: 'crm',
   meta: {
-    title: '客户关系管理',
+    title: '客户关系',
     icon: 'nested'
   },
   children: [
@@ -61,27 +61,21 @@ const crmChannelRouter = {
         },
         {
           path: 'utorder',
-          component: () => import('@/views/sales/advance/prestore/index'),
+          component: () => import('@/views/crm/order/order'),
           name: 'utorder',
           meta: { title: '订单' },
           children: [
             {
               path: 'submit',
-              component: () => import('@/views/sales/advance/prestore/submit/index'),
+              component: () => import('@/views/crm/order/order/submit/index'),
               name: '订单提交',
-              meta: { title: '预存单提交', roles: ['advancepayment.view_user_prestore', 'AllPrivileges'] }
-            },
-            {
-              path: 'check',
-              component: () => import('@/views/sales/advance/prestore/check/index'),
-              name: '订单审核',
-              meta: { title: '预存单审核', roles: ['advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '订单提交', roles: ['advancepayment.view_user_prestore', 'AllPrivileges'] }
             },
             {
               path: 'manage',
-              component: () => import('@/views/sales/advance/prestore/manage/index'),
+              component: () => import('@/views/crm/order/order/manage/index'),
               name: '订单管理',
-              meta: { title: '预存单管理', roles: ['advancepayment.view_user_prestore', 'advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '订单管理', roles: ['advancepayment.view_user_prestore', 'advancepayment.view_prestore', 'AllPrivileges'] }
             }
           ]
         }
@@ -90,14 +84,20 @@ const crmChannelRouter = {
     {
       path: 'customer',
       name: 'customer',
-      component: () => import('@/views/sales/tailgoods/index'),
-      meta: { title: '尾货客户档案订单' },
+      component: () => import('@/views/crm/customers'),
+      meta: { title: '客户档案' },
       children: [
         {
           path: 'manage',
-          component: () => import('@/views/sales/tailgoods/bills'),
-          name: '档案管理',
-          meta: { title: '对账单明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          component: () => import('@/views/crm/customers/manage'),
+          name: 'manage',
+          meta: { title: '档案管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
+          path: 'blacklist',
+          component: () => import('@/views/crm/customers/manage'),
+          name: '黑名单',
+          meta: { title: '黑名单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
       ]
     }

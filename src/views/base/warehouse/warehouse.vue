@@ -137,6 +137,19 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="监控状态"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.order_status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -165,7 +178,7 @@
     </div>
     <!--新建添加模态窗-->
     <el-dialog
-      title="新增工"
+      title="新增"
       width="80%"
       :visible.sync="dialogVisibleAdd"
       :close-on-click-modal="false"
@@ -229,6 +242,18 @@
                     :value="item.value"
                   />
                 </el-select>
+              </template>
+            </el-form-item></el-col>
+
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="监控状态" prop="order_status">
+              <template>
+                <el-switch
+                  v-model="formAdd.order_status"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                />
               </template>
             </el-form-item></el-col>
 
@@ -319,6 +344,18 @@
                 </el-form-item></el-col>
 
               </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="监控状态" prop="order_status">
+
+                  <el-switch
+                    v-model="formEdit.order_status"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                  />
+
+                </el-form-item></el-col>
+
+              </el-row>
             </el-card>
             <el-card class="box-card">
               <el-row :gutter="20">
@@ -347,7 +384,7 @@
 import { getWarehouseList, createWarehouse, updateWarehouse, getWarehouseTypeList } from '@/api/base/warehouse'
 import { getCompanyList } from '@/api/base/company'
 import { getPlatformList } from '@/api/base/platform'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -450,11 +487,6 @@ export default {
         }
         const { id, ...data } = this.formEdit
         console.log(data)
-        let attrStr
-        const transFieldStr = ['order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
         updateWarehouse(id, data).then(
           () => {
             this.dialogVisibleEdit = false

@@ -2,25 +2,6 @@
   <div class="ori-invoice-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <div id="operationBoard">
-              <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
-                <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
-                  选中所有的{{ selectNum }}项
-                  <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleRejectDealer">驳至经销</el-button></el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="点击选中所有筛选出的订单" placement="top-start">
-                <el-button @click="checkAllOption">全选{{ totalNum }}项</el-button>
-              </el-tooltip>
-            </div>
-          </div>
-        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -196,6 +177,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="订单号"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           label="店铺"
           prop="shop"
           sortable="custom"
@@ -265,72 +254,37 @@
             <span>{{ scope.row.mobile }}</span>
           </template>
         </el-table-column>
+        <el-table-column
+          label="货品编码"
+          prop="goods_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品数量"
+          prop="quantity"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
 
-        <el-table-column
-          label="货品"
-          prop="goods_detial"
-        >
-          <template slot-scope="scope">
-            <div v-for="(item, i) in scope.row.goods_detial">
-              <el-tag type="success" size="mini" effect="dark"><span>{{ item }}</span></el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="单据类型"
-          prop="order_category"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_category.name }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="机器序列号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.m_sn }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="故障部位"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.broken_part }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="故障描述"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.description }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="省"
-          prop="province"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.province.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="市"
-          prop="city"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.city.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="区"
-          prop="district"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.district.name }}</span>
-          </template>
-        </el-table-column>
         <el-table-column
           label="创建者"
           prop="creator"
@@ -339,23 +293,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.creator }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建部门"
-          prop="department"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.department.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -375,277 +312,6 @@
 
       </el-table>
     </div>
-
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>开票订单相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="店铺" prop="shop">
-                  <template>
-                    <el-select
-                      v-model="formEdit.shop"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择店铺"
-                      :remote-method="remoteMethodShop"
-                    >
-                      <el-option
-                        v-for="item in optionsShop"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="源单号" prop="order_id">
-                  <el-input v-model="formEdit.order_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
-                  <el-input v-model="formEdit.nickname" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收款公司" prop="company">
-                  <template>
-                    <el-select
-                      v-model="formEdit.company"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
-                    >
-                      <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="发票类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>客户公司信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="发票抬头" prop="title">
-                  <el-input v-model="formEdit.title" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="税号" prop="tax_id">
-                  <el-input v-model="formEdit.tax_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="银行名称" prop="bank">
-                  <el-input v-model="formEdit.bank" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="银行账号" prop="account">
-                  <el-input v-model="formEdit.account" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="联系电话" prop="phone">
-                  <el-input v-model="formEdit.phone" placeholder="请输入名称" />
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="发票备注" prop="remark">
-                  <el-input v-model="formEdit.remark" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>收件信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收件姓名" prop="sent_consignee">
-                  <el-input v-model="formEdit.sent_consignee" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                  <el-input v-model="formEdit.sent_smartphone" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-                  <template>
-                    <el-select
-                      v-model="formEdit.sent_city"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择城市"
-                      :remote-method="remoteMethodCity"
-                    >
-                      <el-option
-                        v-for="item in optionsCity"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-                  <el-input v-model="formEdit.sent_district" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :guuter="20">
-                <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
-                  <el-input v-model="formEdit.sent_address" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="是否发顺丰" prop="is_deliver">
-                  <el-switch v-model="formEdit.is_deliver" active-color="#13ce66" inactive-color="#ff4949" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="message">
-                  <el-input v-model="formEdit.message" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>开票货品相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsEdit">添加</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="success"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteDetailsEdit"
-                >删除</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteAllDetailsEdit"
-                >清空</el-button></el-col>
-                <el-col :span="10" />
-                <el-col :span="4" />
-                <el-col :span="4" />
-              </el-row>
-              <el-table
-                ref="tableEdit"
-                border
-                :data="oriInvoiceGoodsListEdit"
-                :row-class-name="rowClassName"
-                @selection-change="handleDetailSelectionChangeEdit"
-              >
-                <el-table-column type="selection" width="30" align="center" />
-                <el-table-column label="序号" align="center" prop="xh" width="50">
-                  <template slot-scope="scope">
-                    <span>{{ oriInvoiceGoodsListEdit[scope.row.xh-1].xh }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="名称" width="250" prop="goods_name">
-                  <template slot-scope="scope">
-                    <el-select
-                      v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].goods_name"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择货品"
-                      :remote-method="remoteMethodGoods"
-                    >
-                      <el-option
-                        v-for="item in optionsGoods"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-table-column>
-                <el-table-column label="货品数量" width="250" prop="quantity">
-                  <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].quantity" type="number" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="含税单价" width="250" prop="price">
-                  <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].price" type="text" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="货品备注" width="250" prop="memorandum">
-                  <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].memorandum" type="text" />
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="8" :offset="16"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -656,25 +322,16 @@
 </template>
 
 <script>
-import { getManualOrderManageList } from '@/api/dfc/manualorder/manualorder'
+import { getOriginDataManageList } from '@/api/dfc/batchtable/origindata'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
   name: 'OriInvoiceSubmit',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       DataList: [],
       tableLoading: false,
@@ -739,16 +396,12 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getManualOrderManageList(this.params).then(
+      getOriginDataManageList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
         }
       ).catch(
         () => {
@@ -760,95 +413,6 @@ export default {
       this.params.page = val
       this.fetchData()
     },
-
-    // 跳出编辑对话框
-    handleEdit(values) {
-      console.log(values)
-      this.formEdit = { ...values }
-      this.dialogVisibleEdit = true
-
-      // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
-      // console.log(currentShop)
-      this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
-      this.formEdit.shop = this.formEdit.shop.id
-      // console.log(this.optionsShop)
-      // console.log(this.formEdit.shop)
-
-      this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
-      this.formEdit.company = this.formEdit.company.id
-
-      this.optionsCity = [{ label: this.formEdit.sent_city.name, value: this.formEdit.sent_city.id }]
-      this.formEdit.sent_city = this.formEdit.sent_city.id
-
-      this.optionsGoods = this.formEdit.goods_details.map(item => {
-        return { label: item.name.name, value: item.name.id }
-      })
-      console.log(this.optionsGoods)
-      this.formEdit.order_category = this.formEdit.order_category.id
-      this.oriInvoiceGoodsListEdit = []
-      let goods
-      for (goods in this.formEdit.goods_details) {
-        this.formEdit.goods_details[goods].xh = goods + 1
-        this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
-        this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[goods])
-      }
-      console.log(this.oriInvoiceGoodsListEdit)
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      this.$refs.handleFormEdit.validate(valid => {
-        if (!valid) {
-          return
-        }
-        this.formEdit.goods_details = this.oriInvoiceGoodsListEdit
-        const { id, ...data } = this.formEdit
-        let attrStr
-        console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_category', 'order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
-        console.log(data)
-        updateManualOrderSubmit(id, data).then(
-          () => {
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
-      })
-    },
-
-    // 关闭修改界面
-    handleCancelEdit() {
-      this.dialogVisibleEdit = false
-      this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetails()
-    },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      console.log(this.OrderDetailsList)
-      this.formAdd.goods_details = this.OrderDetailsList
-      createOriInvoiceSubmit(this.formAdd).then(
-        () => {
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        console.log(res)
-      })
-    },
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -859,81 +423,7 @@ export default {
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
     // 导入
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-              name: 'importfile',
-              type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportManualOrderSubmit(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-      }).catch(
-        (error) => {
-          console.log(error)
-        }
-      )
-    },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({

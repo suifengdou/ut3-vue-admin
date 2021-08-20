@@ -1,5 +1,5 @@
 <template>
-  <div class="batchtable-manage-container">
+  <div class="ori-invoice-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -37,9 +37,17 @@
               <el-button type="success" @click="importExcel">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
+        </el-col>
+        <el-col :span="7" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
+              <el-button type="primary" @click="add">新增</el-button>
+            </el-tooltip>
+          </div>
+
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -200,9 +208,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
+            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -213,26 +219,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.shop.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -277,44 +263,83 @@
         </el-table-column>
 
         <el-table-column
-          label="货品"
-          prop="goods_detial"
-        >
-          <template slot-scope="scope">
-            <div v-for="(item, i) in scope.row.goods_detial">
-              <el-tag type="success" size="mini" effect="dark"><span>{{ item }}</span></el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="单据类型"
-          prop="order_category"
+          prop="category"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_category.name }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="机器序列号"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.m_sn }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="故障部位"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.broken_part }}</span>
+            <span>{{ scope.row.category }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="故障描述"
+          label="发货条件"
+          prop="d_condition"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.description }}</span>
+            <span>{{ scope.row.d_condition }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="优惠金额"
+          prop="discount"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.discount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="邮费"
+          prop="post_fee"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.post_fee }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="应收合计"
+          prop="receivable"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.receivable }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品价格"
+          prop="goods_price"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品总价"
+          prop="total_prices"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.total_prices }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="商家编码"
+          prop="goods_id"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="goods_name"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="数量"
+          prop="quantity"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -352,16 +377,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="创建部门"
-          prop="department"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.department.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="订单号"
         >
           <template slot-scope="scope">
@@ -385,7 +400,6 @@
 
       </el-table>
     </div>
-
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -396,25 +410,19 @@
 </template>
 
 <script>
-import { getBatchTableManageList, excelImportBatchTableManage } from '@/api/dfc/batchtable/batchtable'
+import {
+  getBatchTableManageList,
+  excelImportBatchTableManage
+} from '@/api/dfc/batchtable/batchtable'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
   name: 'OriInvoiceSubmit',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       DataList: [],
       tableLoading: false,
@@ -479,7 +487,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getManualOrderManageList(this.params).then(
+      getBatchTableSubmitList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -549,7 +557,7 @@ export default {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
-        updateManualOrderSubmit(id, data).then(
+        updateBatchTableSubmit(id, data).then(
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
@@ -673,7 +681,7 @@ export default {
         }
       )
     },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -783,7 +791,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriInvoiceSubmit(this.params).then(
+        checkBatchTableSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -839,7 +847,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriInvoiceSubmit(this.params).then(
+        checkBatchTableSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -914,7 +922,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriInvoiceSubmit(this.params).then(
+              rejectBatchTableSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -981,7 +989,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriInvoiceSubmit(this.params).then(
+              rejectBatchTableSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

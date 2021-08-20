@@ -28,7 +28,7 @@ const dfcRouter = {
         },
         {
           path: 'mogoodsmanage',
-          component: () => import('@/views/dfc/manualorder/modetial'),
+          component: () => import('@/views/dfc/manualorder/modetail'),
           name: 'mogoodsmanage',
           meta: { title: '明细管理' }
         },
@@ -53,7 +53,7 @@ const dfcRouter = {
       ]
     },
     {
-      path: '表格处理',
+      path: 'tables',
       component: () => import('@/views/dfc/batchtable'), // Parent router-view
       name: 'gift',
       meta: { title: '表格处理' },

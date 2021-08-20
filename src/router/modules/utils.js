@@ -15,32 +15,32 @@ const utilsRouter = {
   children: [
     {
       path: 'geography',
-      component: () => import('@/views/dfc/manualorder'), // Parent router-view
+      component: () => import('@/views/utils/geography'), // Parent router-view
       name: 'geography',
       meta: { title: '地理行政' },
       redirect: 'noRedirect',
       children: [
         {
           path: 'nationality',
-          component: () => import('@/views/dfc/manualorder/submit'),
+          component: () => import('@/views/utils/geography/nationality'),
           name: 'nationality',
           meta: { title: '国别' }
         },
         {
           path: 'province',
-          component: () => import('@/views/dfc/manualorder/modetial'),
+          component: () => import('@/views/utils/geography/province'),
           name: 'province',
           meta: { title: '省份' }
         },
         {
           path: 'city',
-          component: () => import('@/views/dfc/manualorder/manage'),
+          component: () => import('@/views/utils/geography//city'),
           name: 'city',
           meta: { title: '城市' }
         },
         {
           path: 'district',
-          component: () => import('@/views/dfc/manualorder/submit'),
+          component: () => import('@/views/utils/geography/district'),
           name: 'district',
           meta: { title: '区县' }
         }

@@ -268,10 +268,10 @@
 
         <el-table-column
           label="货品"
-          prop="goods_detial"
+          prop="goods_detail"
         >
           <template slot-scope="scope">
-            <div v-for="(item, i) in scope.row.goods_detial">
+            <div v-for="(item, i) in scope.row.goods_detail">
               <el-tag type="success" size="mini" effect="dark"><span>{{ item }}</span></el-tag>
             </div>
           </template>
@@ -660,7 +660,7 @@ import { getManualOrderManageList } from '@/api/dfc/manualorder/manualorder'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography'
+import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {

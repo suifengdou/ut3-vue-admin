@@ -31,9 +31,9 @@ export function updateBatchTableSubmit(id, data) {
 }
 
 // 导出工单
-export function exportOriginDataSubmit(data) {
+export function exportBatchTableSubmit(data) {
   return request({
-    url: `/dfc/batchdata/batchtablesubmit/`,
+    url: `/dfc/batchdata/batchtablesubmit/export/`,
     method: 'patch',
     data
   })
