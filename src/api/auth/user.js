@@ -10,7 +10,7 @@ export function login(data) {
 
 export function getInfo() {
   return request({
-    url: '/auth/users/get_user_info/',
+    url: '/auth/users/users/get_user_info/',
     method: 'get'
   })
 }
@@ -18,7 +18,7 @@ export function getInfo() {
 // 获取用户组列表
 export function getUserList(params) {
   return request({
-    url: '/auth/users/',
+    url: '/auth/users/users/',
     method: 'get',
     params
   })
@@ -30,7 +30,7 @@ export function deleteUser(id) {
     'is_active': 0
   }
   return request({
-    url: `/auth/users/${id}/`,
+    url: `/auth/users/users/${id}/`,
     method: 'patch',
     data
   })
@@ -41,7 +41,7 @@ export function updateUser(id, data) {
   delete data.update_time
   delete data.password
   return request({
-    url: `/auth/users/${id}/`,
+    url: `/auth/users/users/${id}/`,
     method: 'patch',
     data
   })
@@ -49,7 +49,7 @@ export function updateUser(id, data) {
 
 export function createUser(data) {
   return request({
-    url: `/auth/users/`,
+    url: `/auth/users/users/`,
     method: 'post',
     data
   })
@@ -57,7 +57,7 @@ export function createUser(data) {
 
 export function getPermissionsList(params) {
   return request({
-    url: `/auth/permission/`,
+    url: `/auth/users/permission/`,
     method: 'get',
     params
   })

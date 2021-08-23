@@ -170,6 +170,17 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="单据状态"
+          prop="order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_status.name }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
           label="收件人"
           prop="manual_order"
           sortable="custom"
@@ -216,6 +227,26 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.manual_order.order_category }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="快递公司"
+          prop="logistics_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.logistics_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="快递单号"
+          prop="logistics_no"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.logistics_no }}</span>
           </template>
         </el-table-column>
         <el-table-column

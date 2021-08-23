@@ -33,7 +33,7 @@ export function updateManualOrderSubmit(id, data) {
 // 导出工单
 export function exportManualOrderSubmit(data) {
   return request({
-    url: `/dfc/manualorder/mosubmit/`,
+    url: `/dfc/manualorder/mosubmit/export/`,
     method: 'patch',
     data
   })

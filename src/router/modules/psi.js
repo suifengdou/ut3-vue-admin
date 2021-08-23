@@ -102,12 +102,18 @@ const psiChannelRouter = {
     {
       path: 'inventory',
       name: 'inventory',
-      component: () => import('@/views/crm/customers'),
+      component: () => import('@/views/psi/inventory'),
       meta: { title: '库存管理' },
       children: [
         {
-          path: 'inventorymanage',
+          path: 'inventoryanalysis',
           component: () => import('@/views/crm/customers/manage'),
+          name: 'inventoryanalysis',
+          meta: { title: '库存分析', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
+          path: 'inventorymanage',
+          component: () => import('@/views/psi/inventory/manage'),
           name: 'inventorymanage',
           meta: { title: '库存管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }

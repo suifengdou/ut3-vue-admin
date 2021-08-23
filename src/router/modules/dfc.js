@@ -40,13 +40,13 @@ const dfcRouter = {
         },
         {
           path: 'moexport',
-          component: () => import('@/views/dfc/manualorder/submit'),
+          component: () => import('@/views/dfc/manualorder/export/submit'),
           name: 'moexport',
           meta: { title: '格式输出' }
         },
         {
           path: 'moexportmanage',
-          component: () => import('@/views/dfc/manualorder/submit'),
+          component: () => import('@/views/dfc/manualorder/export/manage'),
           name: 'moexportmanage',
           meta: { title: '输出管理' }
         }

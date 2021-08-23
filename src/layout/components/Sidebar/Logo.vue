@@ -25,8 +25,8 @@ export default {
   data() {
     return {
       title: 'Ultra Tools V3',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
-      // logo:'./utlog.png'
+      // logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      logo:'http://qy9qcmykj.hb-bkt.clouddn.com/utlogblue.png'
     }
   }
 }
@@ -56,10 +56,10 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       vertical-align: middle;
-      margin-right: 12px;
+      margin-right: 2px;
     }
 
     & .sidebar-title {
