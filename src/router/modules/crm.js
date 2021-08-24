@@ -100,6 +100,98 @@ const crmChannelRouter = {
           meta: { title: '黑名单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
       ]
+    },
+    {
+      path: 'dialog',
+      name: 'dialog',
+      component: () => import('@/views/crm/dialog'),
+      meta: { title: '客户对话' },
+      children: [
+        {
+          path: 'dialogtb',
+          component: () => import('@/views/crm/dialog/dialogtb'),
+          name: 'dialogtb',
+          meta: { title: '淘系对话', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'dialogtb',
+              component: () => import('@/views/crm/dialog/dialogtb/dialogtb'),
+              name: 'dialogtb',
+              meta: { title: '淘系对话-客户', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogtbdetail',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogtbdetail',
+              meta: { title: '淘系对话-信息', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogtbwords',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogtbwords',
+              meta: { title: '淘系对话-分词', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'dialogjd',
+          component: () => import('@/views/crm/customers/manage'),
+          name: 'dialogjd',
+          meta: { title: '京东对话', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'dialogjd',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogjd',
+              meta: { title: '京东对话-客户', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogjddetail',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogjddetail',
+              meta: { title: '京东对话-信息', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogjdwords',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogjdwords',
+              meta: { title: '京东对话-分词', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'dialogow',
+          component: () => import('@/views/crm/customers/manage'),
+          name: 'dialogow',
+          meta: { title: '官网对话', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'dialogow',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogow',
+              meta: { title: '官网对话-客户', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogowdetail',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogowdetail',
+              meta: { title: '官网对话-信息', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'dialogowwords',
+              component: () => import('@/views/crm/customers/manage'),
+              name: 'dialogowwords',
+              meta: { title: '官网对话-分词', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'servicer',
+          component: () => import('@/views/crm/customers/manage'),
+          name: 'servicer',
+          meta: { title: '对话-客服网名', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        }
+      ]
     }
   ]
 }
