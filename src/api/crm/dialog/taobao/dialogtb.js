@@ -75,12 +75,3 @@ export function rejectDialogTB(data) {
   })
 }
 
-// 原始ERP订单管理操作API
-// 获取列表
-export function getOriOrderManageList(params) {
-  return request({
-    url: '/crm/order/oriordermanage/',
-    method: 'get',
-    params
-  })
-}

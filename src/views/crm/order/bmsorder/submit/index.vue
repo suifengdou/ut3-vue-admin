@@ -44,7 +44,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增工单</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -391,7 +391,7 @@
     </div>
     <!--新建添加模态窗-->
     <el-dialog
-      title="新增工单"
+      title="新增"
       width="60%"
       :visible.sync="dialogVisibleAdd"
       :close-on-click-modal="false"

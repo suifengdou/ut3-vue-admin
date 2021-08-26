@@ -309,7 +309,7 @@
     </div>
     <!--新建添加模态窗-->
     <el-dialog
-      title="新增工单"
+      title="新增"
       width="60%"
       :visible.sync="dialogVisibleAdd"
       :close-on-click-modal="false"

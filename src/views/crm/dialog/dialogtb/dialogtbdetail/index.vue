@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.src_tids" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -150,217 +150,76 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="错误列表"
-          prop="mistake_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
-          </template>
-        </el-table-column>
 
         <el-table-column
-          label="订单编号"
-          prop="trade_no"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.trade_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="店铺"
-          prop="shop_name"
+          prop="dialog"
           sortable="custom"
+          width="120px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop_name.name }}</span>
+            <span>{{ scope.row.dialog.shop }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="客户网名"
-          prop="buyer_nick"
+          prop="dialog"
           sortable="custom"
+          width="120px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.buyer_nick }}</span>
+            <span>{{ scope.row.dialog.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="收件人"
-          prop="receiver_name"
+          label="讲话人"
+          prop="sayer"
           sortable="custom"
+          width="150px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receiver_name }}</span>
+            <span>{{ scope.row.sayer }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="收货地址"
-          prop="receiver_address"
+          label="讲话时间"
+          prop="time"
           sortable="custom"
+          width="100px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receiver_address }}</span>
+            <span>{{ scope.row.time }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="手机"
-          prop="receiver_mobile"
+          label="讲话人身份"
+          prop="d_status"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receiver_mobile }}</span>
+            <span>{{ scope.row.d_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="付款时间"
-          prop="pay_time"
+          label="讲话内容"
+          prop="content"
           sortable="custom"
+          width="300px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.pay_time }}</span>
+            <span>{{ scope.row.content }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="收货地区"
-          prop="receiver_area"
+          label="内容类型"
+          prop="category"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receiver_area }}</span>
+            <span>{{ scope.row.category.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="物流单号"
-          prop="logistics_no"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.logistics_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="物流公司"
-          prop="logistics_name"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.logistics_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="买家留言"
-          prop="buyer_message"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.buyer_message }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客服备注"
-          prop="cs_remark"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.cs_remark }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="原始子订单号"
-          prop="src_tids"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.src_tids }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品数量"
-          prop="num"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.num }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="成交价"
-          prop="price"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.price }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品成交总价"
-          prop="share_amount"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.share_amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品名称"
-          prop="goods_name"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="商家编码"
-          prop="spec_code"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.spec_code }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="仓库"
-          prop="warehouse_name"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.warehouse_name.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单类型"
-          prop="order_category"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_category }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="发货时间"
-          prop="deliver_time"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.deliver_time }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column
           label="创建者"
           prop="creator"
@@ -373,6 +232,7 @@
         </el-table-column>
         <el-table-column
           label="创建时间"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.create_time }}</span>
@@ -380,6 +240,7 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
+          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.update_time }}</span>
@@ -676,14 +537,14 @@
 
 <script>
 import {
-  getOrderList,
-  createOrder,
-  updateOrder,
-  exportOrder,
-  excelImportOrder,
-  checkOrder,
-  rejectOrder
-} from '@/api/crm/order/order'
+  getDialogTBDetailList,
+  createDialogTBDetail,
+  updateDialogTBDetail,
+  exportDialogTBDetail,
+  excelImportDialogTBDetail,
+  checkDialogTBDetail,
+  rejectDialogTBDetail
+} from '@/api/crm/dialog/taobao/dialogtbdetail'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -788,7 +649,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOrderList(this.params).then(
+      getDialogTBDetailList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -827,7 +688,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateOrder(id, data).then(
+      updateDialogTBDetail(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -868,7 +729,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createOrder(this.formAdd).then(
+      createDialogTBDetail(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -929,7 +790,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOrder(importformData, config).then(
+            excelImportDialogTBDetail(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -966,10 +827,13 @@ export default {
         }
       }).then(action => {
         console.log(action)
+        done(false)
       }).catch(
         (error) => {
           console.log(error)
+          done(false)
         }
+
       )
     },
     // 导出
@@ -993,7 +857,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOrder(this.params).then(
+            exportDialogTBDetail(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1079,124 +943,12 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 校正
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixOrder(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法校正',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixOrder(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
     // 审核单据
+
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOrder(this.params).then(
+        checkDialogTBDetail(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1252,7 +1004,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOrder(this.params).then(
+        checkDialogTBDetail(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1315,7 +1067,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次导入，请慎重选择！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1327,7 +1079,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOrder(this.params).then(
+              rejectDialogTBDetail(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1394,7 +1146,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOrder(this.params).then(
+              rejectDialogTBDetail(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
