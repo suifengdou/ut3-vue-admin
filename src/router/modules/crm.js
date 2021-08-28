@@ -108,6 +108,12 @@ const crmChannelRouter = {
       meta: { title: '客户对话' },
       children: [
         {
+          path: 'servicer',
+          component: () => import('@/views/crm/dialog/servicer'),
+          name: 'servicer',
+          meta: { title: '对话-客服网名', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
           path: 'dialogtb',
           component: () => import('@/views/crm/dialog/dialogtb'),
           name: 'dialogtb',
@@ -179,13 +185,19 @@ const crmChannelRouter = {
         },
         {
           path: 'dialogow',
-          component: () => import('@/views/crm/customers/manage'),
+          component: () => import('@/views/crm/dialog/dialogow'),
           name: 'dialogow',
           meta: { title: '官网对话', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
           children: [
             {
+              path: 'dialogowsubmit',
+              component: () => import('@/views/crm/dialog/dialogow/dialogowsubmit'),
+              name: 'dialogowsubmit',
+              meta: { title: '官网对话-提取', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
               path: 'dialogow',
-              component: () => import('@/views/crm/customers/manage'),
+              component: () => import('@/views/crm/dialog/dialogow/dialogow'),
               name: 'dialogow',
               meta: { title: '官网对话-客户', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
@@ -202,13 +214,101 @@ const crmChannelRouter = {
               meta: { title: '官网对话-分词', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             }
           ]
+        }
+
+      ]
+    },
+    {
+      path: 'callcenter',
+      name: 'callcenter',
+      component: () => import('@/views/crm/callcenter/oricalllog'),
+      meta: { title: '呼叫中心' },
+      children: [
+        {
+          path: 'oricalllog',
+          component: () => import('@/views/crm/customers/manage'),
+          name: 'oricalllog',
+          meta: { title: '原始通话记录', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         },
         {
-          path: 'servicer',
-          component: () => import('@/views/crm/dialog/servicer'),
-          name: 'servicer',
-          meta: { title: '对话-客服网名', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          path: 'calllog',
+          component: () => import('@/views/crm/callcenter/calllog'),
+          name: 'calllog',
+          meta: { title: '通话记录', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
+      ]
+    },
+    {
+      path: 'service',
+      name: 'service',
+      component: () => import('@/views/crm/service'),
+      meta: { title: '中央维修' },
+      children: [
+        {
+          path: 'mantenancesummary',
+          component: () => import('@/views/crm/dialog/servicer'),
+          name: 'mantenancesummary',
+          meta: { title: '维修统计', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
+          path: 'orimaintenance',
+          component: () => import('@/views/crm/service/orimaintenance'),
+          name: 'orimaintenance',
+          meta: { title: '原始单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'orimaintenancesubmit',
+              component: () => import('@/views/crm/service/orimaintenance/orimaintenancesubmit'),
+              name: 'orimaintenancesubmit',
+              meta: { title: '原始单-提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'orimaintenancebefore',
+              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailmyself'),
+              name: 'orimaintenancebefore',
+              meta: { title: '原始单-修前异常', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'orimaintenanceworking',
+              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailsubmit'),
+              name: 'orimaintenanceworking',
+              meta: { title: '原始单-修中异常', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'orimaintenance',
+              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetail'),
+              name: 'orimaintenance',
+              meta: { title: '原始单-管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'maintenance',
+          component: () => import('@/views/crm/dialog/dialogjd'),
+          name: 'maintenance',
+          meta: { title: '维修单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'maintenancesubmit',
+              component: () => import('@/views/crm/dialog/dialogjd/dialogjd'),
+              name: 'maintenancesubmit',
+              meta: { title: '维修单-计算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'maintenancejudgment',
+              component: () => import('@/views/crm/dialog/dialogjd/dialogjddetailsubmit'),
+              name: 'maintenancejudgment',
+              meta: { title: '维修单-判责', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'maintenance',
+              component: () => import('@/views/crm/dialog/dialogjd/dialogjddetail'),
+              name: 'maintenance',
+              meta: { title: '维修单-管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        }
+
       ]
     }
   ]
