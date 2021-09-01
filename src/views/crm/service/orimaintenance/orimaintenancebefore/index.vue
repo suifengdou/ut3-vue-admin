@@ -28,7 +28,25 @@
               </el-input>
             </el-tooltip>
           </div>
-
+        </el-col>
+        <el-col :span="5" class="titleBar">
+          <el-select
+            v-model="params.process_tag"
+            filterable
+            default-first-option
+            reserve-keyword
+            clearable
+            placeholder="请选择异常类别"
+            @change="fetchData"
+            @clear="fetchData"
+          >
+            <el-option
+              v-for="item in optionsProcess"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -58,17 +76,17 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="处理类别" prop="mistake_tag">
+                      <el-col :span="8"><el-form-item label="错误类别" prop="process_tag">
                         <template>
                           <el-select
-                            v-model="params.mistake_tag"
+                            v-model="params.process_tag"
                             filterable
                             default-first-option
                             reserve-keyword
-                            placeholder="请选择处理类别"
+                            placeholder="请选择错误类别"
                           >
                             <el-option
-                              v-for="item in optionsMistake"
+                              v-for="item in optionsProcess"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -807,14 +825,14 @@
 
 <script>
 import {
-  getOriMaintenanceSubmitList,
-  createOriMaintenanceSubmit,
-  updateOriMaintenanceSubmit,
-  exportOriMaintenanceSubmit,
-  excelImportOriMaintenanceSubmit,
-  checkOriMaintenanceSubmit,
-  rejectOriMaintenanceSubmit
-} from '@/api/crm/service/orimaintenance/orimaintenancesubmit'
+  getOriMaintenanceBeforeList,
+  createOriMaintenanceBefore,
+  updateOriMaintenanceBefore,
+  exportOriMaintenanceBefore,
+  excelImportOriMaintenanceBefore,
+  checkOriMaintenanceBefore,
+  rejectOriMaintenanceBefore
+} from '@/api/crm/service/orimaintenance/orimaintenancebefore'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -835,36 +853,29 @@ export default {
       },
       dialogVisibleEdit: false,
       formEdit: {},
-      optionsMistake: [
+      optionsProcess: [
         {
           value: 0,
-          label: '正常'
+          label: '无异常'
         },
         {
           value: 1,
-          label: '尝试修复数据'
+          label: '未更新到'
         },
         {
           value: 2,
-          label: '二级市错误'
+          label: '取件超时'
         },
         {
           value: 3,
-          label: '寄件地区出错'
+          label: '到库超时'
         },
         {
           value: 4,
-          label: 'UT无此店铺'
-        },
-        {
-          value: 5,
-          label: 'UT此型号整机未创建'
-        },
-        {
-          value: 6,
-          label: 'UT系统无此店铺'
-        },
+          label: '维修超时'
+        }
       ],
+
       optionsJudgment: [
         {
           value: true,
@@ -923,7 +934,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriMaintenanceSubmitList(this.params).then(
+      getOriMaintenanceBeforeList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -962,7 +973,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateOriMaintenanceSubmit(id, data).then(
+      updateOriMaintenanceBefore(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1032,7 +1043,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOriMaintenanceSubmit(importformData, config).then(
+            excelImportOriMaintenanceBefore(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -1099,7 +1110,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriMaintenanceSubmit(this.params).then(
+            exportOriMaintenanceBefore(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
@@ -1212,7 +1223,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriMaintenanceSubmit(this.params).then(
+        checkOriMaintenanceBefore(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1268,7 +1279,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriMaintenanceSubmit(this.params).then(
+        checkOriMaintenanceBefore(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1348,7 +1359,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectOriMaintenanceBefore(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1422,7 +1433,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectOriMaintenanceBefore(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

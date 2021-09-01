@@ -257,22 +257,16 @@ const crmChannelRouter = {
           meta: { title: '原始单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
           children: [
             {
+              path: 'orimaintenancebefore',
+              component: () => import('@/views/crm/service/orimaintenance/orimaintenancebefore'),
+              name: 'orimaintenancebefore',
+              meta: { title: '原始单-异常', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
               path: 'orimaintenancesubmit',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenancesubmit'),
               name: 'orimaintenancesubmit',
               meta: { title: '原始单-提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
-            },
-            {
-              path: 'orimaintenancebefore',
-              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailmyself'),
-              name: 'orimaintenancebefore',
-              meta: { title: '原始单-修前异常', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
-            },
-            {
-              path: 'orimaintenanceworking',
-              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailsubmit'),
-              name: 'orimaintenanceworking',
-              meta: { title: '原始单-修中异常', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'orimaintenance',

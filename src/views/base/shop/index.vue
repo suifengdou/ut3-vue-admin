@@ -367,8 +367,11 @@ export default {
       formEdit: {},
       rules: {
         name: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ]
+          { required: true, message: '请输入店铺名', trigger: 'blur' }
+        ],
+        group_name: [
+          { required: true, message: '请输入分组', trigger: 'blur' }
+        ],
       }
     }
   },

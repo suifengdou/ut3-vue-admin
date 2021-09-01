@@ -1,4 +1,4 @@
-index.vue<template>
+<template>
   <div class="goods-container">
     <div class="tableTitle">
       <el-row :gutter="20">
@@ -546,8 +546,14 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
+      ).catch((error) => {
+        this.$notify({
+          title: '错误详情',
+          message: error.data,
+          type: 'error',
+          offset: 210,
+          duration: 0
+        })
       })
     },
     // 关闭添加界面

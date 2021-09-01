@@ -33,7 +33,7 @@ export function updateOriMaintenanceSubmit(id, data) {
 // 导出工单
 export function exportOriMaintenanceSubmit(data) {
   return request({
-    url: `/crm/service/orimaintenancesubmit/`,
+    url: `/crm/service/orimaintenancesubmit/export/`,
     method: 'patch',
     data
   })
