@@ -189,78 +189,108 @@
         </el-table-column>
 
         <el-table-column
+          label="重复维修标记"
+          prop="repeat_tag"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.repeat_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="单据状态"
+          prop="order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_status.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="发现二次维修"
+          prop="found_tag"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.found_tag }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="店铺"
           prop="shop"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop }}</span>
+            <span>{{ scope.row.shop.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="省"
+          prop="province"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.province.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="市"
+          prop="city"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.city.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="区"
+          prop="district"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.district.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品"
+          prop="goods_name"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="客户"
+          prop="customer"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.customer.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="保修单号"
-          prop="order_id"
+          prop="machine_sn"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="错误标签"
-          prop="mistake_tag"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="递交状态"
-          prop="towork_status"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.towork_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修单状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="序列号"
-          prop="machine_sn"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.machine_sn }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="换新序列号"
+          label="收发仓库"
           prop="new_machine_sn"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.new_machine_sn }}</span>
+            <span>{{ scope.row.warehouse }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -284,6 +314,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="序列号"
+          prop="machine_sn"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.machine_sn }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="故障类型"
           prop="fault_type"
           sortable="custom"
@@ -304,113 +344,23 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="创建人"
-          prop="ori_creator"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.ori_creator }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核人"
-          prop="handler_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handler_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="处理登记人"
-          prop="completer"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.completer }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="购买时间"
-          prop="purchase_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.purchase_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建时间"
-          prop="ori_create_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.ori_create_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核时间"
-          prop="handle_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handle_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修完成时间"
-          prop="finish_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="最后修改时间"
-          prop="last_handle_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.last_handle_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="送修类型"
-          prop="transport_type"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.transport_type }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="客户网名"
-          prop="goods_type"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_type }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户姓名"
           prop="buyer_nick"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.buyer_nick }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄件客户姓名"
+          prop="sender_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.sender_name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -424,193 +374,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="寄件客户省市县"
-          prop="sender_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户地址"
-          prop="sender_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件物流公司"
-          prop="send_logistics_company"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.send_logistics_company }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件物流单号"
-          prop="send_logistics_no"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.send_logistics_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收件备注"
-          prop="send_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.send_memory }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回客户姓名"
-          prop="return_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回客户手机"
-          prop="return_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回省市区"
-          prop="return_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回地址"
-          prop="return_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件指定物流公司"
-          prop="return_logistics_company"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_logistics_company }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件物流单号"
-          prop="return_logistics_no"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_logistics_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件备注"
-          prop="return_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_memory }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修货品商家编码"
-          prop="goods_id"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修货品名称"
-          prop="goods_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修货品简称"
-          prop="goods_abbreviation"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_abbreviation }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修数量"
-          prop="create_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="关联订单号"
-          prop="send_order_id"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.send_order_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否在保修期内"
+          label="是否在保"
           prop="is_guarantee"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.is_guarantee }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修金额"
-          prop="fee"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.fee }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -644,6 +414,108 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="创建人"
+          prop="ori_creator"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          prop="ori_create_time"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_create_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="审核人"
+          prop="handler_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handler_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="审核时间"
+          prop="handle_time"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handle_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理登记人"
+          prop="completer"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.completer }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修完成时间"
+          prop="finish_time"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.finish_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修完成日期"
+          prop="finish_date"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.finish_date }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修完成月度"
+          prop="finish_month"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.finish_month }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修完成年度"
+          prop="finish_year"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.finish_year }}</span>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column
+          label="创建者"
+          prop="creator"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建时间"
           prop="create_time"
           sortable="custom"
@@ -661,16 +533,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.update_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建者"
-          prop="creator"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.creator }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -808,15 +670,15 @@
 
 <script>
 import {
-  getOriMaintenanceSubmitList,
-  createOriMaintenanceSubmit,
-  updateOriMaintenanceSubmit,
-  exportOriMaintenanceSubmit,
-  excelImportOriMaintenanceSubmit,
-  checkOriMaintenanceSubmit,
-  fixOriMaintenanceSubmit,
-  rejectOriMaintenanceSubmit
-} from '@/api/crm/service/orimaintenance/orimaintenancesubmit'
+  getMaintenanceSubmitList,
+  createMaintenanceSubmit,
+  updateMaintenanceSubmit,
+  exportMaintenanceSubmit,
+  excelImportMaintenanceSubmit,
+  checkMaintenanceSubmit,
+  fixMaintenanceSubmit,
+  rejectMaintenanceSubmit
+} from '@/api/crm/service/maintenance/maintenancesubmit'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -925,7 +787,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriMaintenanceSubmitList(this.params).then(
+      getMaintenanceSubmitList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -964,7 +826,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateOriMaintenanceSubmit(id, data).then(
+      updateMaintenanceSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1034,7 +896,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOriMaintenanceSubmit(importformData, config).then(
+            excelImportMaintenanceSubmit(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -1101,7 +963,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriMaintenanceSubmit(this.params).then(
+            exportMaintenanceSubmit(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
@@ -1214,7 +1076,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriMaintenanceSubmit(this.params).then(
+        checkMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1270,7 +1132,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriMaintenanceSubmit(this.params).then(
+        checkMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1333,7 +1195,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixOriMaintenanceSubmit(this.params).then(
+        fixMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1389,7 +1251,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixOriMaintenanceSubmit(this.params).then(
+        fixMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1469,7 +1331,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectMaintenanceSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1543,7 +1405,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectMaintenanceSubmit(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

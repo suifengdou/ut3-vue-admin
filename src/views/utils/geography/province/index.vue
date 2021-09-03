@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增店铺</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -28,7 +28,6 @@
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
-            <el-button type="success" @click="test">测试</el-button>
           </div>
         </el-col>
       </el-row>
@@ -49,11 +48,8 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="省份名称" prop="name">
                         <el-input v-model="params.name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="类型" prop="category">
-                        <el-input v-model="params.shop_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
@@ -109,12 +105,32 @@
         </el-table-column>
         <el-table-column
           label="国家"
+          prop="nationality"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.nationality.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="省份"
           prop="name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="电话区号"
+          prop="area_code"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.area_code }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -164,55 +180,34 @@
             <span>相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="国别" prop="nationality">
+              <template>
+                <el-select
+                  v-model="formAdd.nationality"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请选择国家"
+                  :remote-method="remoteMethodNationality"
+                >
+                  <el-option
+                    v-for="item in optionsNationality"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="店铺分组" prop="group_name">
-              <el-input v-model="formAdd.group_name" placeholder="请输入类型" />
+            <el-col :span="8"><el-form-item label="省份" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入类型" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="关联公司" prop="company">
-              <template>
-                <el-select
-                  v-model="formAdd.company"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodCompany"
-                >
-                  <el-option
-                    v-for="item in optionsCompany"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
+            <el-col :span="8"><el-form-item label="电话区号" prop="area_code">
+              <el-input v-model="formAdd.area_code" placeholder="请输入电话区号" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="平台类型" prop="platform">
-              <template>
-                <el-select
-                  v-model="formAdd.platform"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodPlatform"
-                >
-                  <el-option
-                    v-for="item in optionsPlatform"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-
           </el-row>
         </el-card>
         <el-card class="box-card">
@@ -253,44 +248,24 @@
                 <el-col :span="8"><el-form-item label="店铺名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="店铺分组" prop="group_name">
-                  <el-input v-model="formEdit.group_name" placeholder="请输入类型" />
+                <el-col :span="8"><el-form-item label="电话区号" prop="area_code">
+                  <el-input v-model="formEdit.area_code" placeholder="请输入电话区号" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="关联公司" prop="company">
+                <el-col :span="8"><el-form-item label="国别" prop="nationality">
                   <template>
                     <el-select
-                      v-model="formEdit.company"
+                      v-model="formEdit.nationality"
                       filterable
                       default-first-option
                       remote
                       reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
+                      placeholder="请选择国别"
+                      :remote-method="remoteMethodNationality"
                     >
                       <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="平台类型" prop="platform">
-                  <template>
-                    <el-select
-                      v-model="formEdit.platform"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择平台"
-                      :remote-method="remoteMethodPlatform"
-                    >
-                      <el-option
-                        v-for="item in optionsPlatform"
+                        v-for="item in optionsNationality"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value"
@@ -332,8 +307,7 @@ import {
   exportProvince,
   excelImportProvince
 } from '@/api/utils/geography/province'
-import { getCompanyList } from '@/api/base/company'
-import { getPlatformList } from '@/api/base/platform'
+import { getNationalityList } from '@/api/utils/geography/nationality'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -346,7 +320,7 @@ export default {
       params: {
         page: 1
       },
-      optionsCompany: [],
+      optionsNationality: [],
       optionsPlatform: [],
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
@@ -355,7 +329,10 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' }
-        ]
+        ],
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
       }
     }
   },
@@ -573,8 +550,13 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
+      ).catch((error) => {
+        this.$notify({
+          title: '创建出错',
+          message: error.data,
+          type: 'error',
+          duration: 0
+        })
       })
     },
     // 关闭添加界面
@@ -587,11 +569,8 @@ export default {
       console.log(values)
       this.formEdit = { ...values }
 
-      this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
-      this.formEdit.company = this.formEdit.company.id
-
-      this.optionsPlatform = [{ label: this.formEdit.platform.name, value: this.formEdit.platform.id }]
-      this.formEdit.platform = this.formEdit.platform.id
+      this.optionsNationality = [{ label: this.formEdit.nationality.name, value: this.formEdit.nationality.id }]
+      this.formEdit.nationality = this.formEdit.nationality.id
 
       this.dialogVisibleEdit = true
     },
@@ -659,41 +638,23 @@ export default {
         page: 1
       }
     },
-    // 公司搜索
-    remoteMethodCompany(query) {
-      if (query !== '') {
-        setTimeout(() => {
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getCompanyList(paramsSearch).then(
-            res => {
-              this.optionsCompany = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
-    // 平台搜索
-    remoteMethodPlatform(query) {
+    // 省份搜索
+    remoteMethodNationality(query) {
       console.log(query)
       if (query !== '') {
         setTimeout(() => {
           const paramsSearch = {}
           paramsSearch.name = query
-          getPlatformList(paramsSearch).then(
+          getNationalityList(paramsSearch).then(
             res => {
-              this.optionsPlatform = res.data.results.map(item => {
+              this.optionsNationality = res.data.results.map(item => {
                 return { label: item.name, value: item.id }
               })
             }
           )
         }, 200)
       } else {
-        this.options = []
+        this.optionsNationality = []
       }
     }
   }

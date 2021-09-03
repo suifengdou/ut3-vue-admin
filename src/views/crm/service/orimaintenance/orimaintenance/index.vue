@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="ori-maintenance-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -29,7 +28,25 @@
               </el-input>
             </el-tooltip>
           </div>
-
+        </el-col>
+        <el-col :span="5" class="titleBar">
+          <el-select
+            v-model="params.process_tag"
+            filterable
+            default-first-option
+            reserve-keyword
+            clearable
+            placeholder="请选择异常类别"
+            @change="fetchData"
+            @clear="fetchData"
+          >
+            <el-option
+              v-for="item in optionsProcess"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -59,17 +76,17 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="处理类别" prop="mistake_tag">
+                      <el-col :span="8"><el-form-item label="错误类别" prop="process_tag">
                         <template>
                           <el-select
-                            v-model="params.mistake_tag"
+                            v-model="params.process_tag"
                             filterable
                             default-first-option
                             reserve-keyword
-                            placeholder="请选择处理类别"
+                            placeholder="请选择错误类别"
                           >
                             <el-option
-                              v-for="item in optionsMistake"
+                              v-for="item in optionsProcess"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -808,20 +825,20 @@
 
 <script>
 import {
-  getOriMaintenanceSubmitList,
-  createOriMaintenanceSubmit,
-  updateOriMaintenanceSubmit,
-  exportOriMaintenanceSubmit,
-  excelImportOriMaintenanceSubmit,
-  checkOriMaintenanceSubmit,
-  fixOriMaintenanceSubmit,
-  rejectOriMaintenanceSubmit
-} from '@/api/crm/service/orimaintenance/orimaintenancesubmit'
+  getOriMaintenanceList,
+  createOriMaintenance,
+  updateOriMaintenance,
+  exportOriMaintenance,
+  excelImportOriMaintenance,
+  checkOriMaintenance,
+  rejectOriMaintenance
+} from '@/api/crm/service/orimaintenance/orimaintenance'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
+
 export default {
-  name: 'submitExpressWorkOrder',
+  name: 'orimaintenance',
   data() {
     return {
       DataList: [],
@@ -837,35 +854,27 @@ export default {
       },
       dialogVisibleEdit: false,
       formEdit: {},
-      optionsMistake: [
+      optionsProcess: [
         {
           value: 0,
-          label: '正常'
+          label: '无异常'
         },
         {
           value: 1,
-          label: '尝试修复数据'
+          label: '未更新到'
         },
         {
           value: 2,
-          label: '二级市错误'
+          label: '取件超时'
         },
         {
           value: 3,
-          label: '寄件地区出错'
+          label: '到库超时'
         },
         {
           value: 4,
-          label: 'UT无此店铺'
-        },
-        {
-          value: 5,
-          label: 'UT此型号整机未创建'
-        },
-        {
-          value: 6,
-          label: 'UT系统无此店铺'
-        },
+          label: '维修超时'
+        }
       ],
       optionsJudgment: [
         {
@@ -925,7 +934,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriMaintenanceSubmitList(this.params).then(
+      getOriMaintenanceList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -964,7 +973,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateOriMaintenanceSubmit(id, data).then(
+      updateOriMaintenance(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1034,7 +1043,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOriMaintenanceSubmit(importformData, config).then(
+            excelImportOriMaintenance(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -1101,7 +1110,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriMaintenanceSubmit(this.params).then(
+            exportOriMaintenance(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
@@ -1214,7 +1223,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriMaintenanceSubmit(this.params).then(
+        checkOriMaintenance(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1270,126 +1279,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriMaintenanceSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-          }
-        )
-      }
-    },
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixOriMaintenanceSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixOriMaintenanceSubmit(this.params).then(
+        checkOriMaintenance(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1469,7 +1359,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectOriMaintenance(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1543,7 +1433,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriMaintenanceSubmit(this.params).then(
+              rejectOriMaintenance(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({

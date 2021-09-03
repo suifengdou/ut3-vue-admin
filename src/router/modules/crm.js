@@ -244,12 +244,7 @@ const crmChannelRouter = {
       component: () => import('@/views/crm/service'),
       meta: { title: '中央维修' },
       children: [
-        {
-          path: 'mantenancesummary',
-          component: () => import('@/views/crm/dialog/servicer'),
-          name: 'mantenancesummary',
-          meta: { title: '维修统计', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
-        },
+
         {
           path: 'orimaintenance',
           component: () => import('@/views/crm/service/orimaintenance'),
@@ -270,7 +265,7 @@ const crmChannelRouter = {
             },
             {
               path: 'orimaintenance',
-              component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetail'),
+              component: () => import('@/views/crm/service/orimaintenance/orimaintenance'),
               name: 'orimaintenance',
               meta: { title: '原始单-管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             }
@@ -278,13 +273,13 @@ const crmChannelRouter = {
         },
         {
           path: 'maintenance',
-          component: () => import('@/views/crm/dialog/dialogjd'),
+          component: () => import('@/views/crm/service/maintenance'),
           name: 'maintenance',
           meta: { title: '维修单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
           children: [
             {
               path: 'maintenancesubmit',
-              component: () => import('@/views/crm/dialog/dialogjd/dialogjd'),
+              component: () => import('@/views/crm/service/maintenance/maintenancesubmit'),
               name: 'maintenancesubmit',
               meta: { title: '维修单-计算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
@@ -301,6 +296,12 @@ const crmChannelRouter = {
               meta: { title: '维修单-管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             }
           ]
+        },
+        {
+          path: 'mantenancesummary',
+          component: () => import('@/views/crm/dialog/servicer'),
+          name: 'mantenancesummary',
+          meta: { title: '维修统计', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
 
       ]
