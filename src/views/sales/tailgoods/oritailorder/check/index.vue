@@ -864,10 +864,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         setLogisticsOritailorderCheck(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -920,10 +920,10 @@ export default {
         this.params.ids = ids
         setLogisticsOritailorderCheck(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -978,10 +978,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         recoverOritailorderCheck(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1034,10 +1034,10 @@ export default {
         this.params.ids = ids
         recoverOritailorderCheck(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0

@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">计算</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -1198,125 +1197,6 @@ export default {
         )
       }
     },
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixMaintenanceSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixMaintenanceSubmit(this.params).then(
-          res => {
-            if (res.data.success !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-          }
-        )
-      }
-    },
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -1325,7 +1205,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消保修单！无法再次导入，请慎重选择！'),
+          h('span', null, '驳回保修单到原始单界面！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1339,10 +1219,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectMaintenanceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1413,10 +1293,10 @@ export default {
               this.params.ids = ids
               rejectMaintenanceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0

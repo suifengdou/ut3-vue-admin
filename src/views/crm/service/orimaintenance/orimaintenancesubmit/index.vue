@@ -1216,10 +1216,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         checkOriMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1272,10 +1272,10 @@ export default {
         this.params.ids = ids
         checkOriMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1335,10 +1335,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         fixOriMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1391,10 +1391,10 @@ export default {
         this.params.ids = ids
         fixOriMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1471,10 +1471,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectOriMaintenanceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1545,10 +1545,10 @@ export default {
               this.params.ids = ids
               rejectOriMaintenanceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0

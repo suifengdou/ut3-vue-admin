@@ -302,6 +302,12 @@ const crmChannelRouter = {
           component: () => import('@/views/crm/service/maintenancesummary'),
           name: 'mantenancesummary',
           meta: { title: '维修统计', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
+          path: 'findandfound',
+          component: () => import('@/views/crm/service/findandfound'),
+          name: 'findandfound',
+          meta: { title: '二次明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
 
       ]

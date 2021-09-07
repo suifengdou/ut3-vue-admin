@@ -1214,10 +1214,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         checkOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1270,10 +1270,10 @@ export default {
         this.params.ids = ids
         checkOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1328,10 +1328,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         setUsedOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1384,10 +1384,10 @@ export default {
         this.params.ids = ids
         setUsedOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1442,10 +1442,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         setRetreadOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1498,10 +1498,10 @@ export default {
         this.params.ids = ids
         setRetreadOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1556,10 +1556,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         setSpecialOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1612,10 +1612,10 @@ export default {
         this.params.ids = ids
         setSpecialOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1670,10 +1670,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         recoverOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1726,10 +1726,10 @@ export default {
         this.params.ids = ids
         recoverOritailorderSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1801,10 +1801,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectOritailorderSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1868,10 +1868,10 @@ export default {
               this.params.ids = ids
               rejectOritailorderSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0

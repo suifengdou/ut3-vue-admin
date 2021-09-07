@@ -801,10 +801,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         checkMOExportSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -857,10 +857,10 @@ export default {
         this.params.ids = ids
         checkMOExportSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -932,10 +932,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectMOExportSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -999,10 +999,10 @@ export default {
               this.params.ids = ids
               rejectMOExportSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1083,10 +1083,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectDealerOriInvoiceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '驳回成功',
-                      message: `驳回成功条数：${res.data.success}`,
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1150,10 +1150,10 @@ export default {
               this.params.ids = ids
               rejectDealerOriInvoiceSubmit(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
                       title: '驳回成功',
-                      message: `驳回成功条数：${res.data.success}`,
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0

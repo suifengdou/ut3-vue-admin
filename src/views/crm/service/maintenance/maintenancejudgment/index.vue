@@ -9,9 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">计算</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -1014,10 +1013,10 @@ export default {
         this.params.ids = ids
         checkMaintenanceJudgment(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1077,10 +1076,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         fixMaintenanceJudgment(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1133,10 +1132,10 @@ export default {
         this.params.ids = ids
         fixMaintenanceJudgment(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1195,16 +1194,16 @@ export default {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '取消工单',
+        title: '驳回工单',
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消保修单！无法再次导入，请慎重选择！'),
+          h('span', null, '驳回保修单！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
         confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        cancelButtonText: '驳回',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             this.tableLoading = true
@@ -1213,10 +1212,10 @@ export default {
             if (this.params.allSelectTag === 1) {
               rejectMaintenanceJudgment(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1224,8 +1223,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -1274,7 +1273,7 @@ export default {
               if (typeof (this.multipleSelection) === 'undefined') {
                 this.$notify({
                   title: '错误详情',
-                  message: '未选择订单无法取消',
+                  message: '未选择订单无法驳回',
                   type: 'error',
                   offset: 70,
                   duration: 0
@@ -1287,10 +1286,10 @@ export default {
               this.params.ids = ids
               rejectMaintenanceJudgment(this.params).then(
                 res => {
-                  if (res.data.success !== 0) {
+                  if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 0
@@ -1298,8 +1297,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
