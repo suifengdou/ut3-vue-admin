@@ -33,7 +33,7 @@ export function updateInboundDetailValid(id, data) {
 // 导出工单
 export function exportInboundDetailValid(data) {
   return request({
-    url: `/psi/inbound/inbounddetailvalid/`,
+    url: `/psi/inbound/inbounddetailvalid/export/`,
     method: 'patch',
     data
   })

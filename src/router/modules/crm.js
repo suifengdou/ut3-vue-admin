@@ -285,13 +285,13 @@ const crmChannelRouter = {
             },
             {
               path: 'maintenancejudgment',
-              component: () => import('@/views/crm/dialog/dialogjd/dialogjddetailsubmit'),
+              component: () => import('@/views/crm/service/maintenance/maintenancejudgment'),
               name: 'maintenancejudgment',
               meta: { title: '维修单-判责', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             },
             {
               path: 'maintenance',
-              component: () => import('@/views/crm/dialog/dialogjd/dialogjddetail'),
+              component: () => import('@/views/crm/service/maintenance/maintenance'),
               name: 'maintenance',
               meta: { title: '维修单-管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
             }
@@ -299,7 +299,7 @@ const crmChannelRouter = {
         },
         {
           path: 'mantenancesummary',
-          component: () => import('@/views/crm/dialog/servicer'),
+          component: () => import('@/views/crm/service/maintenancesummary'),
           name: 'mantenancesummary',
           meta: { title: '维修统计', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }

@@ -33,7 +33,7 @@ export function updateOriginDataSubmit(id, data) {
 // 导出工单
 export function exportOriginDataSubmit(data) {
   return request({
-    url: `/dfc/batchdata/origindatasubmit/`,
+    url: `/dfc/batchdata/origindatasubmit/export/`,
     method: 'patch',
     data
   })

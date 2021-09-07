@@ -33,7 +33,7 @@ export function updateInboundCheck(id, data) {
 // 导出工单
 export function exportInboundCheck(data) {
   return request({
-    url: `/psi/inbound/inboundcheck/`,
+    url: `/psi/inbound/inboundcheck/export/`,
     method: 'patch',
     data
   })

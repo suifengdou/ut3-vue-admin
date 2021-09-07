@@ -33,7 +33,7 @@ export function updateOriMaintenanceWorking(id, data) {
 // 导出工单
 export function exportOriMaintenanceWorking(data) {
   return request({
-    url: `/crm/service/orimaintenanceworking/`,
+    url: `/crm/service/orimaintenanceworking/export/`,
     method: 'patch',
     data
   })

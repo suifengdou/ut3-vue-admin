@@ -24,7 +24,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.machine_sn" class="grid-content bg-purple" placeholder="请输入序列号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -33,9 +33,6 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -59,17 +56,18 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="处理类别" prop="mistake_tag">
+                      <el-col :span="8"><el-form-item label="二次维修" prop="repeat_tag">
                         <template>
                           <el-select
-                            v-model="params.mistake_tag"
+                            v-model="params.repeat_tag"
                             filterable
                             default-first-option
                             reserve-keyword
-                            placeholder="请选择处理类别"
+                            multiple
+                            placeholder="请选择二次维修标记"
                           >
                             <el-option
-                              v-for="item in optionsMistake"
+                              v-for="item in optionsRepeat"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -78,10 +76,10 @@
                         </template>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                        <el-input v-model="params.machine_sn" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="店铺" prop="shop">
-                        <el-input v-model="params.shop" type="text" />
+                      <el-col :span="6"><el-form-item label="保修单号" prop="order_id">
+                        <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -174,17 +172,17 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
 
@@ -192,10 +190,39 @@
           label="重复维修标记"
           prop="repeat_tag"
           sortable="custom"
+          width="180"
+          :sort-orders="['ascending','descending']"
+
+        >
+          <template slot-scope="scope">
+            <div v-if="scope.row.found_tag==1">
+              <span>{{ scope.row.repeat_tag.name }}</span>
+            </div>
+            <div v-else>
+              <el-select
+                v-model="scope.row.repeat_tag.id"
+                reserve-keyword
+                placeholder="请选择重复维修标记"
+                @change="confirmResponsibility(scope.row)"
+              >
+                <el-option
+                  v-for="item in optionsRepeat"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="判责说明"
+          prop="memo"
+          sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.repeat_tag.name }}</span>
+            <span>{{ scope.row.memo }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -233,33 +260,7 @@
             <span>{{ scope.row.shop.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="省"
-          prop="province"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.province.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="市"
-          prop="city"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.city.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="区"
-          prop="district"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.district.name }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="货品"
           prop="goods_name"
@@ -430,6 +431,33 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="省"
+          prop="province"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.province.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="市"
+          prop="city"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.city.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="区"
+          prop="district"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.district.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建时间"
           prop="ori_create_time"
           sortable="custom"
@@ -543,128 +571,6 @@
         </el-table-column>
       </el-table>
     </div>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      ref="editdata"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rules"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>客户相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="客户网名" prop="buyer_nick">
-                  <el-input v-model="formEdit.buyer_nick" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户姓名" prop="sender_name">
-                  <el-input v-model="formEdit.sender_name" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户手机" prop="sender_mobile">
-                  <el-input v-model="formEdit.sender_mobile" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户省市县" prop="sender_area">
-                  <el-input v-model="formEdit.sender_area" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="18"><el-form-item label="收货地址" prop="sender_address">
-                  <el-input v-model="formEdit.sender_address" placeholder="请输入收货地址" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收发仓库" prop="warehouse">
-                  <el-input v-model="formEdit.warehouse" placeholder="请输入收发仓库" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="关联订单号" prop="send_order_id">
-                  <el-input v-model="formEdit.send_order_id" placeholder="请输入关联订单号" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="保修类型" prop="maintenance_type">
-                  <el-input v-model="formEdit.maintenance_type" placeholder="请输入保修类型" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="故障类型" prop="fault_type">
-                  <el-input v-model="formEdit.fault_type" placeholder="请输入故障类型" />
-                </el-form-item></el-col>
-              </el-row>
-
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>货品信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="保修货品商家编码" prop="goods_id">
-                  <el-input v-model="formEdit.goods_id" placeholder="请输入保修货品商家编码" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="保修货品名称" prop="goods_name">
-                  <el-input v-model="formEdit.goods_name" placeholder="请输入保修货品名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="保修结束语" prop="appraisal">
-                  <el-input v-model="formEdit.appraisal" placeholder="请输入保修结束语" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="送修类型" prop="transport_type">
-                  <el-input v-model="formEdit.transport_type" placeholder="请输入送修类型" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="序列号" prop="machine_sn">
-                  <el-input v-model="formEdit.machine_sn" placeholder="序列号" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="换新序列号" prop="new_machine_sn">
-                  <el-input v-model="formEdit.new_machine_sn" placeholder="请输入换新序列号" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="关联店铺" prop="shop">
-                  <el-input v-model="formEdit.shop" placeholder="请输入关联店铺" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="购买时间" prop="purchase_time">
-                  <el-date-picker
-                    v-model="formEdit.purchase_time"
-                    type="datetime"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item></el-col>
-              </el-row>
-
-            </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -676,15 +582,15 @@
 
 <script>
 import {
-  getMaintenanceSubmitList,
-  createMaintenanceSubmit,
-  updateMaintenanceSubmit,
-  exportMaintenanceSubmit,
-  excelImportMaintenanceSubmit,
-  checkMaintenanceSubmit,
-  fixMaintenanceSubmit,
-  rejectMaintenanceSubmit
-} from '@/api/crm/service/maintenance/maintenancesubmit'
+  getMaintenanceJudgmentList,
+  createMaintenanceJudgment,
+  updateMaintenanceJudgment,
+  exportMaintenanceJudgment,
+  excelImportMaintenanceJudgment,
+  checkMaintenanceJudgment,
+  fixMaintenanceJudgment,
+  rejectMaintenanceJudgment
+} from '@/api/crm/service/maintenance/maintenancejudgment'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -703,37 +609,23 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleEdit: false,
-      formEdit: {},
-      optionsMistake: [
-        {
-          value: 0,
-          label: '正常'
-        },
+      optionsRepeat: [
         {
           value: 1,
-          label: '尝试修复数据'
+          label: '未处理'
         },
         {
           value: 2,
-          label: '二级市错误'
+          label: '产品'
         },
         {
           value: 3,
-          label: '寄件地区出错'
+          label: '维修'
         },
         {
           value: 4,
-          label: 'UT无此店铺'
-        },
-        {
-          value: 5,
-          label: 'UT此型号整机未创建'
-        },
-        {
-          value: 6,
-          label: 'UT系统无此店铺'
-        },
+          label: '其他'
+        }
       ],
       optionsJudgment: [
         {
@@ -760,9 +652,14 @@ export default {
   methods: {
     fetchData() {
       // console.log('我开始运行了')
+      if (typeof (this.params.repeat_tag) !== 'undefined') {
+        this.params.repeat_tag__in = this.params.repeat_tag.toString()
+        delete this.params.repeat_tag
+      }
       console.log(this.params)
       this.tableLoading = true
       // console.log(this.params.create_time)
+      console.log(this.params)
       if (typeof (this.params.create_time) !== 'undefined') {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
@@ -793,7 +690,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getMaintenanceSubmitList(this.params).then(
+      getMaintenanceJudgmentList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -818,50 +715,6 @@ export default {
       this.params.page = val
       this.fetchData()
     },
-    // 跳出编辑对话框
-    handleEdit(values) {
-      console.log(values)
-      this.formEdit = { ...values }
-      this.dialogVisibleEdit = true
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      const { id, ...data } = this.formEdit
-      let attrStr
-      const transFieldStr = ['mistake_tag', 'towork_status', 'process_tag']
-      for (attrStr in transFieldStr) {
-        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-      }
-      updateMaintenanceSubmit(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
-          this.dialogVisibleEdit = false
-          this.fetchData()
-        },
-        err => {
-          this.$notify({
-            title: '修改出错',
-            message: err.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-        }
-      )
-
-    },
-
-    // 关闭修改界面
-    handleCancelEdit() {
-      this.dialogVisibleEdit = false
-      this.$refs.handleFormEdit.resetFields()
-    },
-
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -902,7 +755,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportMaintenanceSubmit(importformData, config).then(
+            excelImportMaintenanceJudgment(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -969,57 +822,48 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportMaintenanceSubmit(this.params).then(
+            exportMaintenanceJudgment(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
                   return {
+                    ID: item.id,
                     保修单号: item.order_id,
-                    保修单状态: item.order_status,
+                    店铺: item.shop.name,
+                    保修货品名称: item.goods_name.name,
                     收发仓库: item.warehouse,
-                    处理登记人: item.completer,
+
                     保修类型: item.maintenance_type,
                     故障类型: item.fault_type,
-                    送修类型: item.transport_type,
+
+                    省: item.province.name,
+                    市: item.city.name,
+                    区: item.district.name,
+
                     序列号: item.machine_sn,
                     换新序列号: item.new_machine_sn,
-                    关联订单号: item.send_order_id,
-                    保修结束语: item.appraisal,
-                    关联店铺: item.shop,
-                    购买时间: item.purchase_time,
-                    创建时间: item.ori_create_time,
-                    创建人: item.ori_creator,
-                    审核时间: item.handle_time,
-                    审核人: item.handler_name,
+
+                    重复维修标记: item.repeat_tag,
+                    发现二次维修: item.found_tag,
+                    处理登记人: item.completer,
                     保修完成时间: item.finish_time,
-                    保修金额: item.fee,
-                    保修数量: item.quantity,
-                    最后修改时间: item.last_handle_time,
+
                     客户网名: item.buyer_nick,
                     寄件客户姓名: item.sender_name,
                     寄件客户手机: item.sender_mobile,
-                    寄件客户省市县: item.sender_area,
-                    寄件客户地址: item.sender_address,
-                    收件物流公司: item.send_logistics_company,
-                    收件物流单号: item.send_logistics_no,
-                    收件备注: item.send_memory,
-                    寄回客户姓名: item.return_name,
-                    寄回客户手机: item.return_mobile,
-                    寄回省市区: item.return_area,
-                    寄回地址: item.return_address,
-                    寄件指定物流公司: item.return_logistics_company,
-                    寄件物流单号: item.return_logistics_no,
-                    寄件备注: item.return_memory,
-                    保修货品商家编码: item.goods_id,
-                    保修货品名称: item.goods_name,
-                    保修货品简称: item.goods_abbreviation,
+
+                    审核人: item.handler_name,
+                    审核时间: item.handle_time,
+                    创建人: item.ori_creator,
+                    创建时间: item.ori_create_time,
+
+                    保修结束语: item.appraisal,
                     故障描述: item.description,
                     是否在保修期内: item.is_guarantee,
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1077,17 +921,47 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 审核单据
+    // 修改二次维修原因
+    confirmResponsibility(row) {
+      console.log(row)
+      const { id, ...details } = row
+      const data = {
+        repeat_tag: details.repeat_tag.id
+      }
+      console.log(data, id)
+      updateMaintenanceJudgment(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 0
+          })
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 0
+          })
+        }
+      )
 
+    },
+    // 审核单据
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkMaintenanceSubmit(this.params).then(
+        checkMaintenanceJudgment(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1138,7 +1012,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkMaintenanceSubmit(this.params).then(
+        checkMaintenanceJudgment(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1201,7 +1075,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixMaintenanceSubmit(this.params).then(
+        fixMaintenanceJudgment(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1257,7 +1131,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixMaintenanceSubmit(this.params).then(
+        fixMaintenanceJudgment(this.params).then(
           res => {
             if (res.data.success !== 0) {
               this.$notify({
@@ -1337,7 +1211,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectMaintenanceSubmit(this.params).then(
+              rejectMaintenanceJudgment(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1411,7 +1285,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectMaintenanceSubmit(this.params).then(
+              rejectMaintenanceJudgment(this.params).then(
                 res => {
                   if (res.data.success !== 0) {
                     this.$notify({
@@ -1516,6 +1390,72 @@ export default {
       this.params = {
         page: 1
       }
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.repeat_tag.id === 1) {
+        row_style = {
+          backgroundColor: 'lightpink'
+        }
+      } else if (row.repeat_tag.id > 1) {
+        row_style = {
+          backgroundColor: 'palegreen'
+        }
+      }
+      return row_style
+    },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'memo') {
+        this.handleMemo(row)
+      }
+    },
+    handleMemo(row) {
+      this.$prompt('请输入反馈内容', '添加反馈', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.feedback,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            memo: value
+          }
+          updateMaintenanceJudgment(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
     }
   }
 }

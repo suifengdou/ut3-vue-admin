@@ -33,7 +33,7 @@ export function updateOrder(id, data) {
 // 导出工单
 export function exportOrder(data) {
   return request({
-    url: `/crm/order/ordersubmit/`,
+    url: `/crm/order/ordersubmit/export/`,
     method: 'patch',
     data
   })

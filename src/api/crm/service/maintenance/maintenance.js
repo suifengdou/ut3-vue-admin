@@ -33,7 +33,7 @@ export function updateMaintenance(id, data) {
 // 导出工单
 export function exportMaintenance(data) {
   return request({
-    url: `/crm/service/maintenance/`,
+    url: `/crm/service/maintenance/export/`,
     method: 'patch',
     data
   })

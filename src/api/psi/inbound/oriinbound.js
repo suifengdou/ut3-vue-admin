@@ -33,7 +33,7 @@ export function updateOriInbound(id, data) {
 // 导出工单
 export function exportOriInbound(data) {
   return request({
-    url: `/psi/inbound/oriinboundsubmit/`,
+    url: `/psi/inbound/oriinboundsubmit/export/`,
     method: 'patch',
     data
   })

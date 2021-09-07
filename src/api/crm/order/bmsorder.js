@@ -33,7 +33,7 @@ export function updateBMSOrder(id, data) {
 // 导出工单
 export function exportBMSOrder(data) {
   return request({
-    url: `/crm/order/bmsordersubmit/`,
+    url: `/crm/order/bmsordersubmit/export/`,
     method: 'patch',
     data
   })

@@ -33,7 +33,7 @@ export function updateOriOrder(id, data) {
 // 导出工单
 export function exportOriOrder(data) {
   return request({
-    url: `/crm/order/oriordersubmit/`,
+    url: `/crm/order/oriordersubmit/export/`,
     method: 'patch',
     data
   })

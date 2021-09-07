@@ -13,7 +13,7 @@ export function getMODetailList(params) {
 // 导出工单
 export function exportMODetail(data) {
   return request({
-    url: `/dfc/manualorder/mogoodsmanage/`,
+    url: `/dfc/manualorder/mogoodsmanage/export/`,
     method: 'patch',
     data
   })

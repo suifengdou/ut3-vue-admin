@@ -33,7 +33,7 @@ export function updateServicer(id, data) {
 // 导出
 export function exportServicer(data) {
   return request({
-    url: `/crm/dialog/servicer/`,
+    url: `/crm/dialog/servicer/export/`,
     method: 'patch',
     data
   })

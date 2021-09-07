@@ -33,7 +33,7 @@ export function updateInventoryManage(id, data) {
 // 导出工单
 export function exportInventoryManage(data) {
   return request({
-    url: `/psi/inventory/inventorymanage/`,
+    url: `/psi/inventory/inventorymanage/export/`,
     method: 'patch',
     data
   })

@@ -33,7 +33,7 @@ export function updateCustomer(id, data) {
 // 导出工单
 export function exportCustomer(data) {
   return request({
-    url: `/crm/customers/csmanage/`,
+    url: `/crm/customers/csmanage/export/`,
     method: 'patch',
     data
   })

@@ -33,7 +33,7 @@ export function updateOutbound(id, data) {
 // 导出工单
 export function exportOutbound(data) {
   return request({
-    url: `/psi/outbound/outboundsubimt/`,
+    url: `/psi/outbound/outboundsubimt/export/`,
     method: 'patch',
     data
   })

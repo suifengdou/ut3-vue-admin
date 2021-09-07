@@ -33,7 +33,7 @@ export function updateCallLog(id, data) {
 // 导出工单
 export function exportCallLog(data) {
   return request({
-    url: `/crm/callcenter/calllog/`,
+    url: `/crm/callcenter/calllog/export/`,
     method: 'patch',
     data
   })

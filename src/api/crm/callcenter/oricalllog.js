@@ -33,7 +33,7 @@ export function updateOriCallLog(id, data) {
 // 导出工单
 export function exportOriCallLog(data) {
   return request({
-    url: `/crm/callcenter/oricalllog/`,
+    url: `/crm/callcenter/oricalllog/export/`,
     method: 'patch',
     data
   })

@@ -33,7 +33,7 @@ export function updateDialogTB(id, data) {
 // 导出工单
 export function exportDialogTB(data) {
   return request({
-    url: `/crm/dialog/dialogtb/`,
+    url: `/crm/dialog/dialogtb/export/`,
     method: 'patch',
     data
   })

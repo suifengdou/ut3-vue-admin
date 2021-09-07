@@ -33,7 +33,7 @@ export function updateDialogTBDetailSubmit(id, data) {
 // 导出工单
 export function exportDialogTBDetailSubmit(data) {
   return request({
-    url: `/crm/dialog/dialogtbdetailsubmit/`,
+    url: `/crm/dialog/dialogtbdetailsubmit/export/`,
     method: 'patch',
     data
   })

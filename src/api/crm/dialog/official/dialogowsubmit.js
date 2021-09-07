@@ -33,7 +33,7 @@ export function updateDialogOWSubmit(id, data) {
 // 导出工单
 export function exportDialogOWSubmit(data) {
   return request({
-    url: `/crm/dialog/dialogowsubmit/`,
+    url: `/crm/dialog/dialogowsubmit/export/`,
     method: 'patch',
     data
   })
