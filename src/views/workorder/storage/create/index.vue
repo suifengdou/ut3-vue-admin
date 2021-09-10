@@ -787,7 +787,7 @@ export default {
             title: '导入结果',
             message: res.data,
             type: 'success',
-            duration: 0
+            duration: 3000
           })
         },
         error => {

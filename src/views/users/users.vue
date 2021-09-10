@@ -1011,7 +1011,7 @@ export default {
             title: '修改工单反馈成功',
             type: 'success',
             offset: 70,
-            duration: 0
+            duration: 3000
           })
           this.closeFeedback()
         },

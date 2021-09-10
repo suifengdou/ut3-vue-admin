@@ -610,6 +610,10 @@ export default {
       },
       optionsRepeat: [
         {
+          value: 0,
+          label: '正常'
+        },
+        {
           value: 1,
           label: '未处理'
         },
@@ -921,7 +925,7 @@ export default {
       console.log('我是全选的' + this.selectNum)
     },
     // 修改二次维修原因
-    confirmResponsibility(row) {
+    confirmSign(row) {
       console.log(row)
       const { id, ...details } = row
       const data = {
@@ -1384,12 +1388,13 @@ export default {
         }
       }
     },
-
+    // 清楚筛选条件
     resetParams() {
       this.params = {
         page: 1
       }
     },
+    // 行样式
     rowStyle({ row, rowIndex}) {
       let row_style = {}
       if (row.repeat_tag.id === 1) {
@@ -1403,11 +1408,13 @@ export default {
       }
       return row_style
     },
+    // 双击修改
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'memo') {
         this.handleMemo(row)
       }
     },
+    // 修改备注
     handleMemo(row) {
       this.$prompt('请输入反馈内容', '添加反馈', {
         confirmButtonText: '确定',
