@@ -9,8 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCollect">提取</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleAbandon">丢弃</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -32,21 +32,10 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增</el-button>
-            </el-tooltip>
-          </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -79,20 +68,20 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
+                      <el-col :span="6"><el-form-item label="内容类型">
+                        <el-select v-model="params.category" placeholder="内容类型">
                           <el-option
-                            v-for="item in optionsJudgment"
+                            v-for="item in optionsCategory"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
+                      <el-col :span="6"><el-form-item label="角色">
+                        <el-select v-model="params.d_status" placeholder="角色">
                           <el-option
-                            v-for="item in optionsJudgment"
+                            v-for="item in optionsStatus"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -143,6 +132,7 @@
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
+          width="120"
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
@@ -155,17 +145,24 @@
           label="店铺"
           prop="dialog"
           sortable="custom"
-          width="120px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dialog.shop }}</span>
           </template>
         </el-table-column>
         <el-table-column
+          label="错误标识"
+          prop="mistake_tag"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="客户网名"
           prop="dialog"
           sortable="custom"
-          width="120px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dialog.name }}</span>
@@ -175,7 +172,6 @@
           label="讲话人"
           prop="sayer"
           sortable="custom"
-          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.sayer }}</span>
@@ -185,16 +181,16 @@
           label="讲话时间"
           prop="time"
           sortable="custom"
-          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.time }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="讲话人身份"
+          label="角色"
           prop="d_status"
           sortable="custom"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.d_status.name }}</span>
@@ -204,7 +200,6 @@
           label="讲话内容"
           prop="content"
           sortable="custom"
-          width="300px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.content }}</span>
@@ -215,9 +210,17 @@
           prop="category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="ERP单号"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -225,6 +228,7 @@
           prop="creator"
           sortable="custom"
           :sort-orders="['ascending','descending']"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.creator }}</span>
@@ -232,7 +236,6 @@
         </el-table-column>
         <el-table-column
           label="创建时间"
-          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.create_time }}</span>
@@ -240,7 +243,6 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
-          width="100px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.update_time }}</span>
@@ -249,143 +251,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增"
-      width="60%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>客户相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客户网名" prop="buyer_nick">
-              <el-input v-model="formAdd.buyer_nick" placeholder="请输入客户网名" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="订单编号" prop="trade_no">
-              <el-input v-model="formAdd.trade_no" placeholder="请输入订单编号" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="原始子订单号" prop="src_tids">
-              <el-input v-model="formAdd.src_tids" placeholder="请输入原始子订单号" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件人" prop="receiver_name">
-              <el-input v-model="formAdd.receiver_name" placeholder="请输入收件人" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收件人手机" prop="receiver_mobile">
-              <el-input v-model="formAdd.receiver_mobile" placeholder="请输入收件人手机" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收货地区" prop="receiver_area">
-              <el-input v-model="formAdd.receiver_area" placeholder="请输入收货地区" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="收货地址" prop="receiver_address">
-              <el-input v-model="formAdd.receiver_address" placeholder="请输入收货地址" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>货品信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="货品名称" prop="goods_name">
-              <el-input v-model="formAdd.goods_name" placeholder="请输入货品名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="商家编码" prop="spec_code">
-              <el-input v-model="formAdd.spec_code" placeholder="请输入商家编码" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="货品数量" prop="num">
-              <el-input v-model="formAdd.num" placeholder="请输入货品名称" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="成交价" prop="price">
-              <el-input v-model="formAdd.price" placeholder="请输入成交价" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="货品成交总价" prop="share_amount">
-              <el-input v-model="formAdd.share_amount" placeholder="请输入货品成交总价" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>其他信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺" prop="shop_name">
-              <el-input v-model="formAdd.shop_name" placeholder="请输入店铺" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="仓库" prop="warehouse_name">
-              <el-input v-model="formAdd.warehouse_name" placeholder="请输入仓库" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="订单类型" prop="order_category">
-              <el-input v-model="formAdd.order_category" placeholder="请输入订单类型" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="物流公司" prop="logistics_name">
-              <el-input v-model="formAdd.logistics_name" placeholder="请输入物流公司" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="物流单号" prop="logistics_no">
-              <el-input v-model="formAdd.logistics_no" placeholder="请输入物流单号" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="付款时间" prop="pay_time">
-              <el-date-picker
-                v-model="formAdd.pay_time"
-                type="datetime"
-                placeholder="选择日期时间">
-              </el-date-picker>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="发货时间" prop="deliver_time">
-              <el-date-picker
-                v-model="formAdd.deliver_time"
-                type="datetime"
-                placeholder="选择日期时间">
-              </el-date-picker>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="买家留言" prop="buyer_message">
-              <el-input v-model="formAdd.buyer_message" placeholder="请输入买家留言" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客服备注" prop="cs_remark">
-              <el-input v-model="formAdd.cs_remark" placeholder="请输入客服备注" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--修改信息模态窗-->
     <el-dialog
       title="编辑"
@@ -406,109 +271,48 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>客户相关信息</span>
+                <span>对话相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="客户网名" prop="buyer_nick">
-                  <el-input v-model="formEdit.buyer_nick" placeholder="请输入客户网名" />
+                <el-col :span="8"><el-form-item label="店铺">
+                  <template v-if="formEdit.dialog">
+                    <span>{{ formEdit.dialog.shop }}</span>
+                  </template>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="订单编号" prop="trade_no">
-                  <el-input v-model="formEdit.trade_no" placeholder="请输入订单编号" />
+                <el-col :span="8"><el-form-item label="客户">
+                  <template v-if="formEdit.dialog">
+                    <span>{{ formEdit.dialog.name }}</span>
+                  </template>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="原始子订单号" prop="src_tids">
-                  <el-input v-model="formEdit.src_tids" placeholder="请输入原始子订单号" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收件人" prop="receiver_name">
-                  <el-input v-model="formEdit.receiver_name" placeholder="请输入收件人" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收件人手机" prop="receiver_mobile">
-                  <el-input v-model="formEdit.receiver_mobile" placeholder="请输入收件人手机" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收货地区" prop="receiver_area">
-                  <el-input v-model="formEdit.receiver_area" placeholder="请输入收货地区" />
+                <el-col :span="8"><el-form-item label="讲话人" prop="sayer">
+                  <span>{{ formEdit.sayer }}</span>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="18"><el-form-item label="收货地址" prop="receiver_address">
-                  <el-input v-model="formEdit.receiver_address" placeholder="请输入收货地址" />
+                <el-col :span="6"><el-form-item label="内容类型">
+                  <el-select v-model="formEdit.category" placeholder="内容类型">
+                    <el-option
+                      v-for="item in optionsCategory"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
                 </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>货品信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="货品名称" prop="goods_name">
-                  <el-input v-model="formEdit.goods_name" placeholder="请输入货品名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="商家编码" prop="spec_code">
-                  <el-input v-model="formEdit.spec_code" placeholder="请输入商家编码" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="货品数量" prop="num">
-                  <el-input v-model="formEdit.num" placeholder="请输入货品名称" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="成交价" prop="price">
-                  <el-input v-model="formEdit.price" placeholder="请输入成交价" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="货品成交总价" prop="share_amount">
-                  <el-input v-model="formEdit.share_amount" placeholder="请输入货品成交总价" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="店铺" prop="shop_name">
-                  <el-input v-model="formEdit.shop_name" placeholder="请输入店铺" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="仓库" prop="warehouse_name">
-                  <el-input v-model="formEdit.warehouse_name" placeholder="请输入仓库" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="订单类型" prop="order_category">
-                  <el-input v-model="formEdit.order_category" placeholder="请输入订单类型" />
+                <el-col :span="6"><el-form-item label="角色">
+                  <el-select v-model="formEdit.d_status" placeholder="角色">
+                    <el-option
+                      v-for="item in optionsStatus"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="物流公司" prop="logistics_name">
-                  <el-input v-model="formEdit.logistics_name" placeholder="请输入物流公司" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="物流单号" prop="logistics_no">
-                  <el-input v-model="formEdit.logistics_no" placeholder="请输入物流单号" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="付款时间" prop="pay_time">
-                  <el-date-picker
-                    v-model="formEdit.pay_time"
-                    type="datetime"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="发货时间" prop="deliver_time">
-                  <el-date-picker
-                    v-model="formEdit.deliver_time"
-                    type="datetime"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="买家留言" prop="buyer_message">
-                  <el-input v-model="formEdit.buyer_message" placeholder="请输入买家留言" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="客服备注" prop="cs_remark">
-                  <el-input v-model="formEdit.cs_remark" placeholder="请输入客服备注" />
+                <el-col :span="23"><el-form-item label="内容" prop="content">
+                  <el-input v-model="formEdit.content" placeholder="请输入内容" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -538,12 +342,10 @@
 <script>
 import {
   getDialogJDDetailSubmitList,
-  createDialogJDDetailSubmit,
   updateDialogJDDetailSubmit,
   exportDialogJDDetailSubmit,
-  excelImportDialogJDDetailSubmit,
-  checkDialogJDDetailSubmit,
-  rejectDialogJDDetailSubmit
+  collectDialogJDDetailSubmit,
+  abandonDialogJDDetailSubmit
 } from '@/api/crm/dialog/jd/dialogjddetailsubmit'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
@@ -563,18 +365,30 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      formAdd: {},
       formEdit: {},
-      optionsJudgment: [
+      optionsCategory: [
         {
-          value: true,
-          label: '是'
+          value: 0,
+          label: '常规'
         },
         {
-          value: false,
-          label: '否'
+          value: 1,
+          label: '订单'
+        }
+      ],
+      optionsStatus: [
+        {
+          value: 0,
+          label: '顾客'
+        },
+        {
+          value: 1,
+          label: '客服'
+        },
+        {
+          value: 2,
+          label: '机器人'
         }
       ],
       rules: {
@@ -678,23 +492,26 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
+      this.formEdit.d_status = this.formEdit.d_status.id
+      this.formEdit.category = this.formEdit.category.id
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
       let attrStr
-      const transFieldStr = ['mistake_tag', 'order_status', 'process_tag']
+      const transFieldStr = ['mistake_tag', 'order_status']
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
+      delete data.dialog
       updateDialogJDDetailSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.dialogVisibleEdit = false
           this.fetchData()
@@ -711,130 +528,10 @@ export default {
       )
 
     },
-
     // 关闭修改界面
     handleCancelEdit() {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetails()
-    },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      createDialogJDDetailSubmit(this.formAdd).then(
-        () => {
-          this.$notify({
-            title: '创建成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        this.$notify({
-          title: '创建出错',
-          message: res.data,
-          type: 'success',
-          offset: 0,
-          duration: 0
-        })
-      })
-    },
-    // 检索用户组选项
-    unique(arr) {
-      // 根据唯一标识no来对数组进行过滤
-      // 定义常量 res,值为一个Map对象实例
-      const res = new Map()
-      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
-      // 如果res中没有某个键，就设置这个键的值为1
-      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportDialogJDDetailSubmit(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
     },
     // 导出
     exportExcel() {
@@ -945,24 +642,24 @@ export default {
     },
     // 审核单据
 
-    handleCheck() {
+    handleCollect() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkDialogJDDetailSubmit(this.params).then(
+        collectDialogJDDetailSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '提取成功',
+                message: `提取成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '提取失败',
+                message: `提取失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1004,21 +701,21 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkDialogJDDetailSubmit(this.params).then(
+        collectDialogJDDetailSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '提取成功',
+                message: `提取成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '提取失败',
+                message: `提取失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1059,7 +756,7 @@ export default {
         )
       }
     },
-    handleReject() {
+    handleAbandon() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -1067,7 +764,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次导入，请慎重选择！'),
+          h('span', null, '丢弃此对话，不对此对话提取订单！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1079,21 +776,21 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectDialogJDDetailSubmit(this.params).then(
+              abandonDialogJDDetailSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '丢弃成功',
+                      message: `丢弃成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '丢弃失败',
+                      message: `丢弃败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -1146,21 +843,21 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectDialogJDDetailSubmit(this.params).then(
+              abandonDialogJDDetailSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '丢弃成功',
+                      message: `丢弃成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '丢弃失败',
+                      message: `丢弃败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0

@@ -143,6 +143,7 @@
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
+          width="90"
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
@@ -544,7 +545,7 @@ export default {
             title: '修改成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.dialogVisibleEdit = false
           this.fetchData()
@@ -585,7 +586,7 @@ export default {
             title: '创建成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.fetchData()
           this.handleCancelAdd()
@@ -646,7 +647,7 @@ export default {
                   title: '导入结果',
                   message: res.data,
                   type: 'success',
-                  duration: 0
+                  duration: 3000
                 })
                 instance.confirmButtonLoading = false
                 document.getElementsByName("importfile")[0].type = 'text'
@@ -659,7 +660,7 @@ export default {
                 this.$notify({
                   title: '失败原因',
                   message: err.data,
-                  type: 'success',
+                  type: 'error',
                   duration: 0
                 })
                 instance.confirmButtonLoading = false
@@ -806,7 +807,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -862,7 +863,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -937,7 +938,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1004,7 +1005,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {

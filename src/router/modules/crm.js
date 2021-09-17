@@ -203,7 +203,7 @@ const crmChannelRouter = {
             },
             {
               path: 'dialogowdetail',
-              component: () => import('@/views/crm/customers/manage'),
+              component: () => import('@/views/crm/dialog/dialogow/dialogowdetail'),
               name: 'dialogowdetail',
               meta: { title: '官网对话-信息', roles: ['dialog.view_dialogowdetail', 'AllPrivileges'] }
             },

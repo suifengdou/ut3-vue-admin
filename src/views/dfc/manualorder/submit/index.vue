@@ -253,6 +253,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="UT单号"
+          prop="erp_order_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="收件人"
           prop="receiver"
           sortable="custom"
@@ -1289,7 +1298,7 @@ export default {
                   title: '导入结果',
                   message: res.data,
                   type: 'success',
-                  duration: 0
+                  duration: 3000
                 })
                 instance.confirmButtonLoading = false
                 document.getElementsByName("importfile")[0].type = 'text'
@@ -1302,7 +1311,7 @@ export default {
                 this.$notify({
                   title: '失败原因',
                   message: err.data,
-                  type: 'success',
+                  type: 'error',
                   duration: 0
                 })
                 instance.confirmButtonLoading = false
@@ -1444,7 +1453,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1500,7 +1509,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1575,7 +1584,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1642,7 +1651,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1726,7 +1735,7 @@ export default {
                       message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1793,7 +1802,7 @@ export default {
                       message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {

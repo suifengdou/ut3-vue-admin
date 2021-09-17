@@ -143,6 +143,7 @@
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
+          width="120"
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
@@ -192,9 +193,10 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="讲话人身份"
+          label="角色"
           prop="d_status"
           sortable="custom"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.d_status.name }}</span>
@@ -204,7 +206,6 @@
           label="讲话内容"
           prop="content"
           sortable="custom"
-          width="300px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.content }}</span>
@@ -215,6 +216,7 @@
           prop="category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.category.name }}</span>
@@ -225,6 +227,7 @@
           prop="creator"
           sortable="custom"
           :sort-orders="['ascending','descending']"
+          width="90"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.creator }}</span>

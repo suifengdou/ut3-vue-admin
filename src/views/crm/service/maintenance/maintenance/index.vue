@@ -901,7 +901,7 @@ export default {
             title: '修改成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.dialogVisibleEdit = false
           this.fetchData()

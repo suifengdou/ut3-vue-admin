@@ -143,6 +143,7 @@
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
+          width="120"
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
@@ -537,14 +538,14 @@
 
 <script>
 import {
-  getDialogJDDetailList,
-  createDialogJDDetail,
-  updateDialogJDDetail,
-  exportDialogJDDetail,
-  excelImportDialogJDDetail,
-  checkDialogJDDetail,
-  rejectDialogJDDetail
-} from '@/api/crm/dialog/jd/dialogjddetail'
+  getDialogOWDetailList,
+  createDialogOWDetail,
+  updateDialogOWDetail,
+  exportDialogOWDetail,
+  excelImportDialogOWDetail,
+  checkDialogOWDetail,
+  rejectDialogOWDetail
+} from '@/api/crm/dialog/official/dialogowdetail'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -649,7 +650,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getDialogJDDetailList(this.params).then(
+      getDialogOWDetailList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -688,7 +689,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateDialogJDDetail(id, data).then(
+      updateDialogOWDetail(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -729,7 +730,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createDialogJDDetail(this.formAdd).then(
+      createDialogOWDetail(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -790,7 +791,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportDialogJDDetail(importformData, config).then(
+            excelImportDialogOWDetail(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -857,7 +858,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportDialogJDDetail(this.params).then(
+            exportDialogOWDetail(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -948,7 +949,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkDialogJDDetail(this.params).then(
+        checkDialogOWDetail(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1004,7 +1005,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkDialogJDDetail(this.params).then(
+        checkDialogOWDetail(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1079,7 +1080,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectDialogJDDetail(this.params).then(
+              rejectDialogOWDetail(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1146,7 +1147,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectDialogJDDetail(this.params).then(
+              rejectDialogOWDetail(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({

@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.manual_order" class="grid-content bg-purple" placeholder="请输入单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -37,39 +37,19 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="店铺" prop="shop">
+                      <el-col :span="6"><el-form-item label="货品" prop="goods_name">
                         <template>
                           <el-select
-                            v-model="params.shop"
+                            v-model="params.goods_name"
                             filterable
                             default-first-option
                             remote
                             reserve-keyword
-                            placeholder="请搜索并选择店铺"
-                            :remote-method="remoteMethodShop"
+                            placeholder="请搜索并选择货品"
+                            :remote-method="remoteMethodGoods"
                           >
                             <el-option
-                              v-for="item in optionsShop"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
+                              v-for="item in optionsGoods"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -80,34 +60,11 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
+                      <el-col :span="6"><el-form-item label="单号" prop="manual_order">
+                        <el-input v-model="params.manual_order" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4" />
-                      <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
@@ -170,6 +127,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="ERP单号"
+          prop="manual_order"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.manual_order.erp_order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="单据状态"
           prop="order_status"
           sortable="custom"
@@ -191,7 +158,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="手册"
+          label="手机"
           prop="manual_order"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -209,16 +176,7 @@
             <span>{{ scope.row.manual_order.address }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="ERP单号"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.erp_order_id }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="单据类型"
           prop="manual_order"
@@ -227,6 +185,29 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.manual_order.order_category }}</span>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column
+          label="货品编码"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="数量"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -279,28 +260,6 @@
             <span>{{ scope.row.manual_order.description }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="货品编码"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品名称"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="数量"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column
           label="创建者"
           prop="creator"

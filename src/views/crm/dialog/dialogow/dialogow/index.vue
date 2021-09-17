@@ -369,13 +369,16 @@
         </el-table-column>
         <el-table-column
           label="是否建配件工单"
-          prop="is_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.is_order }}</span>
+            <el-switch
+              v-model="scope.row.is_order"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
           </template>
+
         </el-table-column>
         <el-table-column
           label="购买店铺"

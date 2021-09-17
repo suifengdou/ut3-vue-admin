@@ -58,18 +58,18 @@ export function fixDialogJDDetailSubmit(data) {
 }
 
 // 审核工单
-export function checkDialogJDDetailSubmit(data) {
+export function collectDialogJDDetailSubmit(data) {
   return request({
-    url: `/crm/dialog/dialogjddetailsubmit/check/`,
+    url: `/crm/dialog/dialogjddetailsubmit/collect/`,
     method: 'patch',
     data
   })
 }
 
 // 取消工单
-export function rejectDialogJDDetailSubmit(data) {
+export function abandonDialogJDDetailSubmit(data) {
   return request({
-    url: `/crm/dialog/dialogjddetailsubmit/reject/`,
+    url: `/crm/dialog/dialogjddetailsubmit/abandon/`,
     method: 'patch',
     data
   })

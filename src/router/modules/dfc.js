@@ -24,31 +24,111 @@ const dfcRouter = {
           path: 'mosubmit',
           component: () => import('@/views/dfc/manualorder/submit'),
           name: 'mosubmit',
-          meta: { title: '订单递交' }
-        },
-        {
-          path: 'mogoodsmanage',
-          component: () => import('@/views/dfc/manualorder/modetail'),
-          name: 'mogoodsmanage',
-          meta: { title: '明细管理' }
+          meta: { title: '订单递交', roles: ['users.view_userprofile', 'AllPrivileges'] }
         },
         {
           path: 'momanage',
           component: () => import('@/views/dfc/manualorder/manage'),
           name: 'momanage',
-          meta: { title: '订单管理' }
+          meta: { title: '订单管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
+        },
+        {
+          path: 'mogoodsmanage',
+          component: () => import('@/views/dfc/manualorder/modetail'),
+          name: 'mogoodsmanage',
+          meta: { title: '明细管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
         },
         {
           path: 'moexport',
           component: () => import('@/views/dfc/manualorder/export/submit'),
           name: 'moexport',
-          meta: { title: '格式输出' }
+          meta: { title: '格式输出', roles: ['users.view_userprofile', 'AllPrivileges'] }
         },
         {
           path: 'moexportmanage',
           component: () => import('@/views/dfc/manualorder/export/manage'),
           name: 'moexportmanage',
-          meta: { title: '输出管理' }
+          meta: { title: '输出管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
+        }
+      ]
+    },
+    {
+      path: 'compensation',
+      name: '财务差价',
+      component: () => import('@/views/dfc/compensation'),
+      meta: { title: '财务差价' },
+      children: [
+        {
+          path: 'compensation',
+          component: () => import('@/views/dfc/compensation/compensation'),
+          name: '原始差价单',
+          meta: { title: '原始差价单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'submit',
+              component: () => import('@/views/dfc/compensation/compensation/submit'),
+              name: '原始差价单提交',
+              meta: { title: '原始差价单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/sales/tailgoods/oritailorder/manage'),
+              name: '原始差价单管理',
+              meta: { title: '原始尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'batchcompensation',
+          component: () => import('@/views/dfc/compensation/batch'),
+          name: '差价汇总单',
+          meta: { title: '差价汇总单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'submit',
+              component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
+              name: '差价汇总单提交',
+              meta: { title: '差价汇总单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'settle',
+              component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
+              name: '差价汇总单结算',
+              meta: { title: '差价汇总单结算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/sales/tailgoods/tailorder/special/index'),
+              name: '差价汇总单管理',
+              meta: { title: '差价汇总单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'batchdetail',
+          component: () => import('@/views/sales/tailgoods/refund/index'),
+          name: '汇总明细单',
+          meta: { title: '汇总明细单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'submit',
+              component: () => import('@/views/sales/tailgoods/refund/submit'),
+              name: '汇总明细单提交',
+              meta: { title: '汇总明细单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'check',
+              component: () => import('@/views/sales/tailgoods/refund/check'),
+              name: '汇总明细单结算',
+              meta: { title: '汇总明细单结算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            },
+            {
+              path: 'receival',
+              component: () => import('@/views/sales/tailgoods/refund/receival'),
+              name: '汇总明细单管理',
+              meta: { title: '汇总明细单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+            }
+          ]
         }
       ]
     },
