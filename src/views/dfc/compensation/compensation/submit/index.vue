@@ -9,9 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleRejectDealer">驳至经销</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -200,8 +199,10 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -419,7 +420,7 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>开票订单相关信息</span>
+            <span>订单相关信息</span>
           </div>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="店铺" prop="shop">
@@ -442,17 +443,48 @@
                 </el-select>
               </template>
             </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="货品" prop="goods_name">
+              <template>
+                <el-select
+                  v-model="formAdd.goods_name"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择货品"
+                  :remote-method="remoteMethodGoods"
+                >
+                  <el-option
+                    v-for="item in optionsGoods"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="源单号" prop="order_id">
               <el-input v-model="formAdd.order_id" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
-              <el-input v-model="formAdd.nickname" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
 
           <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
+              <el-input v-model="formAdd.nickname" placeholder="请输入名称" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="客服" prop="servicer">
+              <el-input v-model="formAdd.servicer" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+        </el-card>
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>补偿相关信息</span>
+          </div>
+
+          <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择发票类型">
+              <el-select v-model="formAdd.order_category" placeholder="请选择类型">
                 <el-option
                   v-for="item in optionsCategory"
                   :key="item.value"
@@ -460,6 +492,36 @@
                   :value="item.value"
                 />
               </el-select>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="姓名" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入名称" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
+              <el-input v-model="formAdd.alipay_id" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="补偿金额" prop="compensation">
+              <el-input v-model="formAdd.compensation" placeholder="请输入名称" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
+              <el-input v-model="formAdd.alipay_id" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="实收金额" prop="actual_receipts">
+              <el-input v-model="formAdd.actual_receipts" placeholder="请输入名称" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="应收金额" prop="receivable">
+              <el-input v-model="formAdd.receivable" placeholder="请输入实收金额" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="验算结果" prop="checking">
+              <el-input v-model="formAdd.checking" placeholder="请输入名称" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="20"><el-form-item label="备注" prop="memorandum">
+              <el-input v-model="formAdd.memorandum" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -495,7 +557,7 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票订单相关信息</span>
+                <span>订单相关信息</span>
               </div>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="店铺" prop="shop">
@@ -518,17 +580,48 @@
                     </el-select>
                   </template>
                 </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="货品" prop="goods_name">
+                  <template>
+                    <el-select
+                      v-model="formEdit.goods_name"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择货品"
+                      :remote-method="remoteMethodGoods"
+                    >
+                      <el-option
+                        v-for="item in optionsGoods"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="源单号" prop="order_id">
                   <el-input v-model="formEdit.order_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
-                  <el-input v-model="formEdit.nickname" placeholder="请输入名称" />
                 </el-form-item></el-col>
               </el-row>
 
               <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="客户昵称" prop="nickname">
+                  <el-input v-model="formEdit.nickname" placeholder="请输入名称" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="客服" prop="servicer">
+                  <el-input v-model="formEdit.servicer" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>补偿相关信息</span>
+              </div>
+
+              <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择发票类型">
+                  <el-select v-model="formEdit.order_category" placeholder="请选择类型">
                     <el-option
                       v-for="item in optionsCategory"
                       :key="item.value"
@@ -536,6 +629,36 @@
                       :value="item.value"
                     />
                   </el-select>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="姓名" prop="name">
+                  <el-input v-model="formEdit.name" placeholder="请输入名称" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
+                  <el-input v-model="formEdit.alipay_id" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="补偿金额" prop="compensation">
+                  <el-input v-model="formEdit.compensation" placeholder="请输入名称" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
+                  <el-input v-model="formEdit.alipay_id" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="实收金额" prop="actual_receipts">
+                  <el-input v-model="formEdit.actual_receipts" placeholder="请输入名称" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="应收金额" prop="receivable">
+                  <el-input v-model="formEdit.receivable" placeholder="请输入实收金额" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="验算结果" prop="checking">
+                  <el-input v-model="formEdit.checking" placeholder="请输入名称" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="20"><el-form-item label="备注" prop="memorandum">
+                  <el-input v-model="formEdit.memorandum" placeholder="请输入名称" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -631,16 +754,40 @@ export default {
       ],
       rules: {
         shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+          { required: true, message: '请选择店铺', trigger: 'blur', type: 'number' }
+        ],
+        goods_name: [
+          { required: true, message: '请选择货品', trigger: 'blur', type: 'number' }
         ],
         order_id: [
           { required: true, message: '请输入源单号', trigger: 'blur' }
         ],
-        company: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
+        nickname: [
+          { required: true, message: '请选择昵称', trigger: 'blur' }
+        ],
+        servicer: [
+          { required: true, message: '请选择客服', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请选择收款人', trigger: 'blur' }
+        ],
+        alipay_id: [
+          { required: true, message: '请选择支付宝', trigger: 'blur' }
+        ],
+        compensation: [
+          { required: true, message: '请选择补偿金', trigger: 'blur' }
+        ],
+        actual_receipts: [
+          { required: true, message: '请选择实收', trigger: 'blur' }
+        ],
+        receivable: [
+          { required: true, message: '请选择应收', trigger: 'blur' }
+        ],
+        checking: [
+          { required: true, message: '请选择差额', trigger: 'blur' }
         ],
         order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
+          { required: true, message: '请选择类型', trigger: 'blur', type: 'number' }
         ]
       },
       OrderDetailsList: [],
@@ -730,9 +877,10 @@ export default {
       // console.log(this.formEdit.shop)
 
       this.optionsGoods = [{ label: this.formEdit.goods_name.name, value: this.formEdit.goods_name.id }]
+      this.formEdit.goods_name = this.formEdit.goods_name.id
+
       this.formEdit.order_category = this.formEdit.order_category.id
     },
-    // 提交编辑完成的数据
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
@@ -764,7 +912,6 @@ export default {
       )
 
     },
-
     // 关闭修改界面
     handleCancelEdit() {
       this.dialogVisibleEdit = false
@@ -789,20 +936,16 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
+      ).catch((error) => {
+        this.$notify({
+          title: '错误详情',
+          message: error.data,
+          type: 'error',
+          offset: 210,
+          duration: 0
+        })
       })
     },
-    // 检索用户组选项
-    unique(arr) {
-      // 根据唯一标识no来对数组进行过滤
-      // 定义常量 res,值为一个Map对象实例
-      const res = new Map()
-      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
-      // 如果res中没有某个键，就设置这个键的值为1
-      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
     // 导入
     importExcel() {
       const h = this.$createElement
@@ -1249,156 +1392,6 @@ export default {
         }
       )
     },
-    handleRejectDealer() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '驳回工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '驳回工单到经销商处，请及时通知经销商处理！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectCompensationSubmit(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回失败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法驳回',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectCompensationSubmit(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回失败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-          }
-        }
-      }).then().catch(
-        () => {
-          this.fetchData()
-        }
-      )
-    },
     // 货品搜索
     remoteMethodGoods(query) {
       if (query !== '') {
@@ -1509,82 +1502,76 @@ export default {
         }
       }
     },
-    // 货品列表顺序
-    rowClassName({ row, rowIndex }) {
-      row.xh = rowIndex + 1
-    },
-    // 选中新建表单货品项
-    handleDetailSelectionChange(selection) {
-      if (selection.length > 1) {
-        this.$refs.tableAdd.clearSelection()
-        this.$refs.tableAdd.toggleRowSelection(selection.pop())
-      } else {
-        this.checkedDetail = selection
-      }
-    },
-    // 选中编辑表单货品项
-    handleDetailSelectionChangeEdit(selection) {
-      if (selection.length > 1) {
-        this.$refs.tableEdit.clearSelection()
-        this.$refs.tableEdit.toggleRowSelection(selection.pop())
-      } else {
-        this.checkedDetailEdit = selection
-      }
-    },
-    // 删除选中表单货品项
-    handleDeleteDetails() {
-      if (this.checkedDetail.length === 0) {
-        this.$alert('请先选择要删除的数据', '提示', {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.OrderDetailsList.splice(this.checkedDetail[0].xh - 1, 1)
-      }
-    },
-    // 删除选中编辑表单货品项
-    handleDeleteDetailsEdit() {
-      if (this.checkedDetailEdit.length === 0) {
-        this.$alert('请先选择要删除的数据', '提示', {
-          confirmButtonText: '确定'
-        })
-      } else {
-        this.oriInvoiceGoodsListEdit.splice(this.checkedDetailEdit[0].xh - 1, 1)
-      }
-    },
-    // 删除全部表单货品项
-    handleDeleteAllDetails() {
-      this.OrderDetailsList = undefined
-    },
-    // 删除编辑全部表单货品项
-    handleDeleteAllDetailsEdit() {
-      this.oriInvoiceGoodsListEdit = undefined
-    },
-    // 添加表单货品项
-    handleAddDetails() {
-      if (this.OrderDetailsList === undefined) {
-        this.OrderDetailsList = []
-      }
-      const obj = {
-        id: 'n'
-      }
-      this.OrderDetailsList.push(obj)
-    },
-    // 添加编辑表单货品项
-    handleAddDetailsEdit() {
-      if (this.oriInvoiceGoodsListEdit === undefined) {
-        this.oriInvoiceGoodsListEdit = []
-      }
-      const obj = {
-        id: 'n'
-      }
-      this.oriInvoiceGoodsListEdit.push(obj)
-      console.log(this.oriInvoiceGoodsListEdit)
-    },
     // 重置筛选
     resetParams() {
       this.params = {
         page: 1
       }
+    },
+    // 行样式
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.order_category.id === 2) {
+        row_style = {
+          backgroundColor: 'lightpink'
+        }
+      }
+      return row_style
+    },
+    // 双击修改
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'memo') {
+        this.handleMemo(row)
+      }
+    },
+    // 修改备注
+    handleMemo(row) {
+      this.$prompt('请输入反馈内容', '添加反馈', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.feedback,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            memo: value
+          }
+          updateMaintenanceJudgment(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
     }
   }
 }

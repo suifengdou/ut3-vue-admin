@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.src_tids" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.dialog" class="grid-content bg-purple" placeholder="请输入客户网名" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -69,16 +69,45 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="8"><el-form-item label="网名" prop="dialog">
+                        <el-input v-model="params.dialog" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="8"><el-form-item label="讲话人" prop="sayer">
+                        <el-input v-model="params.sayer" type="text" />
                       </el-form-item></el-col>
+
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="单据类型">
+                        <el-select v-model="params.category" placeholder="单据类型">
+                          <el-option
+                            v-for="item in optionsCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="8"><el-form-item label="讲话身份">
+                        <el-select v-model="params.d_status" placeholder="讲话人身份">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="20"><el-form-item label="内容" prop="content">
+                        <el-input v-model="params.content" type="text" />
+                      </el-form-item></el-col>
 
                       <el-col :span="6" />
                       <el-col :span="6" />
@@ -612,36 +641,19 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    店铺: item.dialog.shop,
+                    客户网名: item.dialog.name,
+                    讲话人: item.sayer,
+                    时间: item.time,
+                    讲话人身份: item.d_status.name,
+                    内容: item.content,
+                    内容类型: item.category.name,
+                    UT单号: item.erp_order_id,
+                    对话间隔: item.interval,
+
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
-                    处理标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name
                   }
                 })
