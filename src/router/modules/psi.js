@@ -9,14 +9,15 @@ const psiChannelRouter = {
   name: 'psi',
   meta: {
     title: '库存管理',
-    icon: 'nested'
+    icon: 'nested',
+    roles: ['AllPrivileges']
   },
   children: [
     {
       path: 'inbound',
       component: () => import('@/views/psi/inbound'), // Parent router-view
       name: 'inbound',
-      meta: { title: '入库管理' },
+      meta: { title: '入库管理', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -77,7 +78,7 @@ const psiChannelRouter = {
       path: 'outbound',
       name: 'outbound',
       component: () => import('@/views/psi/outbound'),
-      meta: { title: '出库管理' },
+      meta: { title: '出库管理', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'outboundsubmit',
@@ -103,7 +104,7 @@ const psiChannelRouter = {
       path: 'inventory',
       name: 'inventory',
       component: () => import('@/views/psi/inventory'),
-      meta: { title: '库存管理' },
+      meta: { title: '库存管理', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'inventoryanalysis',

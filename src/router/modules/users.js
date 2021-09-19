@@ -20,7 +20,7 @@ const usersRouter = {
       component: () => import('@/views/users/groups'),
       name: '用户组',
       meta: { title: '用户组', icon: 'user', roles: ['auth.view_group', 'AllPrivileges'] }
-    }
+    },
   ]
 }
 

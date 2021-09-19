@@ -9,7 +9,8 @@ const workOrderRouter = {
   name: 'Nested',
   meta: {
     title: '工单系统',
-    icon: 'workorder'
+    icon: 'workorder',
+    roles: ['AllPrivileges']
   },
   children: [
     {
@@ -98,7 +99,7 @@ const workOrderRouter = {
       path: 'express',
       name: '快递工单',
       component: () => import('@/views/workorder/express/index'),
-      meta: { title: '快递工单', icon: 'workorder' },
+      meta: { title: '快递工单', icon: 'workorder', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -149,7 +150,7 @@ const workOrderRouter = {
       path: 'storage',
       name: '仓储工单',
       component: () => import('@/views/workorder/storage/index'),
-      meta: { title: '仓储工单', icon: 'workorder' },
+      meta: { title: '仓储工单', icon: 'workorder', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -200,7 +201,7 @@ const workOrderRouter = {
       path: 'dealers',
       name: '经销商工单',
       component: () => import('@/views/workorder/dealer/index'),
-      meta: { title: '经销商工单', icon: 'workorder' },
+      meta: { title: '经销商工单', icon: 'workorder', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {

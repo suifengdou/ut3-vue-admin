@@ -9,14 +9,15 @@ const salesChannelRouter = {
   name: 'sales',
   meta: {
     title: '销售业务',
-    icon: 'nested'
+    icon: 'nested',
+    roles: ['AllPrivileges']
   },
   children: [
     {
       path: 'advance',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
       name: 'advance',
-      meta: { title: '预存系统' },
+      meta: { title: '预存系统', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -101,7 +102,7 @@ const salesChannelRouter = {
       path: 'tailgoods',
       name: '尾货订单',
       component: () => import('@/views/sales/tailgoods/index'),
-      meta: { title: '尾货订单' },
+      meta: { title: '尾货订单', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'oritailgoods',

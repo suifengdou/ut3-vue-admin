@@ -10,14 +10,14 @@ const dfcRouter = {
   meta: {
     title: '数格转换',
     icon: 'nested',
-    roles: ['users.view_userprofile', 'AllPrivileges']
+    roles: ['AllPrivileges']
   },
   children: [
     {
       path: 'manualorder',
       component: () => import('@/views/dfc/manualorder'), // Parent router-view
       name: 'manualorder',
-      meta: { title: '手工订单' },
+      meta: { title: '手工订单', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -56,7 +56,7 @@ const dfcRouter = {
       path: 'compensation',
       name: '财务差价',
       component: () => import('@/views/dfc/compensation'),
-      meta: { title: '财务差价' },
+      meta: { title: '财务差价', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'compensation',
@@ -136,7 +136,7 @@ const dfcRouter = {
       path: 'tables',
       component: () => import('@/views/dfc/batchtable'), // Parent router-view
       name: 'gift',
-      meta: { title: '表格处理' },
+      meta: { title: '表格处理', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {

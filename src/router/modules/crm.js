@@ -9,14 +9,15 @@ const crmChannelRouter = {
   name: 'crm',
   meta: {
     title: '客户关系',
-    icon: 'nested'
+    icon: 'nested',
+    roles: ['AllPrivileges']
   },
   children: [
     {
       path: 'order',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
       name: 'order',
-      meta: { title: '订单系统' },
+      meta: { title: '订单系统', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -85,7 +86,7 @@ const crmChannelRouter = {
       path: 'customer',
       name: 'customer',
       component: () => import('@/views/crm/customers'),
-      meta: { title: '客户档案' },
+      meta: { title: '客户档案', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'manage',
@@ -105,7 +106,7 @@ const crmChannelRouter = {
       path: 'dialog',
       name: 'dialog',
       component: () => import('@/views/crm/dialog'),
-      meta: { title: '客户对话' },
+      meta: { title: '客户对话', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'servicer',
@@ -222,7 +223,7 @@ const crmChannelRouter = {
       path: 'callcenter',
       name: 'callcenter',
       component: () => import('@/views/crm/callcenter/'),
-      meta: { title: '呼叫中心' },
+      meta: { title: '呼叫中心', roles: ['AllPrivileges'] },
       children: [
         {
           path: 'oricalllogsubmit',
@@ -254,7 +255,7 @@ const crmChannelRouter = {
       path: 'service',
       name: 'service',
       component: () => import('@/views/crm/service'),
-      meta: { title: '中央维修' },
+      meta: { title: '中央维修', roles: ['AllPrivileges'] },
       children: [
 
         {

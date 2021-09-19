@@ -55,10 +55,14 @@ export function createUser(data) {
   })
 }
 
-export function getPermissionsList(params) {
+
+
+export function updateUserPassword(data) {
   return request({
-    url: `/auth/users/permission/`,
-    method: 'get',
-    params
+    url: `/auth/users/users/reset_password/`,
+    method: 'patch',
+    data
   })
 }
+
+

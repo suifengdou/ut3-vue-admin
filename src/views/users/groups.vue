@@ -5,24 +5,24 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入组名" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="open">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="7" :offset="5" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增用户</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -44,77 +44,11 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="开票公司" prop="permission">
-                        <template>
-                          <el-select
-                            v-model="params.permission"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodPermission"
-                          >
-                            <el-option
-                              v-for="item in optionsPermission"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4" />
-                      <el-col :span="4" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-
-                    <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.create_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
+                      <el-col :span="6"><el-form-item label="组名" prop="name">
+                        <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
@@ -139,15 +73,6 @@
         @sort-change="onSortChange"
       >
         <el-table-column
-          label="ID"
-        >
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="组名"
           prop="name"
           sortable="custom"
@@ -155,23 +80,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="users"
-          label="组员数"
-          width="180"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        />
-        <el-table-column
-          label="创建者"
-          prop="creator"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.creator }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -189,26 +97,29 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="创建时间"
+          label="ID"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
+            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column
-          label="更新时间"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
-          </template>
-        </el-table-column>
+          prop="users"
+          label="组员数"
+          width="180"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        />
+
       </el-table>
     </div>
     <!--修改信息模态窗-->
     <el-dialog
       title="新建"
       :visible.sync="dialogVisibleAdd"
-      width="50%"
+      width="30%"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
@@ -221,13 +132,13 @@
             :model="formAdd"
           >
             <el-row :gutter="20">
-              <el-col :span="18"><el-form-item label="名称" prop="name">
+              <el-col :span="15"><el-form-item label="名称" prop="name">
                 <el-input v-model="formAdd.name" placeholder="请输入名称" />
               </el-form-item></el-col>
               <el-col :span="6" />
             </el-row>
             <el-row :gutter="20">
-              <el-col :span="18"><el-form-item label="权限" prop="permission">
+              <el-col :span="20"><el-form-item label="权限" prop="permission">
                 <el-select
                   v-model="formAdd.permissions"
                   multiple
@@ -235,6 +146,7 @@
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
+                  size="medium"
                   :remote-method="remoteMethodPermission"
                 >
                   <el-option
@@ -245,7 +157,6 @@
                   />
                 </el-select>
               </el-form-item></el-col>
-              <el-col :span="6" />
             </el-row>
 
             <el-form-item size="large">
@@ -320,7 +231,8 @@
 </template>
 
 <script>
-import { getUserList, deleteUser, updateUser, createUser, getPermissionsList } from '@/api/auth/user'
+import { getUserList, deleteUser, updateUser, createUser  } from '@/api/auth/user'
+import { getPermissionsList } from '@/api/auth/permission'
 import { getGroupsList, updateGroup, createGroup } from '@/api/auth/groups'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -414,6 +326,7 @@ export default {
       createGroup(data).then(
         () => {
           this.handleCancelAdd()
+          this.fetchData()
         }
       )
     },

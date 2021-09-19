@@ -1,54 +1,14 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col :xs="36" :sm="36" :lg="18" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            亲爱的{{ user_info.name }}，你好，今天，让UT来助你一臂之力！
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Messages
-          </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Purchases
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Shoppings
-          </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -59,8 +19,20 @@
 import CountTo from 'vue-count-to'
 
 export default {
+  data() {
+    return {
+      user_info: {
+        name: this.$store.state.user.name,
+      },
+
+    }
+  },
   components: {
     CountTo
+  },
+  mounted () {
+    console.log(this.user_info)
+    console.log(this.$store.state)
   },
   methods: {
     handleSetLineChartData(type) {
@@ -129,8 +101,8 @@ export default {
 
     .card-panel-icon-wrapper {
       float: left;
-      margin: 14px 0 0 14px;
-      padding: 16px;
+      margin: 14px 0 0 90px;
+      padding: 16px 40px 16px 16px;
       transition: all 0.38s ease-out;
       border-radius: 6px;
     }
@@ -141,16 +113,16 @@ export default {
     }
 
     .card-panel-description {
-      float: right;
+      float: left;
       font-weight: bold;
       margin: 26px;
       margin-left: 0px;
 
       .card-panel-text {
-        line-height: 18px;
+        line-height: 60px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
-        margin-bottom: 12px;
+        font-size: 27px;
+        margin: 4px 30px 0 0px;
       }
 
       .card-panel-num {
