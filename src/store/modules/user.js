@@ -1,4 +1,4 @@
-import { login, getInfo } from '@/api/auth/user'
+import { login, getUserInfo } from '@/api/auth/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -54,7 +54,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo().then(response => {
+      getUserInfo().then(response => {
         const { data } = response
         if (!data) {
           reject('登陆超时，请重新登录.')

@@ -73,6 +73,15 @@
         @sort-change="onSortChange"
       >
         <el-table-column
+          label="ID"
+        >
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="组名"
           prop="name"
           sortable="custom"
@@ -94,15 +103,6 @@
               <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
             </div>
             <span>{{ scope.row.creator }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="ID"
-        >
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column
@@ -320,6 +320,7 @@ export default {
     handleCancelAdd() {
       this.dialogVisibleAdd = false
       this.fetchData()
+      this.$refs.formEAdd.resetFields()
     },
     handleSubmitAdd() {
       const data = this.formAdd
