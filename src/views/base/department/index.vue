@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增平台</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -38,7 +38,7 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="部门名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
@@ -94,7 +94,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="平台名称"
+          label="部门名称"
           prop="name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -150,11 +150,8 @@
             <span>平台相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="平台名称" prop="name">
+            <el-col :span="8"><el-form-item label="部门名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <el-input v-model="formAdd.category" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -193,11 +190,8 @@
                 <span>相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="平台名称" prop="name">
+                <el-col :span="8"><el-form-item label="部门名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="类型" prop="category">
-                  <el-input v-model="formEdit.category" placeholder="请输入类型" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>

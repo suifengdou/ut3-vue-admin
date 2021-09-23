@@ -59,10 +59,17 @@ export function createUser(data) {
 
 export function updateUserPassword(data) {
   return request({
-    url: `/auth/users/users/reset_password/`,
+    url: `/auth/users/users/change_password/`,
     method: 'patch',
     data
   })
 }
 
 
+export function resetUserPassword(id, data) {
+  return request({
+    url: `/auth/users/users/${id}/reset_password/`,
+    method: 'patch',
+    data
+  })
+}

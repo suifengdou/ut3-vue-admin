@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="dialogjddetailsubmit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">

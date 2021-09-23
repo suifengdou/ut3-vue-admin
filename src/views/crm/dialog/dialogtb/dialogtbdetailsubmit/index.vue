@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="dialogtbdetailsubmit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -361,7 +361,7 @@ import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkOrder',
+  name: 'dialogtbdetailsubmit',
   data() {
     return {
       DataList: [],
@@ -524,7 +524,7 @@ export default {
         this.$notify({
           title: '创建出错',
           message: res.data,
-          type: 'success',
+          type: 'error',
           offset: 0,
           duration: 0
         })

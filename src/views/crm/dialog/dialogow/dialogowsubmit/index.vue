@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="dialogowsubmit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -9,8 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">提取</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">忽略</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -552,9 +552,6 @@
                 <el-col :span="8"><el-form-item label="电话" prop="mobile">
                   <el-input v-model="formEdit.mobile" placeholder="电话" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="货品数量" prop="num">
-                  <el-input v-model="formEdit.num" placeholder="请输入货品名称" />
-                </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="配件信息" prop="goods_details">
@@ -624,13 +621,13 @@ import {
   exportDialogOWSubmit,
   excelImportDialogOWSubmit,
   checkDialogOWSubmit,
-  rejectDialogOWSubmit
+  rejectDialogOWSubmit,
 } from '@/api/crm/dialog/official/dialogowsubmit'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkOrder',
+  name: 'dialogowsubmit',
   data() {
     return {
       DataList: [],

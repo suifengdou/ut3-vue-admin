@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="dialogtbdetailmyself-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -360,7 +360,7 @@ import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkOrder',
+  name: 'dialogtbdetailmyself',
   data() {
     return {
       DataList: [],

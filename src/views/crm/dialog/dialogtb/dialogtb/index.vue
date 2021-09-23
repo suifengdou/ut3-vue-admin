@@ -40,14 +40,6 @@
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增</el-button>
-            </el-tooltip>
-          </div>
-
-        </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">
@@ -120,9 +112,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
 
@@ -189,143 +179,7 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增"
-      width="60%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>客户相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客户网名" prop="buyer_nick">
-              <el-input v-model="formAdd.buyer_nick" placeholder="请输入客户网名" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="订单编号" prop="trade_no">
-              <el-input v-model="formAdd.trade_no" placeholder="请输入订单编号" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="原始子订单号" prop="src_tids">
-              <el-input v-model="formAdd.src_tids" placeholder="请输入原始子订单号" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件人" prop="receiver_name">
-              <el-input v-model="formAdd.receiver_name" placeholder="请输入收件人" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收件人手机" prop="receiver_mobile">
-              <el-input v-model="formAdd.receiver_mobile" placeholder="请输入收件人手机" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收货地区" prop="receiver_area">
-              <el-input v-model="formAdd.receiver_area" placeholder="请输入收货地区" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="收货地址" prop="receiver_address">
-              <el-input v-model="formAdd.receiver_address" placeholder="请输入收货地址" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
 
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>货品信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="货品名称" prop="goods_name">
-              <el-input v-model="formAdd.goods_name" placeholder="请输入货品名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="商家编码" prop="spec_code">
-              <el-input v-model="formAdd.spec_code" placeholder="请输入商家编码" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="货品数量" prop="num">
-              <el-input v-model="formAdd.num" placeholder="请输入货品名称" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="成交价" prop="price">
-              <el-input v-model="formAdd.price" placeholder="请输入成交价" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="货品成交总价" prop="share_amount">
-              <el-input v-model="formAdd.share_amount" placeholder="请输入货品成交总价" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>其他信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺" prop="shop_name">
-              <el-input v-model="formAdd.shop_name" placeholder="请输入店铺" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="仓库" prop="warehouse_name">
-              <el-input v-model="formAdd.warehouse_name" placeholder="请输入仓库" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="订单类型" prop="order_category">
-              <el-input v-model="formAdd.order_category" placeholder="请输入订单类型" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="物流公司" prop="logistics_name">
-              <el-input v-model="formAdd.logistics_name" placeholder="请输入物流公司" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="物流单号" prop="logistics_no">
-              <el-input v-model="formAdd.logistics_no" placeholder="请输入物流单号" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="付款时间" prop="pay_time">
-              <el-date-picker
-                v-model="formAdd.pay_time"
-                type="datetime"
-                placeholder="选择日期时间">
-              </el-date-picker>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="发货时间" prop="deliver_time">
-              <el-date-picker
-                v-model="formAdd.deliver_time"
-                type="datetime"
-                placeholder="选择日期时间">
-              </el-date-picker>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="买家留言" prop="buyer_message">
-              <el-input v-model="formAdd.buyer_message" placeholder="请输入买家留言" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客服备注" prop="cs_remark">
-              <el-input v-model="formAdd.cs_remark" placeholder="请输入客服备注" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>

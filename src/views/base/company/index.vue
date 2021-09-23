@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增平台</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -38,10 +38,25 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
-                        <el-input v-model="params.name" type="text" />
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="6"><el-form-item label="平台名称" prop="category">
+                        <el-select
+                          v-model="params.category"
+                          filterable
+                          default-first-option
+                          reserve-keyword
+                          placeholder="请选择类型"
+                        >
+                          <el-option
+                            v-for="item in optionsCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -386,7 +401,7 @@ export default {
       formEdit: {},
       optionsCategory: [
         {
-          label: '小狗体系',
+          label: '本埠公司',
           value: 0
         },
         {
@@ -406,8 +421,12 @@ export default {
           value: 4
         },
         {
-          label: '其他类型',
+          label: '小狗体系',
           value: 5
+        },
+        {
+          label: '其他类型',
+          value: 6
         }
       ],
       rules: {

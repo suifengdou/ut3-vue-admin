@@ -24,19 +24,19 @@ const crmChannelRouter = {
           path: 'oriorder',
           component: () => import('@/views/crm/order/oriorder'),
           name: 'oriorder',
-          meta: { title: '原始订单' },
+          meta: { title: '原始订单', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/crm/order/oriorder/submit'),
               name: 'oriordersubmit',
-              meta: { title: '原始订单提交', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              meta: { title: '原始订单提交', roles: ['order.view_oriorderinfo', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/crm/order/oriorder/manage'),
               name: 'oriordermanage',
-              meta: { title: '原始订单管理', roles: ['advancepayment.view_account', 'AllPrivileges'] }
+              meta: { title: '原始订单管理', roles: ['order.view_oriorderinfo', 'AllPrivileges'] }
             }
           ]
         },
@@ -44,19 +44,19 @@ const crmChannelRouter = {
           path: 'bmsorder',
           component: () => import('@/views/crm/order/bmsorder'),
           name: 'bmsorder',
-          meta: { title: 'BMS订单' },
+          meta: { title: 'BMS订单', roles: ['order.view_orderinfo', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/crm/order/bmsorder/submit'),
               name: 'bmsordersubmit',
-              meta: { title: 'BMS订单提交', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              meta: { title: 'BMS订单提交', roles: ['order.view_user_orderinfo', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/crm/order/bmsorder/manage'),
               name: 'bmsordermanage',
-              meta: { title: 'BMS订单管理', roles: ['advancepayment.view_account', 'AllPrivileges'] }
+              meta: { title: 'BMS订单管理', roles: ['order.view_orderinfo', 'AllPrivileges'] }
             }
           ]
         },
@@ -64,19 +64,19 @@ const crmChannelRouter = {
           path: 'utorder',
           component: () => import('@/views/crm/order/order'),
           name: 'utorder',
-          meta: { title: '订单' },
+          meta: { title: '订单', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/crm/order/order/submit/index'),
               name: '订单提交',
-              meta: { title: '订单提交', roles: ['advancepayment.view_user_prestore', 'AllPrivileges'] }
+              meta: { title: '订单提交', roles: ['order.view_user_bmsorderinfo', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/crm/order/order/manage/index'),
               name: '订单管理',
-              meta: { title: '订单管理', roles: ['advancepayment.view_user_prestore', 'advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '订单管理', roles: ['order.view_bmsorderinfo', 'advancepayment.view_prestore', 'AllPrivileges'] }
             }
           ]
         }
@@ -86,19 +86,19 @@ const crmChannelRouter = {
       path: 'customer',
       name: 'customer',
       component: () => import('@/views/crm/customers'),
-      meta: { title: '客户档案', roles: ['AllPrivileges'] },
+      meta: { title: '客户档案', roles: ['customers.view_customer', 'AllPrivileges'] },
       children: [
         {
           path: 'manage',
           component: () => import('@/views/crm/customers/manage'),
           name: 'manage',
-          meta: { title: '档案管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '档案管理', roles: ['customers.view_customer', 'AllPrivileges'] }
         },
         {
           path: 'blacklist',
           component: () => import('@/views/crm/customers/manage'),
           name: '黑名单',
-          meta: { title: '黑名单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '黑名单', roles: ['customers.view_customer', 'AllPrivileges'] }
         }
       ]
     },
@@ -130,13 +130,13 @@ const crmChannelRouter = {
               path: 'dialogtbdetailmyself',
               component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailmyself'),
               name: 'dialogtbdetailmyself',
-              meta: { title: '淘系对话-提取-个人', roles: ['dialog.view_dialogtbdetail', 'AllPrivileges'] }
+              meta: { title: '淘系对话-提取-个人', roles: ['dialog.view_user_dialogtbdetail', 'AllPrivileges'] }
             },
             {
               path: 'dialogtbdetailsubmit',
               component: () => import('@/views/crm/dialog/dialogtb/dialogtbdetailsubmit'),
               name: 'dialogtbdetailsubmit',
-              meta: { title: '淘系对话-提取', roles: ['dialog.view_servicer', 'AllPrivileges'] }
+              meta: { title: '淘系对话-提取', roles: ['dialog.view_handler_dialogtbdetail', 'AllPrivileges'] }
             },
             {
               path: 'dialogtbdetail',
@@ -262,25 +262,25 @@ const crmChannelRouter = {
           path: 'orimaintenance',
           component: () => import('@/views/crm/service/orimaintenance'),
           name: 'orimaintenance',
-          meta: { title: '原始单', roles: ['service.view_maintenance', 'AllPrivileges'] },
+          meta: { title: '原始单', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
           children: [
             {
               path: 'orimaintenancebefore',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenancebefore'),
               name: 'orimaintenancebefore',
-              meta: { title: '原始单-异常', roles: ['service.view_maintenance', 'AllPrivileges'] }
+              meta: { title: '原始单-异常', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
             },
             {
               path: 'orimaintenancesubmit',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenancesubmit'),
               name: 'orimaintenancesubmit',
-              meta: { title: '原始单-提交', roles: ['service.view_maintenance', 'AllPrivileges'] }
+              meta: { title: '原始单-提交', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
             },
             {
               path: 'orimaintenance',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenance'),
               name: 'orimaintenance',
-              meta: { title: '原始单-管理', roles: ['service.view_maintenance', 'AllPrivileges'] }
+              meta: { title: '原始单-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
             }
           ]
         },

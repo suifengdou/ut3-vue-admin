@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入店铺名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -38,16 +38,37 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="平台名称" prop="name">
+                      <el-col :span="6"><el-form-item label="店铺名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="类型" prop="category">
+                      <el-col :span="6"><el-form-item label="公司" prop="company">
+                        <el-select
+                          v-model="params.company"
+                          filterable
+                          default-first-option
+                          remote
+                          reserve-keyword
+                          placeholder="请选择公司"
+                          :remote-method="remoteMethodCompany"
+                        >
+                          <el-option
+                            v-for="item in optionsCompany"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="ID" prop="category">
                         <el-input v-model="params.shop_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="ID" prop="category">
+                        <el-input v-model="params.shop_id" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
@@ -219,7 +240,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请选择公司"
+                  placeholder="请选择平台"
                   :remote-method="remoteMethodPlatform"
                 >
                   <el-option

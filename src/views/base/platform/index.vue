@@ -107,6 +107,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="平台类型"
+          prop="category"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -116,6 +126,7 @@
             <span>{{ scope.row.creator }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="创建时间"
         >

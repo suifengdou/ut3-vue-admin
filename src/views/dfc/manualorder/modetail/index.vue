@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.manual_order" class="grid-content bg-purple" placeholder="请输入单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.manual_order" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -60,7 +60,7 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="单号" prop="manual_order">
+                      <el-col :span="6"><el-form-item label="手机" prop="manual_order">
                         <el-input v-model="params.manual_order" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />

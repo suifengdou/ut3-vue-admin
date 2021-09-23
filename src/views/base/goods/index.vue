@@ -12,6 +12,16 @@
           </div>
 
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
+              <el-button type="success" @click="importExcel">导入</el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
+              <el-button type="success" @click="exportExcel">导出</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
@@ -460,7 +470,7 @@
 </template>
 
 <script>
-import { getGoodsList, createGoods, updateGoods, getGoodsCategoryList } from '@/api/base/goods'
+import { getGoodsList, createGoods, updateGoods, getGoodsCategoryList, excelImportGoods, exportGoods } from '@/api/base/goods'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -481,15 +491,15 @@ export default {
       optionsGoodsAttribute: [
         {
           label: '整机',
-          value: 0
-        },
-        {
-          label: '配件',
           value: 1
         },
         {
-          label: '礼品',
+          label: '配件',
           value: 2
+        },
+        {
+          label: '礼品',
+          value: 3
         }
       ],
       rules: {
@@ -642,7 +652,151 @@ export default {
       } else {
         this.options = []
       }
-    }
+    },
+    // 导入
+    importExcel() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportGoods(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+      }).catch(
+        (error) => {
+          console.log(error)
+        }
+      )
+    },
+    exportExcel() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '导出 Excel',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('hr', null, ''),
+          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
+          h('hr', null, ''),
+          h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            exportGoods(this.params).then(
+              res => {
+                res.data = res.data.map(item => {
+                  return {
+                    货品名称: item.name,
+                    商家编码: item.goods_id,
+                    货品类别: item.category.name,
+                    货品属性: item.goods_attribute.name,
+                    货品排序: item.goods_number,
+                    规格: item.size,
+                    长: item.width,
+                    宽: item.height,
+                    高: item.depth,
+                    重量: item.weight,
+                    爆炸图号: item.catalog_num
+                  }
+                })
+                const ws = XLSX.utils.json_to_sheet(res.data)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+                XLSX.writeFile(wb, '列表详情1.xlsx')
+                resultMessage = '表格导出成功啦'
+                resultType = 'success'
+                instance.confirmButtonLoading = false
+                done()
+              },
+              err => {
+                console.log(err)
+                resultMessage = '表格导出失败啦'
+                resultType = 'error'
+                instance.confirmButtonLoading = false
+                done()
+              }
+            )
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        this.$message({
+          type: resultType,
+          message: '最终结果: ' + resultMessage
+        })
+      }).catch(
+        (error) => {
+          console.log(error)
+        }
+      )
+    },
   }
 }
 </script>

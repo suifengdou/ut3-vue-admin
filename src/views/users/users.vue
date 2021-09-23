@@ -263,6 +263,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="重置密码"
+          prop="reset_password"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handleRestePassword(scope.row)">重置密码</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建时间"
         >
           <template slot-scope="scope">
@@ -574,6 +582,38 @@
         </div>
       </template>
     </el-dialog>
+    <!--重置密码-->
+    <el-dialog
+      title="重置密码"
+      :visible.sync="dialogVisibleRestePassword"
+      width="30%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <template>
+        <div class="userFormEdit">
+          <el-form
+            ref="formRestePassword"
+            label-width="80px"
+            size="mini"
+            :model="formRestePassword"
+          >
+            <el-form-item label="名称" prop="new_password">
+              <el-input v-model="formRestePassword.new_password" placeholder="请输入名称" />
+            </el-form-item>
+            <el-form-item label="昵称" prop="pwd_repeat">
+              <el-input v-model="formRestePassword.pwd_repeat" placeholder="请输入名称" />
+            </el-form-item>
+            <el-form-item size="large">
+              <div class="btn-warpper">
+                <el-button type="danger" @click="handleCancelRestePassword">取消</el-button>
+                <el-button type="primary" @click="handleSubmitRestePassword">立即保存</el-button>
+              </div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -584,7 +624,7 @@
 </template>
 
 <script>
-import { getUserList, deleteUser, updateUser, createUser } from '@/api/auth/user'
+import { getUserList, deleteUser, updateUser, createUser, resetUserPassword } from '@/api/auth/user'
 import { getGroupsList } from '../../api/auth/groups'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
@@ -612,9 +652,11 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
+      dialogVisibleRestePassword: false,
       feedbackVisible: false,
       formAdd: {},
       formEdit: {},
+      formRestePassword: {},
       feedbackData: {
         type: Object,
         default() {
@@ -749,6 +791,38 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
+
+    handleRestePassword(userValue) {
+      this.formRestePassword.id = userValue.id
+      this.dialogVisibleRestePassword = true
+
+    },
+    // 提交编辑完成的数据
+    handleSubmitRestePassword() {
+      const { id, ...data } = this.formRestePassword
+      console.log(data)
+      resetUserPassword(id, data).then(
+        () => {
+          this.dialogVisibleRestePassword = false
+          this.fetchData()
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 210,
+            duration: 0
+          })
+        }
+      )
+    },
+    // 关闭修改界面
+    handleCancelRestePassword() {
+      this.dialogVisibleRestePassword = false
+      this.$refs.formRestePassword.resetFields()
+    },
+    // 检索用户组选项
     exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType

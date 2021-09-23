@@ -17,38 +17,44 @@ const dfcRouter = {
       path: 'manualorder',
       component: () => import('@/views/dfc/manualorder'), // Parent router-view
       name: 'manualorder',
-      meta: { title: '手工订单', roles: ['AllPrivileges'] },
+      meta: { title: '手工订单', roles: ['manualorder.view_manualorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'mosubmit',
           component: () => import('@/views/dfc/manualorder/submit'),
           name: 'mosubmit',
-          meta: { title: '订单递交', roles: ['users.view_userprofile', 'AllPrivileges'] }
+          meta: { title: '订单递交', roles: ['manualorder.view_manualorder', 'AllPrivileges'] }
         },
         {
           path: 'momanage',
           component: () => import('@/views/dfc/manualorder/manage'),
           name: 'momanage',
-          meta: { title: '订单管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
+          meta: { title: '订单管理', roles: ['manualorder.view_user_manualorder', 'AllPrivileges'] }
+        },
+        {
+          path: 'mogoodstrack',
+          component: () => import('@/views/dfc/manualorder/modetailtrack'),
+          name: 'mogoodstrack',
+          meta: { title: '明细跟踪', roles: ['manualorder.view_mogoods', 'AllPrivileges'] }
         },
         {
           path: 'mogoodsmanage',
           component: () => import('@/views/dfc/manualorder/modetail'),
           name: 'mogoodsmanage',
-          meta: { title: '明细管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
+          meta: { title: '明细管理', roles: ['manualorder.view_mogoods', 'AllPrivileges'] }
         },
         {
           path: 'moexport',
           component: () => import('@/views/dfc/manualorder/export/submit'),
           name: 'moexport',
-          meta: { title: '格式输出', roles: ['users.view_userprofile', 'AllPrivileges'] }
+          meta: { title: '格式输出', roles: ['manualorder.view_manualorderexport', 'AllPrivileges'] }
         },
         {
           path: 'moexportmanage',
           component: () => import('@/views/dfc/manualorder/export/manage'),
           name: 'moexportmanage',
-          meta: { title: '输出管理', roles: ['users.view_userprofile', 'AllPrivileges'] }
+          meta: { title: '输出管理', roles: ['manualorder.view_manualorderexport', 'AllPrivileges'] }
         }
       ]
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="manualorder-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -9,6 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSetSpecial">特设</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleResetTag">重置</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
@@ -36,7 +38,7 @@
               <!--<el-button type="success" @click="handleImport">导入</el-button>-->
             <!--</el-tooltip>-->
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -777,6 +779,7 @@
         <el-pagination background layout="total, prev, pager, next, jumper" :total="totalNum" :page-size="pageSize" @current-change="handleCurrentChange" />
       </center>
     </div>
+
   </div>
 </template>
 
@@ -788,7 +791,9 @@
     exportManualOrderSubmit,
     excelImportManualOrderSubmit,
     checkManualOrderSubmit,
-    rejectManualOrderSubmit
+    rejectManualOrderSubmit,
+    setSpecialManualOrderSubmit,
+    resetTagManualOrderSubmit
   } from '@/api/dfc/manualorder/manualorder'
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
@@ -1118,7 +1123,7 @@
               title: '导入结果',
               message: res.data,
               type: 'success',
-              duration: 0
+              duration: 3000
             })
           },
           error => {
@@ -1146,7 +1151,7 @@
       handleImport() {
         this.importVisible = true
       },
-      open() {
+      exportExcel() {
         const h = this.$createElement
         let resultMessage, resultType
         this.$msgbox({
@@ -1238,6 +1243,208 @@
         console.log('我是全选的' + this.selectNum)
       },
       // 审核单据
+      handleSetSpecial() {
+        this.tableLoading = true
+        if (this.params.allSelectTag === 1) {
+          setSpecialManualOrderSubmit(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '设置成功',
+                  message: `设置成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '设置失败',
+                  message: `设置失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              delete this.params.allSelectTag
+              this.fetchData()
+            },
+            error => {
+              console.log('我是全选错误返回')
+              this.$notify({
+                title: '错误详情',
+                message: error.response.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        } else {
+          console.log(this.multipleSelection)
+          if (typeof (this.multipleSelection) === 'undefined') {
+            this.$notify({
+              title: '错误详情',
+              message: '未选择订单无法审核',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
+          const ids = this.multipleSelection.map(item => item.id)
+          this.params.ids = ids
+          setSpecialManualOrderSubmit(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '设置成功',
+                  message: `设置成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '设置失败',
+                  message: `设置失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              delete this.params.ids
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '错误详情',
+                message: error.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+          )
+        }
+      },
+      handleResetTag() {
+        this.tableLoading = true
+        if (this.params.allSelectTag === 1) {
+          resetTagManualOrderSubmit(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '设置成功',
+                  message: `设置成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '设置失败',
+                  message: `设置失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              delete this.params.allSelectTag
+              this.fetchData()
+            },
+            error => {
+              console.log('我是全选错误返回')
+              this.$notify({
+                title: '错误详情',
+                message: error.response.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        } else {
+          console.log(this.multipleSelection)
+          if (typeof (this.multipleSelection) === 'undefined') {
+            this.$notify({
+              title: '错误详情',
+              message: '未选择订单无法审核',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
+          const ids = this.multipleSelection.map(item => item.id)
+          this.params.ids = ids
+          resetTagManualOrderSubmit(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '设置成功',
+                  message: `设置成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '设置失败',
+                  message: `设置失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              delete this.params.ids
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '错误详情',
+                message: error.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+          )
+        }
+      },
       handleCheck() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
@@ -1249,7 +1456,7 @@
                   message: `审核成功条数：${res.data.successful}`,
                   type: 'success',
                   offset: 70,
-                  duration: 0
+                  duration: 3000
                 })
               }
               if (res.data.false !== 0) {
@@ -1305,7 +1512,7 @@
                   message: `审核成功条数：${res.data.successful}`,
                   type: 'success',
                   offset: 70,
-                  duration: 0
+                  duration: 3000
                 })
               }
               if (res.data.false !== 0) {
@@ -1380,7 +1587,7 @@
                         message: `取消成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
-                        duration: 0
+                        duration: 3000
                       })
                     }
                     if (res.data.false !== 0) {
@@ -1447,7 +1654,7 @@
                         message: `取消成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
-                        duration: 0
+                        duration: 3000
                       })
                     }
                     if (res.data.false !== 0) {

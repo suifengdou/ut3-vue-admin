@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 
-// 原始ERP订单申请单操作API
 // 获取列表
 export function getManualOrderSubmitList(params) {
   return request({
@@ -10,7 +9,7 @@ export function getManualOrderSubmitList(params) {
   })
 }
 
-// 创建工单
+// 创建
 export function createManualOrderSubmit(data) {
   return request({
     url: `/dfc/manualorder/mosubmit/`,
@@ -19,7 +18,7 @@ export function createManualOrderSubmit(data) {
   })
 }
 
-// 更新工单
+// 更新
 export function updateManualOrderSubmit(id, data) {
   delete data.create_time
   delete data.update_time
@@ -30,7 +29,7 @@ export function updateManualOrderSubmit(id, data) {
   })
 }
 
-// 导出工单
+// 导出
 export function exportManualOrderSubmit(data) {
   return request({
     url: `/dfc/manualorder/mosubmit/export/`,
@@ -39,7 +38,7 @@ export function exportManualOrderSubmit(data) {
   })
 }
 
-// 导入工单
+// 导入
 export function excelImportManualOrderSubmit(data) {
   return request({
     url: `/dfc/manualorder/mosubmit/excel_import/`,
@@ -48,7 +47,7 @@ export function excelImportManualOrderSubmit(data) {
   })
 }
 
-// 审核工单
+// 审核
 export function checkManualOrderSubmit(data) {
   return request({
     url: `/dfc/manualorder/mosubmit/check/`,
@@ -57,10 +56,28 @@ export function checkManualOrderSubmit(data) {
   })
 }
 
-// 取消工单
+// 取消
 export function rejectManualOrderSubmit(data) {
   return request({
     url: `/dfc/manualorder/mosubmit/reject/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置特殊
+export function setSpecialManualOrderSubmit(data) {
+  return request({
+    url: `/dfc/manualorder/mosubmit/set_special/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 重置标记
+export function resetTagManualOrderSubmit(data) {
+  return request({
+    url: `/dfc/manualorder/mosubmit/reset_tag/`,
     method: 'patch',
     data
   })

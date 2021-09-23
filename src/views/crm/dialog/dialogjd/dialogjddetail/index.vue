@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="dialogjddetail-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -9,8 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <!--<el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>-->
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -460,7 +460,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -516,7 +516,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -571,7 +571,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次导入，请慎重选择！'),
+          h('span', null, '驳回到待提取，重新提取！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -587,17 +587,17 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -654,17 +654,17 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0

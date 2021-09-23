@@ -35,6 +35,15 @@ export function excelImportGoods(data) {
   })
 }
 
+// 导出工单
+export function exportGoods(data) {
+  return request({
+    url: `/base/goods/export/`,
+    method: 'patch',
+    data
+  })
+}
+
 export function getGoodsCategoryList(params) {
   return request({
     url: '/base/goodscategory/',

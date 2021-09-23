@@ -352,3 +352,23 @@ export function exportDeliverManage(data) {
     data
   })
 }
+
+
+
+// 获取列表
+export function getOTODetailsManage(params) {
+  return request({
+    url: '/workorder/invoice/oriinvoicegoods/',
+    method: 'get',
+    params
+  })
+}
+
+// 导出工单
+export function exportOTODetails(data) {
+  return request({
+    url: `/workorder/invoice/oriinvoicegoods/export/`,
+    method: 'patch',
+    data
+  })
+}
