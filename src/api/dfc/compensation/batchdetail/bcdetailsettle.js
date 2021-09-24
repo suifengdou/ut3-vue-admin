@@ -48,7 +48,7 @@ export function excelImportBCDetailSettle(data) {
   })
 }
 
-// 审核工单
+// 审核
 export function checkBCDetailSettle(data) {
   return request({
     url: `/dfc/compensation/bcdetailsettle/check/`,
@@ -57,12 +57,14 @@ export function checkBCDetailSettle(data) {
   })
 }
 
-// 取消工单
-export function rejectBCDetailSettle(data) {
+// 重置
+export function resetBCDetailSettle(data) {
   return request({
-    url: `/dfc/compensation/bcdetailsettle/reject/`,
+    url: `/dfc/compensation/bcdetailsettle/reset/`,
     method: 'patch',
     data
   })
 }
+
+
 

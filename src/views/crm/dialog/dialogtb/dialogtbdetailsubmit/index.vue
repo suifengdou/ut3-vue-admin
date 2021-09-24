@@ -10,7 +10,7 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">丢弃</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -32,9 +32,6 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -178,6 +175,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dialog.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="错误原因"
+          prop="mistake_tag"
+          sortable="custom"
+          width="120px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mistake_tag.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -539,83 +546,6 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportDialogTBDetailSubmit(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 3000
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
-    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -740,12 +670,11 @@ export default {
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -799,25 +728,17 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
@@ -830,7 +751,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次导入，请慎重选择！'),
+          h('span', null, '丢弃此对话不提取！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -846,8 +767,8 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '丢弃成功',
+                      message: `丢弃成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -855,8 +776,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '丢弃失败',
+                      message: `丢弃败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -888,7 +809,14 @@ export default {
                   this.fetchData()
                 }
               ).catch(
-                () => {
+                (error) => {
+                  this.$notify({
+                    title: '异常错误详情',
+                    message: error.data,
+                    type: 'error',
+                    offset: 210,
+                    duration: 0
+                  })
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -913,8 +841,8 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '丢弃成功',
+                      message: `丢弃成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -922,8 +850,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '丢弃失败',
+                      message: `丢弃败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -940,22 +868,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()

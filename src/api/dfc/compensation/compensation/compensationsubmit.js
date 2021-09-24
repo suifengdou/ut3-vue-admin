@@ -66,3 +66,22 @@ export function rejectCompensationSubmit(data) {
   })
 }
 
+
+// 取消工单
+export function setSpecialCompensationSubmit(data) {
+  return request({
+    url: `/dfc/compensation/compensationsubmit/set_special/`,
+    method: 'patch',
+    data
+  })
+}
+
+
+// 取消工单
+export function resetTagCompensationSubmit(data) {
+  return request({
+    url: `/dfc/compensation/compensationsubmit/reset_tag/`,
+    method: 'patch',
+    data
+  })
+}

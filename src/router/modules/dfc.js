@@ -62,25 +62,25 @@ const dfcRouter = {
       path: 'compensation',
       name: '财务差价',
       component: () => import('@/views/dfc/compensation'),
-      meta: { title: '财务差价', roles: ['AllPrivileges'] },
+      meta: { title: '财务差价', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] },
       children: [
         {
           path: 'compensation',
           component: () => import('@/views/dfc/compensation/compensation'),
           name: '原始差价单',
-          meta: { title: '原始差价单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '原始差价单', roles: ['compensation.view_compensation', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/dfc/compensation/compensation/submit'),
               name: '原始差价单提交',
-              meta: { title: '原始差价单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '原始差价单提交', roles: ['compensation.view_compensation', 'AllPrivileges'] }
             },
             {
               path: 'manage',
-              component: () => import('@/views/sales/tailgoods/oritailorder/manage'),
+              component: () => import('@/views/dfc/compensation/compensation/manage'),
               name: '原始差价单管理',
-              meta: { title: '原始尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '原始尾货单管理', roles: ['compensation.view_compensation', 'AllPrivileges'] }
             }
           ]
         },
@@ -88,51 +88,51 @@ const dfcRouter = {
           path: 'batchcompensation',
           component: () => import('@/views/dfc/compensation/batch'),
           name: '差价汇总单',
-          meta: { title: '差价汇总单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '差价汇总单', roles: ['compensation.view_compensation', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
-              component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
+              component: () => import('@/views/dfc/compensation/batch/submit'),
               name: '差价汇总单提交',
-              meta: { title: '差价汇总单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '差价汇总单提交', roles: ['compensation.view_user_batchcompensation', 'AllPrivileges'] }
             },
             {
               path: 'settle',
-              component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
+              component: () => import('@/views/dfc/compensation/batch/settle'),
               name: '差价汇总单结算',
-              meta: { title: '差价汇总单结算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '差价汇总单结算', roles: ['compensation.view_handler_batchcompensation', 'AllPrivileges'] }
             },
             {
               path: 'manage',
-              component: () => import('@/views/sales/tailgoods/tailorder/special/index'),
+              component: () => import('@/views/dfc/compensation/batch/manage'),
               name: '差价汇总单管理',
-              meta: { title: '差价汇总单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '差价汇总单管理', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] }
             }
           ]
         },
         {
           path: 'batchdetail',
-          component: () => import('@/views/sales/tailgoods/refund/index'),
+          component: () => import('@/views/dfc/compensation/batchdetail'),
           name: '汇总明细单',
-          meta: { title: '汇总明细单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '汇总明细单', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
-              component: () => import('@/views/sales/tailgoods/refund/submit'),
+              component: () => import('@/views/dfc/compensation/batchdetail/submit'),
               name: '汇总明细单提交',
-              meta: { title: '汇总明细单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '汇总明细单提交', roles: ['compensation.view_user_batchcompensation', 'AllPrivileges'] }
             },
             {
-              path: 'check',
-              component: () => import('@/views/sales/tailgoods/refund/check'),
+              path: 'settle',
+              component: () => import('@/views/dfc/compensation/batchdetail/settle'),
               name: '汇总明细单结算',
-              meta: { title: '汇总明细单结算', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '汇总明细单结算', roles: ['compensation.view_handler_batchcompensation', 'AllPrivileges'] }
             },
             {
               path: 'receival',
-              component: () => import('@/views/sales/tailgoods/refund/receival'),
+              component: () => import('@/views/dfc/compensation/batchdetail/manage'),
               name: '汇总明细单管理',
-              meta: { title: '汇总明细单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '汇总明细单管理', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] }
             }
           ]
         }
@@ -141,7 +141,7 @@ const dfcRouter = {
     {
       path: 'tables',
       component: () => import('@/views/dfc/batchtable'), // Parent router-view
-      name: 'gift',
+      name: 'tables',
       meta: { title: '表格处理', roles: ['AllPrivileges'] },
       redirect: 'noRedirect',
       children: [

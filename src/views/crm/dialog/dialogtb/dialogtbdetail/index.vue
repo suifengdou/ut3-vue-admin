@@ -159,6 +159,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="UT单号"
+          prop="erp_order_id"
+          sortable="custom"
+          width="120px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="客户网名"
           prop="dialog"
           sortable="custom"

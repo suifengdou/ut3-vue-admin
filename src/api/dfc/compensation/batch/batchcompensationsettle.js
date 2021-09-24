@@ -57,12 +57,3 @@ export function checkBatchCompensationSettle(data) {
   })
 }
 
-// 取消工单
-export function rejectBatchCompensationSettle(data) {
-  return request({
-    url: `/dfc/compensation/batchcompensationsettle/reject/`,
-    method: 'patch',
-    data
-  })
-}
-
