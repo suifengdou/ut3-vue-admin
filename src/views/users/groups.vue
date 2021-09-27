@@ -320,13 +320,24 @@ export default {
     handleCancelAdd() {
       this.dialogVisibleAdd = false
       this.fetchData()
-      this.$refs.formEAdd.resetFields()
+      this.$refs.formAdd.resetFields()
     },
     handleSubmitAdd() {
       const data = this.formAdd
       createGroup(data).then(
         () => {
           this.handleCancelAdd()
+          this.fetchData()
+        }
+      ).catch(
+        (error) => {
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+          this.dialogVisibleEdit = false
           this.fetchData()
         }
       )

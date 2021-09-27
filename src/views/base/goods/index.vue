@@ -533,8 +533,13 @@ export default {
           console.log(res.data.results)
         }
       ).catch(
-        () => {
-          this.tableLoading = false
+        (error) => {
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
         }
       )
     },
@@ -555,9 +560,18 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
-      })
+      ).catch(
+        (error) => {
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+          this.handleCancelAdd()
+          this.fetchData()
+        }
+      )
     },
     // 关闭添加界面
     handleCancelAdd() {
@@ -588,9 +602,16 @@ export default {
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
-          },
-          err => {
-            console.log(err.message)
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '更新错误',
+              message: error.data,
+              type: 'error',
+              duration: 0
+            })
+            this.dialogVisibleEdit = false
+            this.fetchData()
           }
         )
       })
@@ -698,16 +719,15 @@ export default {
                 document.getElementsByName("importfile")[0].type = 'file'
                 this.fetchData()
                 done()
-              },
-              err => {
+              }).catch(
+              (error) => {
                 this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
+                  title: '更新错误',
+                  message: error.data,
+                  type: 'error',
                   duration: 0
                 })
                 instance.confirmButtonLoading = false
-                this.fetchData()
                 done()
               }
             )
@@ -723,7 +743,14 @@ export default {
         console.log(action)
       }).catch(
         (error) => {
-          console.log(error)
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+          instance.confirmButtonLoading = false
+          done()
         }
       )
     },

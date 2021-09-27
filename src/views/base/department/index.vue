@@ -104,6 +104,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="部门ID"
+          prop="d_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.d_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -153,11 +163,14 @@
             <el-col :span="8"><el-form-item label="部门名称" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="部门ID" prop="d_id">
+              <el-input v-model="formAdd.d_id" placeholder="请输入ID" />
+            </el-form-item></el-col>
           </el-row>
         </el-card>
         <el-card class="box-card">
           <el-row :gutter="20">
-            <el-col :span="8" :offset="16"><el-form-item size="large">
+            <el-col :span="12" :offset="8"><el-form-item size="large">
               <div class="btn-warpper">
                 <el-button type="danger" @click="handleCancelAdd">取消</el-button>
                 <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
@@ -193,11 +206,14 @@
                 <el-col :span="8"><el-form-item label="部门名称" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="部门ID" prop="d_id">
+                  <el-input v-model="formAdd.d_id" placeholder="请输入ID" />
+                </el-form-item></el-col>
               </el-row>
             </el-card>
             <el-card class="box-card">
               <el-row :gutter="20">
-                <el-col :span="8" :offset="16"><el-form-item size="large">
+                <el-col :span="12" :offset="8"><el-form-item size="large">
                   <div class="btn-warpper">
                     <el-button type="danger" @click="handleCancelEdit">取消</el-button>
                     <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
@@ -266,8 +282,13 @@ export default {
           console.log(res.data.results)
         }
       ).catch(
-        () => {
-          this.tableLoading = false
+        (error) => {
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
         }
       )
     },
@@ -288,9 +309,18 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
-      })
+      ).catch(
+        (error) => {
+          this.$notify({
+            title: '更新错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+          this.handleCancelAdd()
+          this.fetchData()
+        }
+      )
     },
     // 关闭添加界面
     handleCancelAdd() {
@@ -315,9 +345,16 @@ export default {
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
-          },
-          err => {
-            console.log(err.message)
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '更新错误',
+              message: error.data,
+              type: 'error',
+              duration: 0
+            })
+            this.dialogVisibleEdit = false
+            this.fetchData()
           }
         )
       })
