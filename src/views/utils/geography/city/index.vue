@@ -1,5 +1,5 @@
 <template>
-  <div class="nationality-container">
+  <div class="city-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
@@ -397,7 +397,7 @@ import { getProvinceList } from '@/api/utils/geography/province'
 import { getNationalityList } from '@/api/utils/geography/nationality'
 import moment from 'moment'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'City',
   data() {
     return {
       DataList: [],
