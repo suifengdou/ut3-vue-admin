@@ -10,14 +10,14 @@ const workOrderRouter = {
   meta: {
     title: '工单系统',
     icon: 'workorder',
-    roles: ['AllPrivileges']
+    roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'AllPrivileges']
   },
   children: [
     {
       path: 'invoice',
       component: () => import('@/views/workorder/woinvoice/index'), // Parent router-view
       name: 'invoice',
-      meta: { title: '发票工单', icon: 'workorder', roles: ['woinvoice.view_oriinvoice', 'AllPrivileges'] },
+      meta: { title: '发票工单', icon: 'workorder', roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {

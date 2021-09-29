@@ -10,14 +10,14 @@ const dfcRouter = {
   meta: {
     title: '数格转换',
     icon: 'nested',
-    roles: ['AllPrivileges']
+    roles: ['compensation.view_compensation', 'compensation.view_batchcompensation', 'manualorder.view_manualorderexport', 'manualorder.view_manualorder', 'AllPrivileges']
   },
   children: [
     {
       path: 'manualorder',
       component: () => import('@/views/dfc/manualorder'), // Parent router-view
       name: 'manualorder',
-      meta: { title: '手工订单', roles: ['manualorder.view_manualorder', 'AllPrivileges'] },
+      meta: { title: '手工订单', roles: ['manualorder.view_manualorderexport', 'manualorder.view_manualorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -62,7 +62,7 @@ const dfcRouter = {
       path: 'compensation',
       name: '财务差价',
       component: () => import('@/views/dfc/compensation'),
-      meta: { title: '财务差价', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] },
+      meta: { title: '财务差价', roles: ['compensation.view_compensation', 'compensation.view_batchcompensation', 'AllPrivileges'] },
       children: [
         {
           path: 'compensation',
@@ -88,7 +88,7 @@ const dfcRouter = {
           path: 'batchcompensation',
           component: () => import('@/views/dfc/compensation/batch'),
           name: '差价汇总单',
-          meta: { title: '差价汇总单', roles: ['compensation.view_compensation', 'AllPrivileges'] },
+          meta: { title: '差价汇总单', roles: ['compensation.view_batchcompensation', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',

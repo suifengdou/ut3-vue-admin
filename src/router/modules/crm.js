@@ -10,14 +10,14 @@ const crmChannelRouter = {
   meta: {
     title: '客户关系',
     icon: 'nested',
-    roles: ['AllPrivileges']
+    roles: ['order.view_oriorderinfo', 'service.view_orimaintenance', 'service.view_maintenance', 'callcenter.view_oricalllog', 'dialog.view_dialogtb', 'dialog.view_dialogow', 'dialog.view_dialogjd', 'customers.view_customer', 'AllPrivileges']
   },
   children: [
     {
       path: 'order',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
       name: 'order',
-      meta: { title: '订单系统', roles: ['AllPrivileges'] },
+      meta: { title: '订单系统', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -44,19 +44,19 @@ const crmChannelRouter = {
           path: 'bmsorder',
           component: () => import('@/views/crm/order/bmsorder'),
           name: 'bmsorder',
-          meta: { title: 'BMS订单', roles: ['order.view_orderinfo', 'AllPrivileges'] },
+          meta: { title: 'BMS订单', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/crm/order/bmsorder/submit'),
               name: 'bmsordersubmit',
-              meta: { title: 'BMS订单提交', roles: ['order.view_user_orderinfo', 'AllPrivileges'] }
+              meta: { title: 'BMS订单提交', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/crm/order/bmsorder/manage'),
               name: 'bmsordermanage',
-              meta: { title: 'BMS订单管理', roles: ['order.view_orderinfo', 'AllPrivileges'] }
+              meta: { title: 'BMS订单管理', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] }
             }
           ]
         },
@@ -64,19 +64,19 @@ const crmChannelRouter = {
           path: 'utorder',
           component: () => import('@/views/crm/order/order'),
           name: 'utorder',
-          meta: { title: '订单', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] },
+          meta: { title: '订单', roles: ['order.view_orderinfo', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/crm/order/order/submit/index'),
               name: '订单提交',
-              meta: { title: '订单提交', roles: ['order.view_user_bmsorderinfo', 'AllPrivileges'] }
+              meta: { title: '订单提交', roles: ['order.view_orderinfo', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/crm/order/order/manage/index'),
               name: '订单管理',
-              meta: { title: '订单管理', roles: ['order.view_bmsorderinfo', 'advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '订单管理', roles: ['order.view_orderinfo', 'AllPrivileges'] }
             }
           ]
         }
@@ -106,7 +106,7 @@ const crmChannelRouter = {
       path: 'dialog',
       name: 'dialog',
       component: () => import('@/views/crm/dialog'),
-      meta: { title: '客户对话', roles: ['AllPrivileges'] },
+      meta: { title: '客户对话', roles: ['dialog.view_dialogtb', 'dialog.view_dialogow', 'dialog.view_dialogjd', 'AllPrivileges'] },
       children: [
         {
           path: 'servicer',
@@ -223,7 +223,7 @@ const crmChannelRouter = {
       path: 'callcenter',
       name: 'callcenter',
       component: () => import('@/views/crm/callcenter/'),
-      meta: { title: '呼叫中心', roles: ['AllPrivileges'] },
+      meta: { title: '呼叫中心', roles: ['callcenter.view_oricalllog','AllPrivileges'] },
       children: [
         {
           path: 'oricalllogsubmit',
@@ -255,7 +255,7 @@ const crmChannelRouter = {
       path: 'service',
       name: 'service',
       component: () => import('@/views/crm/service'),
-      meta: { title: '中央维修', roles: ['AllPrivileges'] },
+      meta: { title: '中央维修', roles: ['service.view_orimaintenance', 'service.view_maintenance', 'AllPrivileges'] },
       children: [
 
         {
