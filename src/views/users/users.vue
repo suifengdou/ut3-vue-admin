@@ -56,7 +56,7 @@
                             :remote-method="remoteMethodDepartment"
                           >
                             <el-option
-                              v-for="item in optionsShop"
+                              v-for="item in optionsDepartment"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"

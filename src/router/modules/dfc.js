@@ -73,8 +73,14 @@ const dfcRouter = {
             {
               path: 'submit',
               component: () => import('@/views/dfc/compensation/compensation/submit'),
+              name: '原始差价单创建',
+              meta: { title: '原始差价单创建', roles: ['compensation.view_user_compensation', 'AllPrivileges'] }
+            },
+            {
+              path: 'check',
+              component: () => import('@/views/dfc/compensation/compensation/check'),
               name: '原始差价单提交',
-              meta: { title: '原始差价单提交', roles: ['compensation.view_compensation', 'AllPrivileges'] }
+              meta: { title: '原始差价单提交', roles: ['compensation.view_handler_compensation', 'AllPrivileges'] }
             },
             {
               path: 'manage',

@@ -207,7 +207,7 @@
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="部门ID" prop="d_id">
-                  <el-input v-model="formAdd.d_id" placeholder="请输入ID" />
+                  <el-input v-model="formEdit.d_id" placeholder="请输入ID" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>

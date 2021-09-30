@@ -193,13 +193,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
+          label="单据状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -245,11 +245,11 @@
 
         <el-table-column
           label="货品"
-          prop="goods_detail"
+          prop="goods_details"
         >
           <template slot-scope="scope">
-            <div v-for="(item, i) in scope.row.goods_detail">
-              <el-tag type="success" size="mini" effect="dark"><span>{{ item }}</span></el-tag>
+            <div v-for="(item, i) in scope.row.goods_details">
+              <el-tag type="success" size="mini" effect="dark"><span>{{ item.name.name }}*{{ item.quantity }}</span></el-tag>
             </div>
           </template>
         </el-table-column>

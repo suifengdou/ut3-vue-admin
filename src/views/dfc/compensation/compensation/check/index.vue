@@ -9,6 +9,9 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSetSpecial">特设</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleResetTag">重置</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -522,6 +525,9 @@
             <el-col :span="8"><el-form-item label="姓名" prop="name">
               <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
+              <el-input v-model="formAdd.alipay_id" placeholder="请输入名称" />
+            </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="补偿金额" prop="compensation">
@@ -711,13 +717,16 @@
 
 <script>
 import {
-  getCompensationSubmitList,
-  createCompensationSubmit,
-  updateCompensationSubmit,
-  exportCompensationSubmit,
-  excelImportCompensationSubmit,
-  rejectCompensationSubmit
-} from '@/api/dfc/compensation/compensation/compensationsubmit'
+  getCompensationCheckList,
+  createCompensationCheck,
+  updateCompensationCheck,
+  exportCompensationCheck,
+  excelImportCompensationCheck,
+  checkCompensationCheck,
+  rejectCompensationCheck,
+  setSpecialCompensationCheck,
+  resetTagCompensationCheck
+} from '@/api/dfc/compensation/compensation/compensationcheck'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -823,7 +832,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getCompensationSubmitList(this.params).then(
+      getCompensationCheckList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -848,7 +857,7 @@ export default {
         order_category: details.order_category.id
       }
       console.log(data)
-      updateCompensationSubmit(id, data).then(
+      updateCompensationCheck(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -894,14 +903,14 @@ export default {
       this.formEdit.order_category = this.formEdit.order_category.id
     },
     // 提交编辑完成的数据
-    handleSubmitEdit() {
+    handleCheckEdit() {
       const { id, ...data } = this.formEdit
       let attrStr
       const transFieldStr = ['mistake_tag', 'order_status', 'process_tag']
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateCompensationSubmit(id, data).then(
+      updateCompensationCheck(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -939,11 +948,11 @@ export default {
       this.dialogVisibleAdd = false
       this.$refs.handleFormAdd.resetFields()
     },
-    handleSubmitAdd() {
+    handleCheckAdd() {
       console.log(this.formAdd)
       console.log(this.OrderDetailsList)
       this.formAdd.goods_details = this.OrderDetailsList
-      createCompensationSubmit(this.formAdd).then(
+      createCompensationCheck(this.formAdd).then(
         () => {
           this.fetchData()
           this.handleCancelAdd()
@@ -978,7 +987,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportCompensationSubmit(this.params).then(
+            exportCompensationCheck(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1046,7 +1055,313 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
+    handleSetSpecial() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setSpecialCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setSpecialCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+          }
+        )
+      }
+    },
+    handleResetTag() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        resetTagCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        resetTagCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+          }
+        )
+      }
+    },
+    // 审核单据
+    handleCheck() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        checkCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        checkCompensationCheck(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
 
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -1067,7 +1382,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectCompensationSubmit(this.params).then(
+              rejectCompensationCheck(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1127,7 +1442,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectCompensationSubmit(this.params).then(
+              rejectCompensationCheck(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({

@@ -635,6 +635,69 @@
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="省" prop="province">
+                  <template>
+                    <el-select
+                      v-model="formEdit.province"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择省份"
+                      :remote-method="remoteMethodProvince"
+                    >
+                      <el-option
+                        v-for="item in optionsProvince"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="市" prop="city">
+                  <template>
+                    <el-select
+                      v-model="formEdit.city"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择城市"
+                      :remote-method="remoteMethodCity"
+                    >
+                      <el-option
+                        v-for="item in optionsCity"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="区" prop="district">
+                  <template>
+                    <el-select
+                      v-model="formEdit.district"
+                      filterable
+                      default-first-option
+                      clearable
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择区县"
+                      :remote-method="remoteMethodDistrict"
+                    >
+                      <el-option
+                        v-for="item in optionsDistrict"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
             </el-card>
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -798,7 +861,9 @@
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
   import { getGoodsList } from '@/api/base/goods'
+  import { getProvinceList } from '@/api/utils/geography/province'
   import { getCityList } from '@/api/utils/geography/city'
+  import { getDistrictList } from '@/api/utils/geography/district'
   import moment from 'moment'
   import XLSX from 'xlsx'
   export default {
@@ -915,7 +980,9 @@
         optionsDepartment: [],
         optionsCompany: [],
         optionsPlatform: [],
+        optionsProvince: [],
         optionsCity: [],
+        optionsDistrict: [],
         optionsGoods: [],
         optionsCategory: [
           {
@@ -1011,19 +1078,21 @@
         this.dialogVisibleEdit = true
 
         this.formEdit.order_category = this.formEdit.order_category.id
-        this.formEdit.province = this.formEdit.province.id
         if (this.formEdit.district !== 'undefined') {
+          this.optionsDistrict = [{ label: this.formEdit.district.name, value: this.formEdit.district.id }]
           this.formEdit.district = this.formEdit.district.id
         }
+        this.optionsProvince = [{ label: this.formEdit.province.name, value: this.formEdit.province.id }]
+        this.formEdit.province = this.formEdit.province.id
+        this.optionsCity = [{ label: this.formEdit.city.name, value: this.formEdit.city.id }]
+        this.formEdit.city = this.formEdit.city.id
+
         // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
         // console.log(currentShop)
         this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
         this.formEdit.shop = this.formEdit.shop.id
         // console.log(this.optionsShop)
         // console.log(this.formEdit.shop)
-
-        this.optionsCity = [{ label: this.formEdit.city.name, value: this.formEdit.city.id }]
-        this.formEdit.city = this.formEdit.city.id
 
         this.optionsGoods = this.formEdit.goods_details.map(item => {
           return { label: item.name.name, value: item.name.id }
@@ -1092,8 +1161,13 @@
             this.fetchData()
             this.handleCancelAdd()
           }
-        ).catch((res) => {
-          console.log(res)
+        ).catch((error) => {
+          this.$notify({
+            title: '导入错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
         })
       },
       // 检索用户组选项
@@ -1772,6 +1846,25 @@
         }
       },
       // 城市搜索
+      remoteMethodProvince(query) {
+        if (query !== '') {
+          // console.log("我准备开始检索啦")
+          setTimeout(() => {
+            // console.log("我是真正的开始检索啦")
+            const paramsSearch = {}
+            paramsSearch.name = query
+            getProvinceList(paramsSearch).then(
+              res => {
+                this.optionsProvince = res.data.results.map(item => {
+                  return { label: item.name, value: item.id }
+                })
+              }
+            )
+          }, 200)
+        } else {
+          this.optionsProvince = []
+        }
+      },
       remoteMethodCity(query) {
         if (query !== '') {
           // console.log("我准备开始检索啦")
@@ -1788,7 +1881,26 @@
             )
           }, 200)
         } else {
-          this.options = []
+          this.optionsCity = []
+        }
+      },
+      remoteMethodDistrict(query) {
+        if (query !== '') {
+          // console.log("我准备开始检索啦")
+          setTimeout(() => {
+            // console.log("我是真正的开始检索啦")
+            const paramsSearch = {}
+            paramsSearch.name = query
+            getCityList(paramsSearch).then(
+              res => {
+                this.optionsDistrict = res.data.results.map(item => {
+                  return { label: item.name, value: item.id }
+                })
+              }
+            )
+          }, 200)
+        } else {
+          this.optionsDistrict = []
         }
       },
       // 排序

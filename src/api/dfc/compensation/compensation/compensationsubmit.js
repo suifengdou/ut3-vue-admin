@@ -48,14 +48,6 @@ export function excelImportCompensationSubmit(data) {
   })
 }
 
-// 审核工单
-export function checkCompensationSubmit(data) {
-  return request({
-    url: `/dfc/compensation/compensationsubmit/check/`,
-    method: 'patch',
-    data
-  })
-}
 
 // 取消工单
 export function rejectCompensationSubmit(data) {
@@ -67,21 +59,3 @@ export function rejectCompensationSubmit(data) {
 }
 
 
-// 取消工单
-export function setSpecialCompensationSubmit(data) {
-  return request({
-    url: `/dfc/compensation/compensationsubmit/set_special/`,
-    method: 'patch',
-    data
-  })
-}
-
-
-// 取消工单
-export function resetTagCompensationSubmit(data) {
-  return request({
-    url: `/dfc/compensation/compensationsubmit/reset_tag/`,
-    method: 'patch',
-    data
-  })
-}
