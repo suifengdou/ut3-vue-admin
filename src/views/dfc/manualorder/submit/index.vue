@@ -387,7 +387,7 @@
             <el-col :span="8"><el-form-item label="店铺" prop="shop">
               <template>
                 <el-select
-                  v-model="formEdit.shop"
+                  v-model="formAdd.shop"
                   filterable
                   default-first-option
                   remote
@@ -1129,9 +1129,15 @@
             () => {
               this.dialogVisibleEdit = false
               this.fetchData()
-            },
-            err => {
-              console.log(err.message)
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '错误详情',
+                message: error.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
             }
           )
         })
@@ -1163,9 +1169,10 @@
           }
         ).catch((error) => {
           this.$notify({
-            title: '导入错误',
+            title: '错误详情',
             message: error.data,
             type: 'error',
+            offset: 210,
             duration: 0
           })
         })
@@ -1210,7 +1217,13 @@
           }
         ).catch(
           () => {
-            console.log('1')
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
           }
         )
         this.importVisible = false
