@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.batch_order" class="grid-content bg-purple" placeholder="请输入OA单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.batch_order" class="grid-content bg-purple" placeholder="请输入批次号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -75,7 +75,7 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="OA单号" prop="batch_order">
+                      <el-col :span="6"><el-form-item label="批次号" prop="batch_order">
                         <el-input v-model="params.batch_order" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />

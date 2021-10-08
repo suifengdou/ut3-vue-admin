@@ -1,7 +1,5 @@
 <template>
   <div>
-    <el-alert :closable="false">
-      <router-view />
-    </el-alert>
+    <router-view />
   </div>
 </template>

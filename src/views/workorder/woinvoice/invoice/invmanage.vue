@@ -538,10 +538,6 @@
 </template>
 
 <script>
-import {
-  checkInvoiceHandle,
-  rejectInvoiceHandle
-} from '@/api/wop/woinvoice'
 import { getInvoiceListManage, exportInvoiceManage } from '@/api/wop/woinvoice'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
@@ -550,7 +546,7 @@ import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'InvoiceManage',
   data() {
     const validateTicket = (rule, value, callback) => {
       console.log(this.formAdd.order_category)

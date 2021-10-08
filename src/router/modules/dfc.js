@@ -86,7 +86,7 @@ const dfcRouter = {
               path: 'manage',
               component: () => import('@/views/dfc/compensation/compensation/manage'),
               name: '原始差价单管理',
-              meta: { title: '原始尾货单管理', roles: ['compensation.view_compensation', 'AllPrivileges'] }
+              meta: { title: '原始差价单管理', roles: ['compensation.view_compensation', 'AllPrivileges'] }
             }
           ]
         },

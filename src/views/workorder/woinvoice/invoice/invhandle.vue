@@ -439,6 +439,9 @@
                 <el-col :span="8"><el-form-item label="发票类型" prop="order_category">
                   <span>{{ formEdit.order_category }}</span>
                 </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="创建人" prop="creator">
+                  <span>{{ formEdit.creator }}</span>
+                </el-form-item></el-col>
               </el-row>
             </el-card>
 
@@ -454,7 +457,14 @@
                   <span>{{ formEdit.tax_id }}</span>
                 </el-form-item></el-col>
               </el-row>
-
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="地址" prop="address">
+                  <span>{{ formEdit.address }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="联系电话" prop="phone">
+                  <span>{{ formEdit.phone }}</span>
+                </el-form-item></el-col>
+              </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="银行名称" prop="bank">
                   <span>{{ formEdit.bank }}</span>
@@ -462,16 +472,7 @@
                 <el-col :span="8"><el-form-item label="银行账号" prop="account">
                   <span>{{ formEdit.account }}</span>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="联系电话" prop="phone">
-                  <span>{{ formEdit.phone }}</span>
-                </el-form-item></el-col>
-              </el-row>
 
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="地址" prop="address">
-                  <span>{{ formEdit.address }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8" />
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="发票备注" prop="remark">
@@ -489,6 +490,15 @@
                   <span>{{ formEdit.message }}</span>
                 </el-form-item></el-col>
                 <el-col :span="8" />
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="源单金额" prop="bank">
+                  <span>{{ formEdit.ori_amount }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="开票金额" prop="account">
+                  <span>{{ formEdit.amount }}</span>
+                </el-form-item></el-col>
+
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="12">

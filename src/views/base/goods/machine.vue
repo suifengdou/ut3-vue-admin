@@ -41,7 +41,9 @@
                       <el-col :span="6"><el-form-item label="货品名称" prop="name">
                         <el-input v-model="params.name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="6"><el-form-item label="货品编码" prop="goods_id">
+                        <el-input v-model="params.goods_id" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
