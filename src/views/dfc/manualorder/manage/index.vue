@@ -10,7 +10,6 @@
               </el-input>
             </el-tooltip>
           </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -50,28 +49,8 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发票类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
+                      <el-col :span="6"><el-form-item label="单据类型" prop="order_category">
+                        <el-select v-model="params.order_category" placeholder="请选择单据类型">
                           <el-option
                             v-for="item in optionsCategory"
                             :key="item.value"
@@ -93,43 +72,23 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
+                      <el-col :span="8"><el-form-item label="收件人" prop="receiver">
+                        <el-input v-model="params.receiver" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
+                      <el-col :span="8"><el-form-item label="手机" prop="mobile">
+                        <el-input v-model="params.mobile" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="4" />
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否顺丰">
-                        <el-select v-model="params.is_deliver" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
+
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">

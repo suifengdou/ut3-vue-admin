@@ -1314,9 +1314,15 @@ export default {
           () => {
             this.dialogVisibleEdit = false
             this.fetchData()
-          },
-          err => {
-            console.log(err.message)
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '更新错误',
+              message: `错误详情：${error.data}`,
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
           }
         )
       })

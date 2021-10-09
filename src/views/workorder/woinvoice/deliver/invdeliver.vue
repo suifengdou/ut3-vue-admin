@@ -159,7 +159,6 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">

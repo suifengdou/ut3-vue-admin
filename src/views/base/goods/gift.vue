@@ -510,7 +510,7 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      this.params.goods_attribute = 2
+      this.params.goods_attribute = 3
       // console.log(this.params.create_time)
       if (typeof (this.params.create_time) !== 'undefined') {
         if (this.params.create_time.length === 2) {
