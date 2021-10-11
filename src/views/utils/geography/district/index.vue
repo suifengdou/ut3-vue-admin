@@ -723,27 +723,29 @@ export default {
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
-      this.$refs.FormEdit.validate(valid => {
-        if (!valid) {
-          return
+      const { id, ...data } = this.formEdit
+      updateDistrict(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 3000
+          })
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 0
+          })
         }
-        const { id, ...data } = this.formEdit
-        console.log(data)
-        let attrStr
-        const transFieldStr = ['order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
-        updateDistrict(id, data).then(
-          () => {
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          },
-          err => {
-            console.log(err.message)
-          }
-        )
-      })
+      )
+
     },
     // 关闭修改界面
     handleCancelEdit() {

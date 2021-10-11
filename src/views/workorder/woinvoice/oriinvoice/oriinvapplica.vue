@@ -521,32 +521,6 @@
             </el-form-item></el-col>
             <el-col :span="8" />
           </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-              <template>
-                <el-select
-                  v-model="formAdd.sent_city"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择城市"
-                  :remote-method="remoteMethodCity"
-                >
-                  <el-option
-                    v-for="item in optionsCity"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-              <el-input v-model="formAdd.sent_district" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8" />
-          </el-row>
           <el-row :guuter="20">
             <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
               <el-input v-model="formAdd.sent_address" placeholder="请输入名称" />
@@ -784,32 +758,6 @@
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
                   <el-input v-model="formEdit.sent_smartphone" placeholder="请输入名称" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-                  <template>
-                    <el-select
-                      v-model="formEdit.sent_city"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择城市"
-                      :remote-method="remoteMethodCity"
-                    >
-                      <el-option
-                        v-for="item in optionsCity"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-                  <el-input v-model="formEdit.sent_district" placeholder="请输入名称" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
