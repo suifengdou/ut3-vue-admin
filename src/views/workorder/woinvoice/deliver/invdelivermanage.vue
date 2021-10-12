@@ -175,6 +175,21 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="更新时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.update_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
                   </el-form>
                 </div>
               </el-collapse-item>
@@ -792,6 +807,12 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.update_time) !== 'undefined') {
+        if (this.params.update_time.length === 2) {
+          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getDeliverManage(this.params).then(
