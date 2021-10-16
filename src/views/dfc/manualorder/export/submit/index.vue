@@ -98,6 +98,25 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="是否导出" prop="process_tag">
+                        <template>
+                          <el-select
+                            v-model="params.process_tag"
+                            filterable
+                            default-first-option
+                            remote
+                            reserve-keyword
+                            placeholder="请搜索并选择是否导出"
+                          >
+                            <el-option
+                              v-for="item in optionsProcess"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="单号" prop="erp_order_Id">
                         <el-input v-model="params.erp_order_Id" type="text" />
                       </el-form-item></el-col>
@@ -165,6 +184,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -430,29 +450,16 @@ export default {
         allSelectTag: 0
       },
       optionsShop: [],
-      optionsDepartment: [],
-      optionsCompany: [],
-      optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
-      optionsCategory: [
+      optionsProcess: [
+        {
+          value: 0,
+          label: '未处理'
+        },
         {
           value: 1,
-          label: '专票'
-        },
-        {
-          value: 2,
-          label: '普票'
-        }
-      ],
-      optionsIsDeliver: [
-        {
-          value: true,
-          label: '是'
-        },
-        {
-          value: false,
-          label: '否'
+          label: '已处理'
         }
       ],
       OrderDetailsList: [],
@@ -554,13 +561,18 @@ export default {
                 resultType = 'success'
                 instance.confirmButtonLoading = false
                 done()
-              },
-              err => {
-                console.log(err)
-                resultMessage = '表格导出失败啦'
-                resultType = 'error'
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
                 instance.confirmButtonLoading = false
                 done()
+                this.fetchData()
               }
             )
           } else {
@@ -575,7 +587,14 @@ export default {
         })
       }).catch(
         (error) => {
-          console.log(error)
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
         }
       )
     },
@@ -628,14 +647,13 @@ export default {
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
-              offset: 210,
+              offset: 70,
               duration: 0
             })
             this.fetchData()
@@ -687,25 +705,16 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
-              offset: 210,
+              offset: 70,
               duration: 0
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
@@ -761,22 +770,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -828,22 +830,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -970,6 +965,16 @@ export default {
           }
         }
       }
+    },
+    // 显示行的颜色变化
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.process_tag.id === 1) {
+        row_style = {
+          backgroundColor: 'palegreen'
+        }
+      }
+      return row_style
     },
     // 重置筛选
     resetParams() {

@@ -112,6 +112,21 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="更新时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.update_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
                   </el-form>
                 </div>
               </el-collapse-item>
@@ -405,16 +420,18 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (typeof (this.params.update_time) !== 'undefined') {
+        if (this.params.update_time.length === 2) {
+          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
       getMOExportList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
         }
       ).catch(
         () => {
