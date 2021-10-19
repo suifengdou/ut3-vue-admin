@@ -1282,19 +1282,16 @@ export default {
           })
           console.log(res)
           this.closeIvoiceID()
-        },
-        error => {
+        }).catch(
+        (error) => {
           this.$notify({
             title: '修改发票单号失败',
+            message: error.data,
             type: 'error',
             offset: 70,
             duration: 0
           })
-          console.log(error)
-        }
-      ).catch(
-        () => {
-          console.log('sss')
+          this.closeIvoiceID()
         }
       )
     },

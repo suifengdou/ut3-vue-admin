@@ -35,7 +35,7 @@
               <el-button type="success" @click="handleImport">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -428,6 +428,30 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.district }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建人"
+          prop="creator"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          prop="create_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.create_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="更新时间"
+          prop="update_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.update_time }}</span>
           </template>
         </el-table-column>
 
@@ -838,7 +862,7 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -862,7 +886,7 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop,
+                    店铺名称: item.shop,
                     原始单号: item.ori_order_id,
                     网名: item.nickname,
                     收件人: item.consignee,

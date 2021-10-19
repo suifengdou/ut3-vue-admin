@@ -446,6 +446,30 @@
             <span>{{ scope.row.district }}</span>
           </template>
         </el-table-column>
+        <el-table-column
+          label="创建人"
+          prop="creator"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          prop="create_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.create_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="更新时间"
+          prop="update_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.update_time }}</span>
+          </template>
+        </el-table-column>
 
       </el-table>
     </div>
