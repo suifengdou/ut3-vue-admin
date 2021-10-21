@@ -450,6 +450,26 @@
             </el-card>
             <el-card class="box-card">
               <div slot="header" class="clearfix">
+                <span>收件信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="收件姓名" prop="sent_consignee">
+                  <span>{{ formEdit.sent_consignee }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
+                  <span>{{ formEdit.sent_smartphone }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8" />
+              </el-row>
+              <el-row :guuter="20">
+                <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
+                  <span>{{ formEdit.sent_address }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8" />
+              </el-row>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
                 <span>其他信息</span>
               </div>
               <el-row :gutter="20">

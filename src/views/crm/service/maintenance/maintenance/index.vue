@@ -655,6 +655,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+
       console.log(this.params)
       getMaintenanceList(this.params).then(
         res => {

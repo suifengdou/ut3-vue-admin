@@ -121,7 +121,6 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -155,15 +154,17 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -195,17 +196,51 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="错误原因"
+          prop="mistake_tag"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="处理标签"
           prop="process_tag"
+          width="120px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <el-select v-model="scope.row.process_tag.id" placeholder="标签" @change="confirmProcess(scope.row)">
+              <el-option
+                v-for="item in optionsProcess"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
+          label="驳回原因"
+          prop="rejection"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.rejection }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理意见"
+          prop="suggestion"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.suggestion }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="执行内容"
+          prop="feedback"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
@@ -215,8 +250,7 @@
         <el-table-column
           label="初始问题信息"
           prop="information"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
+          width="200px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.information }}</span>
@@ -231,10 +265,18 @@
               v-model="scope.row.is_losing"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
+        </el-table-column>
+        <el-table-column
+          label="理赔金额"
+          prop="indemnification"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.indemnification }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="是否返回"
@@ -245,18 +287,30 @@
               v-model="scope.row.is_return"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
         </el-table-column>
-
         <el-table-column
-          label="工单类型"
-          prop="wo_category"
+          label="返回单号"
+          prop="return_express_id"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
+            <span>{{ scope.row.return_express_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否正向"
+          prop="is_forward"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_forward"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -339,12 +393,6 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
-      dialogVisibleEdit: false,
-      importVisible: false,
-      formAdd: {},
-      formEdit: {},
-      importFile: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -573,37 +621,32 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    快递单号: item.track_id,
+                    快递公司: item.company.name,
+                    工单事项类型: item.category.name,
+                    初始问题信息: item.information,
+                    提交时间: item.submit_time,
+                    提交人: item.servicer,
+                    反馈间隔: item.services_interval,
+                    处理意见: item.suggestion,
+                    处理人: item.handler,
+                    处理时间: item.handle_time,
+                    处理间隔: item.handle_interval,
+                    反馈内容: item.feedback,
+                    是否理赔: item.is_losing,
+                    理赔金额: item.indemnification,
+                    是否返回: item.is_return,
+                    返回单号: item.return_express_id,
+                    备注: item.memo,
+                    驳回原因: item.rejection,
+                    工单状态: item.order_status.name,
+                    是否正向: item.is_forward,
+                    处理标签: item.process_tag.name,
+                    处理状态: item.handling_status,
+                    错误原因: item.mistake_tag,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    创建者: item.creator
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

@@ -10,7 +10,7 @@ const workOrderRouter = {
   meta: {
     title: '工单系统',
     icon: 'workorder',
-    roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'AllPrivileges']
+    roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'express.view_expressworkorder', 'AllPrivileges']
   },
   children: [
     {
@@ -99,50 +99,50 @@ const workOrderRouter = {
       path: 'express',
       name: '快递工单',
       component: () => import('@/views/workorder/express/index'),
-      meta: { title: '快递工单', icon: 'workorder', roles: ['AllPrivileges'] },
+      meta: { title: '快递工单', icon: 'workorder', roles: ['express.view_expressworkorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'reversecreate',
           component: () => import('@/views/workorder/express/reversecreate/index'),
           name: '快递逆向提交',
-          meta: { title: '快递逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '快递逆向提交', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'create',
           component: () => import('@/views/workorder/express/create/index'),
           name: '快递正向提交',
-          meta: { title: '快递正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '快递正向提交', icon: 'workorder', roles: ['express.view_handler_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/express/handle/index'),
-          name: '快递逆向处理',
-          meta: { title: '快递逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '快递处理意见',
+          meta: { title: '快递处理意见', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'express.view_handler_expressworkorder', 'AllPrivileges'] }
         },
         {
-          path: 'supplierhandle',
-          component: () => import('@/views/workorder/express/supplierhandle/index'),
-          name: '快递综合处理',
-          meta: { title: '快递综合处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          path: 'execute',
+          component: () => import('@/views/workorder/express/execute'),
+          name: '快递指令执行',
+          meta: { title: '快递指令执行', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'express.view_handler_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'check',
           component: () => import('@/views/workorder/express/check/index'),
           name: '快递工单审核',
-          meta: { title: '快递工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '快递工单审核', icon: 'workorder', roles: ['express.view_check_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'financehandle',
           component: () => import('@/views/workorder/express/financehandle/index'),
           name: '快递工单财审',
-          meta: { title: '快递工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '快递工单财审', icon: 'workorder', roles: ['express.view_audit_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/express/manage/index'),
           name: '快递工单管理',
-          meta: { title: '快递工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '快递工单管理', icon: 'workorder', roles: ['express.view_expressworkorder', 'AllPrivileges'] }
         }
       ]
     },

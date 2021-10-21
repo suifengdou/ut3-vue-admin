@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="express-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -33,10 +33,10 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
+              <el-button type="success" @click="importExcel">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -219,18 +219,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
+          label="驳回原因"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
+            <span>{{ scope.row.rejection }}</span>
           </template>
         </el-table-column>
 
         <el-table-column
           label="初始问题信息"
           prop="information"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
+          width="200px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.information }}</span>
@@ -264,13 +263,24 @@
           </template>
 
         </el-table-column>
-
         <el-table-column
-          label="工单类型"
-          prop="wo_category"
+          label="返回单号"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
+            <span>{{ scope.row.return_express_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否正向"
+          prop="is_forward"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_forward"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -327,8 +337,8 @@
             <span>工单相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择类型">
+            <el-col :span="8"><el-form-item label="工单类型" prop="category">
+              <el-select v-model="formAdd.category" placeholder="请选择类型">
                 <el-option
                   v-for="item in optionsCategory"
                   :key="item.value"
@@ -376,7 +386,7 @@
             <span>其他信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
+            <el-col :span="6"><el-form-item label="是否返回" prop="is_return">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_return"
@@ -385,7 +395,13 @@
                 />
               </template>
             </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
+            <el-col :span="10"><el-form-item label="返回单号" prop="return_express_id">
+              <el-input v-model="formAdd.return_express_id" placeholder="请输入返回单号" />
+            </el-form-item></el-col>
+            <el-col :span="8" />
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_losing"
@@ -432,7 +448,7 @@
             label-width="80px"
             size="mini"
             :model="formEdit"
-            :rules="rulesEdit"
+            :rules="rules"
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -487,7 +503,7 @@
                 <span>其他信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
+                <el-col :span="6"><el-form-item label="是否返回" prop="is_return">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_return"
@@ -496,7 +512,13 @@
                     />
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
+                <el-col :span="10"><el-form-item label="返回单号" prop="return_express_id">
+                  <el-input v-model="formEdit.return_express_id" placeholder="请输入返回单号" />
+                </el-form-item></el-col>
+                <el-col :span="8" />
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"
@@ -529,36 +551,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -585,15 +577,6 @@ import XLSX from 'xlsx'
 export default {
   name: 'submitExpressWorkOrder',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       DataList: [],
       tableLoading: false,
@@ -609,10 +592,8 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      importVisible: false,
       formAdd: {},
       formEdit: {},
-      importFile: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -641,33 +622,16 @@ export default {
       ],
       rules: {
         category: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+          { required: true, message: '请选择类型', trigger: 'blur', type: 'number' }
         ],
         track_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
+          { required: true, message: '请输入快递单号', trigger: 'blur' }
         ],
         company: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
+          { required: true, message: '请输入快递公司', trigger: 'blur' }
         ],
         information: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
-        ]
-      },
-      rulesEdit: {
-        id: [
-          {required: true, message: '请选择店铺', trigger: 'blur'}
-        ],
-        category: [
-          {required: true, message: '请选择店铺', trigger: 'blur'}
-        ],
-        track_id: [
-          {required: true, message: '请输入源单号', trigger: 'blur'}
-        ],
-        company: [
-          {required: true, message: '请输入源单号', trigger: 'blur'}
-        ],
-        information: [
-          {required: true, message: '请选择公司', trigger: 'blur'}
+          { required: true, message: '请选择描述信息', trigger: 'blur' }
         ]
       }
     }
@@ -725,24 +689,32 @@ export default {
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
-        const transFieldStr = ['process_tag', 'mid_handler', 'wo_category', 'order_status']
+        const transFieldStr = ['process_tag', 'handling_status', 'order_status', 'mistake_tag']
         for (attrStr in transFieldStr) {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
         console.log(data)
         updateWorkOrder(id, data).then(
           () => {
+            this.$notify({
+              title: '更新成功',
+              type: 'success',
+              offset: 70,
+              duration: 3000
+            })
             this.dialogVisibleEdit = false
             this.fetchData()
-          },
-          err => {
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: err.data,
+              message: error.data,
               type: 'error',
               offset: 70,
               duration: 0
             })
+            this.dialogVisibleEdit = false
+            this.fetchData()
           }
         )
       })
@@ -781,67 +753,87 @@ export default {
         })
       })
     },
-    // 检索用户组选项
-    unique(arr) {
-      // 根据唯一标识no来对数组进行过滤
-      // 定义常量 res,值为一个Map对象实例
-      const res = new Map()
-      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
-      // 如果res中没有某个键，就设置这个键的值为1
-      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
     // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
     importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportWorkOrder(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
         }
-      }
-      excelImportWorkOrder(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
+      }).then(action => {
+        console.log(action)
+      }).catch(
         (error) => {
           this.$notify({
-            title: '导入错误',
+            title: '失败原因',
             message: error.data,
-            type: 'error',
+            type: 'success',
             duration: 0
           })
         }
       )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
     },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
-    },
-    open() {
+    // 导出
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -865,37 +857,31 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    快递单号: item.track_id,
+                    快递公司: item.company.name,
+                    工单事项类型: item.category.name,
+                    初始问题信息: item.information,
+                    提交时间: item.submit_time,
+                    提交人: item.servicer,
+                    反馈间隔: item.services_interval,
+                    处理意见: item.suggestion,
+                    处理人: item.handler,
+                    处理时间: item.handle_time,
+                    处理间隔: item.handle_interval,
+                    反馈内容: item.feedback,
+                    是否理赔: item.is_losing,
+                    是否返回: item.is_return,
+                    返回单号: item.return_express_id,
+                    备注: item.memo,
+                    驳回原因: item.rejection,
+                    工单状态: item.order_status.name,
+                    是否正向: item.is_forward,
+                    处理标签: item.process_tag.name,
+                    处理状态: item.handling_status,
+                    错误原因: item.mistake_tag,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    创建者: item.creator
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -959,7 +945,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -980,12 +966,11 @@ export default {
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -1015,7 +1000,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1039,25 +1024,17 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
@@ -1090,7 +1067,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1113,22 +1090,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -1157,7 +1127,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1180,22 +1150,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -1208,7 +1171,14 @@ export default {
           }
         }
       }).then().catch(
-        () => {
+        (error) => {
+          this.$notify({
+            title: '异常错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 210,
+            duration: 0
+          })
           this.fetchData()
         }
       )
