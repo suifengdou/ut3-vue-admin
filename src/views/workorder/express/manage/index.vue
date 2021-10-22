@@ -528,14 +528,14 @@ export default {
       optionsCity: [],
       optionsGoods: [],
       optionsCategory: [
-        { value: 0, label: '截单退回' },
-        { value: 1, label: '无人收货' },
-        { value: 2, label: '客户拒签' },
-        { value: 3, label: '修改地址' },
-        { value: 4, label: '催件派送' },
-        { value: 5, label: '虚假签收' },
-        { value: 6, label: '丢件破损' },
-        { value: 7, label: '其他异常' }
+        { value: 1, label: '截单退回' },
+        { value: 2, label: '无人收货' },
+        { value: 3, label: '客户拒签' },
+        { value: 4, label: '修改地址' },
+        { value: 5, label: '催件派送' },
+        { value: 6, label: '虚假签收' },
+        { value: 7, label: '丢件破损' },
+        { value: 8, label: '其他异常' }
       ],
       optionsStatus: [
         { value: 0, label: '已被取消' },

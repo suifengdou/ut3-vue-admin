@@ -154,34 +154,22 @@ const workOrderRouter = {
       redirect: 'noRedirect',
       children: [
         {
-          path: 'reversecreate',
-          component: () => import('@/views/workorder/storage/reversecreate/index'),
-          name: '仓储逆向提交',
-          meta: { title: '仓储逆向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
-        },
-        {
           path: 'create',
           component: () => import('@/views/workorder/storage/create/index'),
-          name: '仓储正向提交',
-          meta: { title: '仓储正向提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单创建',
+          meta: { title: '仓储工单创建', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/storage/handle/index'),
-          name: '仓储逆向处理',
-          meta: { title: '仓储逆向处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单处理',
+          meta: { title: '仓储工单处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'supplierhandle',
           component: () => import('@/views/workorder/storage/supplierhandle/index'),
-          name: '仓储综合处理',
-          meta: { title: '仓储综合处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
-        },
-        {
-          path: 'check',
-          component: () => import('@/views/workorder/storage/check/index'),
-          name: '仓储工单审核',
-          meta: { title: '仓储工单审核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          name: '仓储工单执行',
+          meta: { title: '仓储工单执行', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
         },
         {
           path: 'financehandle',

@@ -43,7 +43,7 @@ export function exportWorkOrder(data) {
 export function excelImportWorkOrder(data) {
   return request({
     url: `/workorder/express/ewocreate/excel_import/`,
-    method: 'post',
+    method: 'patch',
     data
   })
 }

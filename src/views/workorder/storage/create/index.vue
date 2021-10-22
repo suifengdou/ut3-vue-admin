@@ -413,7 +413,7 @@
             label-width="80px"
             size="mini"
             :model="formEdit"
-            :rules="rulesEdit"
+            :rules="rules"
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -566,14 +566,6 @@ import XLSX from 'xlsx'
 export default {
   name: 'submitExpressWorkOrder',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
 
     return {
       DataList: [],
@@ -630,23 +622,6 @@ export default {
         ],
         information: [
           { required: true, message: '请选择公司', trigger: 'blur' }
-        ]
-      },
-      rulesEdit: {
-        id: [
-          {required: true, message: '请选择店铺', trigger: 'blur'}
-        ],
-        category: [
-          {required: true, message: '请选择店铺', trigger: 'blur'}
-        ],
-        track_id: [
-          {required: true, message: '请输入源单号', trigger: 'blur'}
-        ],
-        company: [
-          {required: true, message: '请输入源单号', trigger: 'blur'}
-        ],
-        information: [
-          {required: true, message: '请选择公司', trigger: 'blur'}
         ]
       }
     }
