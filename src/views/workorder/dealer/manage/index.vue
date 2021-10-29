@@ -57,9 +57,8 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-
-                      <el-col :span="6"><el-form-item label="工单类型" prop="order_category">
-                        <el-select v-model="params.wo_category" placeholder="请选择工单类型">
+                      <el-col :span="6"><el-form-item label="工单类型">
+                        <el-select v-model="params.category" placeholder="工单类型">
                           <el-option
                             v-for="item in optionsCategory"
                             :key="item.value"
@@ -68,8 +67,15 @@
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="工单状态" prop="order_status">
-                        <el-select v-model="params.order_status" placeholder="请选择工单状态">
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+
+                      <el-col :span="6"><el-form-item label="初始信息" prop="information">
+                        <el-input v-model="params.information" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
                           <el-option
                             v-for="item in optionsStatus"
                             :key="item.value"
@@ -81,80 +87,47 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="返回快递公司" prop="return_express_company">
-                        <el-input v-model="params.return_express_company" type="text" />
+                      <el-col :span="3"><el-form-item label="处理人" prop="servicer">
+                        <el-input v-model="params.servicer" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="返回单号" prop="return_express_id">
+                      <el-col :span="6"><el-form-item label="处理意见" prop="suggestion">
+                        <el-input v-model="params.suggestion" type="suggestion" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="执行人" prop="handler">
+                        <el-input v-model="params.handler" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行内容" prop="feedback">
+                        <el-input v-model="params.feedback" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="是否客户邮寄">
+                        <el-select v-model="params.is_customer_post" clearable placeholder="是否返回">
+                          <el-option
+                            v-for="item in optionsJudge"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="8"><el-form-item label="返回单号" prop="return_express_id">
                         <el-input v-model="params.return_express_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="货品" prop="goods_name">
-                        <template>
-                          <el-select
-                            v-model="params.goods_name"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsGoods"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="数量" prop="quantity">
-                        <el-input v-model="params.quantity" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="合计金额" prop="amount">
-                        <el-input v-model="params.amount" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否客户邮寄" prop="is_customer_post">
-                        <el-select v-model="params.is_customer_post" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否丢件" prop="is_losing">
-                        <el-select v-model="params.is_losing" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
+                      <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
 
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                      <el-col :span="3"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-
-                    <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
+                      <el-col :span="6"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
@@ -165,8 +138,31 @@
                           />
                         </div>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+
+                      <el-col :span="6"><el-form-item label="处理时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.submit_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.handle_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
                     </el-row>
                   </el-form>
                 </div>
@@ -187,12 +183,14 @@
         border
         style="width: 100%"
         @sort-change="onSortChange"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -207,16 +205,16 @@
         </el-table-column>
         <el-table-column
           label="事项类型"
-          prop="wo_category"
+          prop="category"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
+            <span>{{ scope.row.category.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="公司"
+          label="快递公司"
           prop="company"
           sortable="custom"
         >
@@ -226,7 +224,7 @@
         </el-table-column>
         <el-table-column
           label="快递单号"
-          prop="order_id"
+          prop="express_id"
           sortable="custom"
         >
           <template slot-scope="scope">
@@ -244,53 +242,29 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="初始问题信息"
-          prop="information"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.information }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="工单反馈"
-          prop="feedback"
+          label="执行内容"
+          width="120px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="经销商反馈"
-          prop="memo"
+          label="处理意见"
+          width="120px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.suggestion }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="货品型号"
-          prop="goods_name"
+          label="初始问题信息"
+          prop="information"
+          width="160px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="数量"
-          prop="quantity"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="合计金额"
-          prop="amount"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.amount }}</span>
+            <span>{{ scope.row.information }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -308,6 +282,30 @@
 
         </el-table-column>
         <el-table-column
+          label="货品"
+          prop="goods_name"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品数量"
+          prop="quantity"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品金额"
+          prop="amount"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="是否客户邮寄"
           prop="is_customer_post"
         >
@@ -319,9 +317,7 @@
               disabled
             />
           </template>
-
         </el-table-column>
-
         <el-table-column
           label="返回快递公司"
           prop="return_express_company"
@@ -339,67 +335,6 @@
           </template>
         </el-table-column>
 
-
-        <el-table-column
-          label="客服提交时间"
-          prop="submit_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.submit_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客服"
-          prop="servicer"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.servicer }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客服处理间隔(分钟)"
-          prop="services_interval"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.services_interval }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="经销商处理时间"
-          prop="handle_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handle_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="经销商处理人"
-          prop="handler"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handler }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="经销商处理间隔(分钟)"
-          prop="express_interval"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.express_interval }}</span>
-          </template>
-        </el-table-column>
         <el-table-column
           label="创建者"
           prop="creator"
@@ -408,6 +343,62 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理人"
+          prop="servicer"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.servicer }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理时间"
+          prop="submit_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.submit_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理间隔(分钟)"
+          prop="services_interval"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.services_interval }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="执行人"
+          prop="handler"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handler }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="执行时间"
+          prop="handle_time"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handle_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="执行间隔(分钟)"
+          prop="handle_interval"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handle_interval }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="驳回原因"
+          prop="rejection"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.rejection }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -422,6 +413,13 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.update_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="备注"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
           </template>
         </el-table-column>
 
@@ -466,13 +464,13 @@ export default {
       ],
       optionsStatus: [
         { value: 0, label: '已被取消' },
-        { value: 1, label: '经销未递' },
-        { value: 2, label: '客服在理' },
-        { value: 3, label: '经销复核' },
-        { value: 4, label: '运营对账' },
+        { value: 1, label: '等待递交' },
+        { value: 2, label: '等待处理' },
+        { value: 3, label: '等待执行' },
+        { value: 4, label: '等待确认' },
         { value: 5, label: '工单完结' }
       ],
-      optionsIsDeliver: [
+      optionsJudge: [
         {
           value: true,
           label: '是'
@@ -497,7 +495,28 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.create_time
         }
+      }
+      if (typeof (this.params.submit_time) !== 'undefined') {
+        if (this.params.submit_time.length === 2) {
+          this.params.submit_time_after = moment.parseZone(this.params.submit_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.submit_time_before = moment.parseZone(this.params.submit_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.submit_time
+        }
+      }
+      if (typeof (this.params.handle_time) !== 'undefined') {
+        if (this.params.handle_time.length === 2) {
+          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.handle_time
+        }
+      }
+      if (typeof (this.params.order_status) !== 'undefined') {
+        console.log(this.params.order_status)
+        this.params.order_status__in = this.params.order_status.toString()
+        delete this.params.order_status
+        console.log(this.params.order_status__in)
       }
       getWorkOrderManage(this.params).then(
         res => {
@@ -550,32 +569,26 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
                     源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    工单状态: item.order_status.name,
+                    公司: item.company.name,
+                    单据类型: item.category.name,
+                    初始问题信息: item.information,
+                    货品: item.goods_name.name,
+                    数量: item.quantity,
+                    是否客户邮寄: item.is_customer_post,
+                    返回快递公司: item.return_express_company,
+                    返回单号: item.return_express_id,
+                    处理时间: item.submit_time,
+                    处理人: item.servicer,
+                    处理间隔: item.services_interval,
+                    是否丢件: item.is_losing,
+                    处理意见: item.suggestion,
+                    驳回原因: item.rejection,
+                    执行内容: item.feedback,
+                    执行人: item.handler,
+                    执行时间: item.handle_time,
+                    执行间隔: item.handle_interval,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,

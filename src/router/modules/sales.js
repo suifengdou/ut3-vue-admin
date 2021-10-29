@@ -10,14 +10,14 @@ const salesChannelRouter = {
   meta: {
     title: '销售业务',
     icon: 'nested',
-    roles: ['AllPrivileges']
+    roles: ['advancepayment.view_statements', 'AllPrivileges']
   },
   children: [
     {
       path: 'advance',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
       name: 'advance',
-      meta: { title: '预存系统', roles: ['AllPrivileges'] },
+      meta: { title: '预存系统', roles: ['advancepayment.view_statements', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
@@ -56,13 +56,13 @@ const salesChannelRouter = {
               path: 'check',
               component: () => import('@/views/sales/advance/prestore/check/index'),
               name: '预存单审核',
-              meta: { title: '预存单审核', roles: ['advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '预存单审核', roles: ['advancepayment.view_handler_prestore', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/sales/advance/prestore/manage/index'),
               name: '预存单管理',
-              meta: { title: '预存单管理', roles: ['advancepayment.view_user_prestore', 'advancepayment.view_prestore', 'AllPrivileges'] }
+              meta: { title: '预存单管理', roles: ['advancepayment.view_prestore', 'AllPrivileges'] }
             }
           ]
         },
@@ -82,19 +82,19 @@ const salesChannelRouter = {
           path: 'verifyprestore',
           component: () => import('@/views/sales/advance/verifyprestore/index'),
           name: '预存校验管理',
-          meta: { title: '预存校验管理', roles: ['advancepayment.view_verificationprestore', 'AllPrivileges'] }
+          meta: { title: '预存校验管理', roles: ['advancepayment.view_handler_prestore', 'AllPrivileges'] }
         },
         {
           path: 'adverifyexpense',
           component: () => import('@/views/sales/advance/verifyexpense/index'),
           name: '预支出校验管理',
-          meta: { title: '预支出校验管理', roles: ['advancepayment.view_verificationexpenses', 'AllPrivileges'] }
+          meta: { title: '预支出校验管理', roles: ['advancepayment.view_handler_prestore', 'AllPrivileges'] }
         },
         {
           path: 'expendlist',
           component: () => import('@/views/sales/advance/expendlist/index'),
           name: '支出冲销管理',
-          meta: { title: '支出冲销管理', roles: ['advancepayment.view_expendlist', 'AllPrivileges'] }
+          meta: { title: '支出冲销管理', roles: ['advancepayment.view_handler_prestore', 'AllPrivileges'] }
         }
       ]
     },

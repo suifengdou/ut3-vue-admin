@@ -1,5 +1,5 @@
 <template>
-  <div class="manualorder-submit-container">
+  <div class="dealerparts-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -12,7 +12,7 @@
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSetSpecial">特设</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleResetTag">重置</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -34,9 +34,6 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <!--<el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">-->
-              <!--<el-button type="success" @click="handleImport">导入</el-button>-->
-            <!--</el-tooltip>-->
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -162,7 +159,6 @@
         :data="DataList"
         border
         style="width: 100%"
-        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -207,30 +203,22 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="问题信息"
+          prop="information"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.information }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="网名"
           prop="nickname"
           sortable="custom"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.nickname }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="指定快递"
-          prop="assign_express"
-          width="120px"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.assign_express.id"  @change="selectExpress(scope.row)">
-              <el-option
-                v-for="item in optionsExpress"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -867,16 +855,16 @@
 
 <script>
   import {
-    getManualOrderSubmitList,
-    createManualOrderSubmit,
-    updateManualOrderSubmit,
-    exportManualOrderSubmit,
-    excelImportManualOrderSubmit,
-    checkManualOrderSubmit,
-    rejectManualOrderSubmit,
-    setSpecialManualOrderSubmit,
-    resetTagManualOrderSubmit
-  } from '@/api/dfc/manualorder/manualorder'
+    getWorkOrderSubmit,
+    createWorkOrderSubmit,
+    updateWorkOrderSubmit,
+    exportWorkOrderSubmit,
+    excelImportWorkOrderSubmit,
+    checkWorkOrderSubmit,
+    rejectWorkOrderSubmit,
+    setSpecialWorkOrderSubmit,
+    resetTagWorkOrderSubmit
+  } from '@/api/wop/dealerparts/submit'
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
   import { getGoodsList } from '@/api/base/goods'
@@ -886,7 +874,7 @@
   import moment from 'moment'
   import XLSX from 'xlsx'
   export default {
-    name: 'ManualOrderSubmit',
+    name: 'DealerPartsSubmit',
     data() {
       const validateTicket = (rule, value, callback) => {
         console.log(this.formAdd.order_category)
@@ -912,10 +900,8 @@
         },
         dialogVisibleAdd: false,
         dialogVisibleEdit: false,
-        importVisible: false,
         formAdd: {},
         formEdit: {},
-        importFile: {},
         optionsShop: [],
         optionsDepartment: [],
         optionsCompany: [],
@@ -936,24 +922,6 @@
           {
             value: 3,
             label: '礼品赠品'
-          }
-        ],
-        optionsExpress: [
-          {
-            value: 0,
-            label: '随机'
-          },
-          {
-            value: 1,
-            label: '顺丰'
-          },
-          {
-            value: 2,
-            label: '申通'
-          },
-          {
-            value: 3,
-            label: '韵达'
           }
         ],
         optionsIsDeliver: [
@@ -1007,12 +975,16 @@
             this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
           }
         }
-        getManualOrderSubmitList(this.params).then(
+        getWorkOrderSubmit(this.params).then(
           res => {
             this.DataList = res.data.results
             this.totalNum = res.data.count
             this.tableLoading = false
             console.log(res.data.results)
+            // const ws = XLSX.utils.json_to_sheet(res.data.results)
+            // const wb = XLSX.utils.book_new()
+            // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+            // XLSX.writeFile(wb, '列表详情1.xlsx')
           }
         ).catch(
           () => {
@@ -1079,7 +1051,7 @@
             data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
           }
           console.log(data)
-          updateManualOrderSubmit(id, data).then(
+          updateWorkOrderSubmit(id, data).then(
             () => {
               this.dialogVisibleEdit = false
               this.fetchData()
@@ -1116,7 +1088,7 @@
         console.log(this.formAdd)
         console.log(this.OrderDetailsList)
         this.formAdd.goods_details = this.OrderDetailsList
-        createManualOrderSubmit(this.formAdd).then(
+        createWorkOrderSubmit(this.formAdd).then(
           () => {
             this.fetchData()
             this.handleCancelAdd()
@@ -1152,7 +1124,7 @@
             'Content-Type': 'multipart/form-data'
           }
         }
-        excelImportManualOrderSubmit(importformData, config).then(
+        excelImportWorkOrderSubmit(importformData, config).then(
           res => {
             this.$notify({
               title: '导入结果',
@@ -1212,7 +1184,7 @@
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
-              exportManualOrderSubmit(this.params).then(
+              exportWorkOrderSubmit(this.params).then(
                 res => {
                   res.data = res.data.map(item => {
                     return {
@@ -1283,42 +1255,11 @@
         this.selectNum = this.totalNum
         console.log('我是全选的' + this.selectNum)
       },
-      // 提交编辑完成的数据
-      selectExpress(row) {
-        console.log(row)
-        const { id, ...details } = row
-        const data = {
-          assign_express: details.assign_express.id
-        }
-        console.log(data, id)
-        updateManualOrderSubmit(id, data).then(
-          () => {
-            this.$notify({
-              title: '修改成功',
-              type: 'success',
-              offset: 0,
-              duration: 3000
-            })
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '修改出错',
-              message: error.data,
-              type: 'error',
-              offset: 0,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-
-      },
       // 审核单据
       handleSetSpecial() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          setSpecialManualOrderSubmit(this.params).then(
+          setSpecialWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1374,7 +1315,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          setSpecialManualOrderSubmit(this.params).then(
+          setSpecialWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1419,7 +1360,7 @@
       handleResetTag() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          resetTagManualOrderSubmit(this.params).then(
+          resetTagWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1475,7 +1416,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          resetTagManualOrderSubmit(this.params).then(
+          resetTagWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1520,7 +1461,7 @@
       handleCheck() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          checkManualOrderSubmit(this.params).then(
+          checkWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1576,7 +1517,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          checkManualOrderSubmit(this.params).then(
+          checkWorkOrderSubmit(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1635,11 +1576,11 @@
         const h = this.$createElement
         let resultMessage, resultType
         this.$msgbox({
-          title: '取消工单',
+          title: '驳回工单',
           message: h('p', null, [
             h('h3', { style: 'color: teal' }, '特别注意：'),
             h('hr', null, ''),
-            h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+            h('span', null, '驳回到创建界面！'),
             h('hr', null, '')
           ]),
           showCancelButton: true,
@@ -1651,12 +1592,12 @@
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
               if (this.params.allSelectTag === 1) {
-                rejectManualOrderSubmit(this.params).then(
+                rejectWorkOrderSubmit(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '取消成功',
-                        message: `取消成功条数：${res.data.successful}`,
+                        title: '驳回成功',
+                        message: `驳回成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -1664,8 +1605,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '取消失败',
-                        message: `取消败条数：${res.data.false}`,
+                        title: '驳回失败',
+                        message: `驳回败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -1718,12 +1659,12 @@
                 }
                 const ids = this.multipleSelection.map(item => item.id)
                 this.params.ids = ids
-                rejectManualOrderSubmit(this.params).then(
+                rejectWorkOrderSubmit(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '取消成功',
-                        message: `取消成功条数：${res.data.successful}`,
+                        title: '驳回成功',
+                        message: `驳回成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -1731,8 +1672,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '取消失败',
-                        message: `取消败条数：${res.data.false}`,
+                        title: '驳回失败',
+                        message: `驳回败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -2000,23 +1941,6 @@
         }
         this.oriInvoiceGoodsListEdit.push(obj)
         console.log(this.oriInvoiceGoodsListEdit)
-      },
-      rowStyle({ row, rowIndex}) {
-        let row_style = {}
-        if (row.assign_express.id === 1) {
-          row_style = {
-            backgroundColor: '#db8449'
-          }
-        } else if (row.assign_express.id === 2) {
-          row_style = {
-            backgroundColor: '#e49e61'
-          }
-        } else if (row.assign_express.id === 3) {
-          row_style = {
-            backgroundColor: '#f39800'
-          }
-        }
-        return row_style
       },
       // 重置筛选
       resetParams() {

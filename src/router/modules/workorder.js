@@ -10,7 +10,7 @@ const workOrderRouter = {
   meta: {
     title: '工单系统',
     icon: 'workorder',
-    roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'express.view_expressworkorder', 'AllPrivileges']
+    roles: ['woinvoice.view_oriinvoice', 'woinvoice.view_deliverorder', 'express.view_expressworkorder', 'dealers.view_dealerworkorder', 'dealerparts.view_dealerparts', 'storage.view_storageworkorder', 'AllPrivileges']
   },
   children: [
     {
@@ -150,38 +150,38 @@ const workOrderRouter = {
       path: 'storage',
       name: '仓储工单',
       component: () => import('@/views/workorder/storage/index'),
-      meta: { title: '仓储工单', icon: 'workorder', roles: ['AllPrivileges'] },
+      meta: { title: '仓储工单', icon: 'workorder', roles: ['storage.view_storageworkorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'create',
           component: () => import('@/views/workorder/storage/create/index'),
           name: '仓储工单创建',
-          meta: { title: '仓储工单创建', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '仓储工单创建', icon: 'workorder', roles: ['storage.view_storageworkorder', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/storage/handle/index'),
           name: '仓储工单处理',
-          meta: { title: '仓储工单处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '仓储工单处理', icon: 'workorder', roles: ['storage.view_storageworkorder', 'AllPrivileges'] }
         },
         {
-          path: 'supplierhandle',
-          component: () => import('@/views/workorder/storage/supplierhandle/index'),
-          name: '仓储工单执行',
-          meta: { title: '仓储工单执行', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          path: 'confirm',
+          component: () => import('@/views/workorder/storage/confirm/index'),
+          name: '仓储工单确认',
+          meta: { title: '仓储工单确认', icon: 'workorder', roles: ['storage.view_storageworkorder', 'AllPrivileges'] }
         },
         {
-          path: 'financehandle',
-          component: () => import('@/views/workorder/storage/financehandle/index'),
+          path: 'audit',
+          component: () => import('@/views/workorder/storage/audit/index'),
           name: '仓储工单财审',
-          meta: { title: '仓储工单财审', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '仓储工单财审', icon: 'workorder', roles: ['storage.view_audit_storageworkorder', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/storage/manage/index'),
           name: '仓储工单管理',
-          meta: { title: '仓储工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '仓储工单管理', icon: 'workorder', roles: ['storage.view_storageworkorder', 'AllPrivileges'] }
         }
       ]
     },
@@ -189,38 +189,65 @@ const workOrderRouter = {
       path: 'dealers',
       name: '经销商工单',
       component: () => import('@/views/workorder/dealer/index'),
-      meta: { title: '经销商工单', icon: 'workorder', roles: ['AllPrivileges'] },
+      meta: { title: '经销商工单', icon: 'workorder', roles: ['dealers.view_dealerworkorder', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'create',
-          component: () => import('@/views/workorder/dealer/submit'),
+          component: () => import('@/views/workorder/dealer/create'),
           name: '经销商工单提交',
-          meta: { title: '经销商工单提交', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '经销商工单提交', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
         },
         {
           path: 'handle',
           component: () => import('@/views/workorder/dealer/handle'),
           name: '经销商工单处理',
-          meta: { title: '经销商工单处理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '经销商工单处理', icon: 'workorder', roles: ['dealers.view_handler_dealerworkorder', 'AllPrivileges'] }
         },
         {
           path: 'Check',
           component: () => import('@/views/workorder/dealer/check'),
           name: '经销商工单复核',
-          meta: { title: '经销商工单复核', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '经销商工单复核', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
         },
         {
           path: 'confirm',
           component: () => import('@/views/workorder/dealer/confirm'),
           name: '经销商运营确认',
-          meta: { title: '经销商运营确认', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '经销商运营确认', icon: 'workorder', roles: ['dealers.view_check_dealerworkorder', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/workorder/dealer/manage'),
           name: '经销商工单管理',
-          meta: { title: '经销商工单管理', icon: 'workorder', roles: ['woinvoice.view_applicant_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '经销商工单管理', icon: 'workorder', roles: ['dealers.view_dealerworkorder', 'AllPrivileges'] }
+        }
+      ]
+    },
+    {
+      path: 'dealerparts',
+      name: '经销商配件',
+      component: () => import('@/views/workorder/dealerparts/index'),
+      meta: { title: '经销商配件', icon: 'workorder', roles: ['dealerparts.view_dealerparts', 'AllPrivileges'] },
+      redirect: 'noRedirect',
+      children: [
+        {
+          path: 'create',
+          component: () => import('@/views/workorder/dealerparts/create'),
+          name: '经销商配件提交',
+          meta: { title: '经销商配件提交', icon: 'workorder', roles: ['dealerparts.view_user_dealerparts', 'AllPrivileges'] }
+        },
+        {
+          path: 'submit',
+          component: () => import('@/views/workorder/dealerparts/submit'),
+          name: '经销商配件处理',
+          meta: { title: '经销商配件处理', icon: 'workorder', roles: ['dealerparts.view_handler_dealerparts', 'AllPrivileges'] }
+        },
+        {
+          path: 'manage',
+          component: () => import('@/views/workorder/dealerparts/manage'),
+          name: '经销商配件管理',
+          meta: { title: '经销商配件管理', icon: 'workorder', roles: ['dealerparts.view_dealerparts', 'AllPrivileges'] }
         }
       ]
     }

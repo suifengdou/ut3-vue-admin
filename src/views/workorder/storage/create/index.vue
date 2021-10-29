@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.keyword" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -33,10 +33,10 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
+              <el-button type="success" @click="importExcel">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -66,76 +66,54 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="快递公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
+                      <el-col :span="3"><el-form-item label="处理人" prop="servicer">
+                        <el-input v-model="params.servicer" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
-                        <el-select v-model="params.category" placeholder="请选择事项类型">
+                      <el-col :span="6"><el-form-item label="处理意见" prop="suggestion">
+                        <el-input v-model="params.suggestion" type="suggestion" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="执行人" prop="handler">
+                        <el-input v-model="params.handler" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行内容" prop="feedback">
+                        <el-input v-model="params.feedback" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="是否理赔">
+                        <el-select v-model="params.is_losing" clearable placeholder="是否理赔">
                           <el-option
-                            v-for="item in optionsCategory"
+                            v-for="item in optionsJudge"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="3"><el-form-item label="是否正向">
+                        <el-select v-model="params.is_forward" clearable placeholder="是否正向">
+                          <el-option
+                            v-for="item in optionsJudge"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+
+                      <el-col :span="3"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-
-                    <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
+                      <el-col :span="6"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
@@ -146,8 +124,31 @@
                           />
                         </div>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+
+                      <el-col :span="6"><el-form-item label="处理时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.submit_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.handle_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
                     </el-row>
                   </el-form>
                 </div>
@@ -181,6 +182,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="实务关键字"
+          prop="keyword"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.keyword }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="事项类型"
           prop="category"
           sortable="custom"
@@ -191,7 +202,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="快递公司"
+          label="公司"
           prop="company"
           sortable="custom"
         >
@@ -200,10 +211,19 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
+          label="错误原因"
+          prop="mistake_tag"
+          sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="驳回原因"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.rejection }}</span>
           </template>
         </el-table-column>
 
@@ -232,27 +252,18 @@
 
         </el-table-column>
         <el-table-column
-          label="是否返回"
-          prop="is_return"
+          label="是否正向"
+          prop="is_forward"
         >
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.is_return"
+              v-model="scope.row.is_forward"
               active-color="#13ce66"
               inactive-color="#ff4949"
               disabled
             />
           </template>
 
-        </el-table-column>
-
-        <el-table-column
-          label="工单类型"
-          prop="wo_category"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
-          </template>
         </el-table-column>
         <el-table-column
           label="备注"
@@ -313,8 +324,8 @@
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="工单类型" prop="order_category">
-              <el-select v-model="formAdd.order_category" placeholder="请选择类型">
+            <el-col :span="8"><el-form-item label="工单类型" prop="category">
+              <el-select v-model="formAdd.category" placeholder="请选择类型">
                 <el-option
                   v-for="item in optionsCategory"
                   :key="item.value"
@@ -323,7 +334,7 @@
                 />
               </el-select>
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="仓库" prop="company">
+            <el-col :span="8"><el-form-item label="公司" prop="company">
               <template>
                 <el-select
                   v-model="formAdd.company"
@@ -331,7 +342,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请选择仓库"
+                  placeholder="请选择公司"
                   :remote-method="remoteMethodCompany"
                 >
                   <el-option
@@ -357,16 +368,7 @@
             <span>其他信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="formAdd.is_return"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                />
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
+            <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
               <template slot-scope="scope">
                 <el-switch
                   v-model="formAdd.is_losing"
@@ -375,6 +377,10 @@
                 />
               </template>
             </el-form-item></el-col>
+            <el-col :span="6"><el-form-item label="理赔金额" prop="indemnification">
+              <el-input v-model="formAdd.indemnification" placeholder="请输入金额" />
+            </el-form-item></el-col>
+
             <el-col :span="8" />
           </el-row>
           <el-row :gutter="20">
@@ -435,7 +441,7 @@
                     />
                   </el-select>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="快递公司" prop="company">
+                <el-col :span="8"><el-form-item label="公司" prop="company">
                   <template>
                     <el-select
                       v-model="formEdit.company"
@@ -469,16 +475,7 @@
                 <span>其他信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="是否返回" prop="is_return">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_return"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="16"><el-form-item label="是否理赔" prop="is_losing">
+                <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
                   <template slot-scope="scope">
                     <el-switch
                       v-model="formEdit.is_losing"
@@ -487,6 +484,10 @@
                     />
                   </template>
                 </el-form-item></el-col>
+                <el-col :span="6"><el-form-item label="理赔金额" prop="indemnification">
+                  <el-input v-model="formEdit.indemnification" placeholder="请输入金额" />
+                </el-form-item></el-col>
+
                 <el-col :span="8" />
               </el-row>
               <el-row :gutter="20">
@@ -510,36 +511,6 @@
           </el-form>
         </div>
       </template>
-    </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
     </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
@@ -582,25 +553,32 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      importVisible: false,
-      formAdd: {},
-      formEdit: {},
-      importFile: {},
+      formAdd: {
+        'company': 4,
+        'category': 1,
+      },
+      formEdit: {
+        'company': 4,
+        'category': 1
+      },
       optionsShop: [],
       optionsDepartment: [],
-      optionsCompany: [],
+      optionsCompany: [
+        { value: 4, label: '高新物流（中外运）' },
+      ],
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
       optionsCategory: [
-        { value: 0, label: '入库错误' },
-        { value: 1, label: '系统问题' },
-        { value: 2, label: '单据问题' },
-        { value: 3, label: '订单类别' },
-        { value: 4, label: '入库咨询' },
-        { value: 5, label: '出库咨询' }
+        { value: 1, label: '常规工作' },
+        { value: 2, label: '入库问题' },
+        { value: 3, label: '出库问题' },
+        { value: 4, label: '单据问题' },
+        { value: 5, label: '工厂问题' },
+        { value: 6, label: '快递问题' },
+        { value: 7, label: '信息咨询' }
       ],
-      optionsJudgment: [
+      optionsJudge: [
         {
           value: true,
           label: '是'
@@ -612,16 +590,16 @@ export default {
       ],
       rules: {
         category: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
+          { required: true, message: '请选择类型', trigger: 'change', type: 'number' }
         ],
-        track_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
+        keyword: [
+          { required: true, message: '请输入关键词', trigger: 'blur' }
         ],
         company: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
+          { required: true, message: '请输入公司', trigger: 'blur', type: 'number' }
         ],
         information: [
-          { required: true, message: '请选择公司', trigger: 'blur' }
+          { required: true, message: '请输入详细信息', trigger: 'blur' }
         ]
       }
     }
@@ -639,6 +617,21 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.create_time
+        }
+      }
+      if (typeof (this.params.submit_time) !== 'undefined') {
+        if (this.params.submit_time.length === 2) {
+          this.params.submit_time_after = moment.parseZone(this.params.submit_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.submit_time_before = moment.parseZone(this.params.submit_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.submit_time
+        }
+      }
+      if (typeof (this.params.handle_time) !== 'undefined') {
+        if (this.params.handle_time.length === 2) {
+          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.handle_time
         }
       }
       getWorkOrder(this.params).then(
@@ -667,39 +660,33 @@ export default {
 
       this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
       this.formEdit.company = this.formEdit.company.id
-
       this.formEdit.category = this.formEdit.category.id
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
-      this.$refs.handleFormEdit.validate(valid => {
-        if (!valid) {
-          return
+      const { id, ...data } = this.formEdit
+      let attrStr
+      console.log(data)
+      const transFieldStr = ['mistake_tag', 'handling_status', 'order_status']
+      for (attrStr in transFieldStr) {
+        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
+      }
+      console.log(data)
+      updateWorkOrder(id, data).then(
+        () => {
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
         }
-        const { id, ...data } = this.formEdit
-        let attrStr
-        console.log(data)
-        const transFieldStr = ['process_tag', 'mid_handler', 'wo_category', 'order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
-        console.log(data)
-        updateWorkOrder(id, data).then(
-          () => {
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          },
-          err => {
-            this.$notify({
-              title: '错误详情',
-              message: err.data,
-              type: 'error',
-              offset: 70,
-              duration: 0
-            })
-          }
-        )
-      })
+      )
     },
 
     // 关闭修改界面
@@ -724,11 +711,11 @@ export default {
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
-        console.log(res)
+      ).catch((error) => {
+        console.log(error)
         this.$notify({
           title: '错误详情',
-          message: res.data,
+          message: error.data,
           type: 'error',
           offset: 70,
           duration: 0
@@ -744,58 +731,88 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
+
     // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
     importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportWorkOrder(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
         }
-      }
-      excelImportWorkOrder(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 3000
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
+      }).then(action => {
+        console.log(action)
+      }).catch(
         (error) => {
           this.$notify({
-            title: '导入错误',
+            title: '失败原因',
             message: error.data,
-            type: 'error',
+            type: 'success',
             duration: 0
           })
         }
       )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
     },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
-    },
-    open() {
+    // 导出
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -819,37 +836,29 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    事务关键字: item.keyword,
+                    公司: item.company.name,
+                    初始问题信息: item.information,
+                    工单状态: item.order_status.name,
+                    工单事项类型: item.category.name,
+                    是否正向: item.is_forward,
+                    处理时间: item.submit_time,
+                    处理人: item.servicer,
+                    处理间隔: item.services_interval,
+                    处理意见: item.suggestion,
+                    驳回原因: item.rejection,
+                    执行人: item.handler,
+                    执行时间: item.handle_time,
+                    执行间隔: item.handle_interval,
+                    执行内容: item.feedback,
+                    是否理赔: item.is_losing,
+                    理赔金额: item.indemnification,
+                    备注: item.memo,
+                    处理状态: item.handling_status.name,
+                    错误原因: item.mistake_tag.name,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    创建者: item.creator
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 获取列表
 export function getWorkOrderSubmit(params) {
   return request({
-    url: '/workorder/dealers/dwosubmit/',
+    url: '/workorder/dealerparts/dpsubmit/',
     method: 'get',
     params
   })
@@ -13,7 +13,7 @@ export function getWorkOrderSubmit(params) {
 // 创建工单
 export function createWorkOrderSubmit(data) {
   return request({
-    url: `/workorder/dealers/dwosubmit/`,
+    url: `/workorder/dealerparts/dpsubmit/`,
     method: 'post',
     data
   })
@@ -24,7 +24,7 @@ export function updateWorkOrderSubmit(id, data) {
   delete data.create_time
   delete data.update_time
   return request({
-    url: `/workorder/dealers/dwosubmit/${id}/`,
+    url: `/workorder/dealerparts/dpsubmit/${id}/`,
     method: 'patch',
     data
   })
@@ -33,7 +33,7 @@ export function updateWorkOrderSubmit(id, data) {
 // 导出工单
 export function exportWorkOrderSubmit(data) {
   return request({
-    url: `/workorder/dealers/dwosubmit/export/`,
+    url: `/workorder/dealerparts/dpsubmit/export/`,
     method: 'patch',
     data
   })
@@ -42,7 +42,7 @@ export function exportWorkOrderSubmit(data) {
 // 导入工单
 export function excelImportWorkOrderSubmit(data) {
   return request({
-    url: `/workorder/dealers/dwosubmit/excel_import/`,
+    url: `/workorder/dealerparts/dpsubmit/excel_import/`,
     method: 'post',
     data
   })
@@ -51,7 +51,7 @@ export function excelImportWorkOrderSubmit(data) {
 // 审核工单
 export function checkWorkOrderSubmit(data) {
   return request({
-    url: `/workorder/dealers/dwosubmit/check/`,
+    url: `/workorder/dealerparts/dpsubmit/check/`,
     method: 'patch',
     data
   })
@@ -60,8 +60,28 @@ export function checkWorkOrderSubmit(data) {
 // 取消工单
 export function rejectWorkOrderSubmit(data) {
   return request({
-    url: `/workorder/dealers/dwosubmit/reject/`,
+    url: `/workorder/dealerparts/dpsubmit/reject/`,
     method: 'patch',
     data
   })
 }
+
+// 设置特殊
+export function setSpecialWorkOrderSubmit(data) {
+  return request({
+    url: `/workorder/dealerparts/dpsubmit/set_special/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 重置标记
+export function resetTagWorkOrderSubmit(data) {
+  return request({
+    url: `/workorder/dealerparts/dpsubmit/reset_tag/`,
+    method: 'patch',
+    data
+  })
+}
+
+

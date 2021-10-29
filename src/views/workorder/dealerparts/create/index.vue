@@ -1,5 +1,5 @@
 <template>
-  <div class="manualorder-submit-container">
+  <div class="dealerparts-create-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -162,7 +162,6 @@
         :data="DataList"
         border
         style="width: 100%"
-        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -207,30 +206,22 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="问题信息"
+          prop="information"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.information }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="网名"
           prop="nickname"
           sortable="custom"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.nickname }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="指定快递"
-          prop="assign_express"
-          width="120px"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.assign_express.id"  @change="selectExpress(scope.row)">
-              <el-option
-                v-for="item in optionsExpress"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -403,26 +394,6 @@
             <span>订单相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺" prop="shop">
-              <template>
-                <el-select
-                  v-model="formAdd.shop"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择店铺"
-                  :remote-method="remoteMethodShop"
-                >
-                  <el-option
-                    v-for="item in optionsShop"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="订单号" prop="order_id">
               <el-input v-model="formAdd.order_id" placeholder="请输入订单号" />
             </el-form-item></el-col>
@@ -471,6 +442,12 @@
           <div slot="header" class="clearfix">
             <span>问题信息</span>
           </div>
+          <el-row :gutter="20">
+            <el-col :span="20"><el-form-item label="故障描述" prop="information">
+              <el-input v-model="formAdd.information" placeholder="请输入问题描述" />
+            </el-form-item></el-col>
+            <el-col :span="8" />
+          </el-row>
           <el-row :gutter="20">
             <el-col :span="8"><el-form-item label="机器序列号" prop="m_sn">
               <el-input v-model="formAdd.m_sn" placeholder="请输入机器序列号" />
@@ -591,26 +568,6 @@
                 <span>订单相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="店铺" prop="shop">
-                  <template>
-                    <el-select
-                      v-model="formEdit.shop"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择店铺"
-                      :remote-method="remoteMethodShop"
-                    >
-                      <el-option
-                        v-for="item in optionsShop"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="订单号" prop="order_id">
                   <el-input v-model="formEdit.order_id" placeholder="请输入订单号" />
                 </el-form-item></el-col>
@@ -723,6 +680,12 @@
                 <span>问题信息</span>
               </div>
               <el-row :gutter="20">
+                <el-col :span="20"><el-form-item label="故障描述" prop="information">
+                  <el-input v-model="formEdit.information" placeholder="请输入问题描述" />
+                </el-form-item></el-col>
+                <el-col :span="8" />
+              </el-row>
+              <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="机器序列号" prop="m_sn">
                   <el-input v-model="formEdit.m_sn" placeholder="请输入机器序列号" />
                 </el-form-item></el-col>
@@ -825,36 +788,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -867,16 +800,16 @@
 
 <script>
   import {
-    getManualOrderSubmitList,
-    createManualOrderSubmit,
-    updateManualOrderSubmit,
-    exportManualOrderSubmit,
-    excelImportManualOrderSubmit,
-    checkManualOrderSubmit,
-    rejectManualOrderSubmit,
-    setSpecialManualOrderSubmit,
-    resetTagManualOrderSubmit
-  } from '@/api/dfc/manualorder/manualorder'
+    getWorkOrderCreate,
+    createWorkOrderCreate,
+    updateWorkOrderCreate,
+    exportWorkOrderCreate,
+    excelImportWorkOrderCreate,
+    checkWorkOrderCreate,
+    rejectWorkOrderCreate,
+    setSpecialWorkOrderCreate,
+    resetTagWorkOrderCreate
+  } from '@/api/wop/dealerparts/create'
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
   import { getGoodsList } from '@/api/base/goods'
@@ -886,7 +819,7 @@
   import moment from 'moment'
   import XLSX from 'xlsx'
   export default {
-    name: 'ManualOrderSubmit',
+    name: 'DealerPartsCreate',
     data() {
       const validateTicket = (rule, value, callback) => {
         console.log(this.formAdd.order_category)
@@ -912,10 +845,8 @@
         },
         dialogVisibleAdd: false,
         dialogVisibleEdit: false,
-        importVisible: false,
         formAdd: {},
         formEdit: {},
-        importFile: {},
         optionsShop: [],
         optionsDepartment: [],
         optionsCompany: [],
@@ -938,24 +869,6 @@
             label: '礼品赠品'
           }
         ],
-        optionsExpress: [
-          {
-            value: 0,
-            label: '随机'
-          },
-          {
-            value: 1,
-            label: '顺丰'
-          },
-          {
-            value: 2,
-            label: '申通'
-          },
-          {
-            value: 3,
-            label: '韵达'
-          }
-        ],
         optionsIsDeliver: [
           {
             value: true,
@@ -967,11 +880,11 @@
           }
         ],
         rules: {
-          shop: [
-            { required: true, message: '请选择店铺', trigger: 'blur', type: 'number' }
-          ],
           order_id: [
             { required: true, message: '请输入源单号', trigger: 'blur' }
+          ],
+          nickname: [
+            { required: true, message: '请输入收件人', trigger: 'blur' }
           ],
           receiver: [
             { required: true, message: '请输入收件人', trigger: 'blur' }
@@ -984,6 +897,9 @@
           ],
           address: [
             { required: true, message: '请输入地址', trigger: 'blur' }
+          ],
+          information: [
+            { required: true, message: '请输入问题信息', trigger: 'blur' }
           ],
         },
         OrderDetailsList: [],
@@ -1007,12 +923,16 @@
             this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
           }
         }
-        getManualOrderSubmitList(this.params).then(
+        getWorkOrderCreate(this.params).then(
           res => {
             this.DataList = res.data.results
             this.totalNum = res.data.count
             this.tableLoading = false
             console.log(res.data.results)
+            // const ws = XLSX.utils.json_to_sheet(res.data.results)
+            // const wb = XLSX.utils.book_new()
+            // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+            // XLSX.writeFile(wb, '列表详情1.xlsx')
           }
         ).catch(
           () => {
@@ -1079,7 +999,7 @@
             data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
           }
           console.log(data)
-          updateManualOrderSubmit(id, data).then(
+          updateWorkOrderCreate(id, data).then(
             () => {
               this.dialogVisibleEdit = false
               this.fetchData()
@@ -1116,7 +1036,7 @@
         console.log(this.formAdd)
         console.log(this.OrderDetailsList)
         this.formAdd.goods_details = this.OrderDetailsList
-        createManualOrderSubmit(this.formAdd).then(
+        createWorkOrderCreate(this.formAdd).then(
           () => {
             this.fetchData()
             this.handleCancelAdd()
@@ -1141,57 +1061,85 @@
         return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
       },
       // 导入
-      getFile(event) {
-        this.importFile.file = event.target.files[0]
-      },
       importExcel() {
-        const importformData = new FormData()
-        importformData.append('file', this.importFile.file)
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+        const h = this.$createElement
+        this.$msgbox({
+          title: '导入 Excel',
+          name: 'importmsg',
+          message: h('p', null, [
+            h('h3', { style: 'color: teal' }, '特别注意：'),
+            h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+            h('h4', null, '浏览并选择文件：'),
+            h('input', { attrs: {
+                name: 'importfile',
+                type: 'file'
+              }}, null, '导入文件' ),
+            h('p', null),
+            h('hr', null)
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true
+              instance.confirmButtonText = '执行中...'
+              const importformData = new FormData()
+              importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+              const config = {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              }
+              excelImportWorkOrderCreate(importformData, config).then(
+                res => {
+                  this.$notify({
+                    title: '导入结果',
+                    message: res.data,
+                    type: 'success',
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  document.getElementsByName("importfile")[0].type = 'text'
+                  document.getElementsByName("importfile")[0].value = ''
+                  document.getElementsByName("importfile")[0].type = 'file'
+                  this.fetchData()
+                  done()
+                },
+                err => {
+                  this.$notify({
+                    title: '失败原因',
+                    message: err.data,
+                    type: 'success',
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  this.fetchData()
+                  done()
+                }
+              )
+            } else {
+              document.getElementsByName("importfile")[0].type = 'text'
+              document.getElementsByName("importfile")[0].value = ''
+              document.getElementsByName("importfile")[0].type = 'file'
+              this.fetchData()
+              done()
+            }
           }
-        }
-        excelImportManualOrderSubmit(importformData, config).then(
-          res => {
+        }).then(action => {
+          console.log(action)
+        }).catch(
+          (error) => {
             this.$notify({
-              title: '导入结果',
-              message: res.data,
+              title: '失败原因',
+              message: error.data,
               type: 'success',
-              duration: 3000
-            })
-          },
-          error => {
-            this.$notify({
-              title: '导入错误',
-              message: error,
-              type: 'error',
-              duration: 0
-            })
-          }
-        ).catch(
-          () => {
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
               duration: 0
             })
           }
         )
-        this.importVisible = false
-        this.$refs.files.type = 'text'
-        this.$refs.files.value = ''
-        this.$refs.files.type = 'file'
-        this.fetchData()
       },
-      closeImport() {
-        this.importVisible = false
-      },
-      handleImport() {
-        this.importVisible = true
-      },
+      // 导出
       exportExcel() {
         const h = this.$createElement
         let resultMessage, resultType
@@ -1212,7 +1160,7 @@
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
-              exportManualOrderSubmit(this.params).then(
+              exportWorkOrderCreate(this.params).then(
                 res => {
                   res.data = res.data.map(item => {
                     return {
@@ -1283,42 +1231,11 @@
         this.selectNum = this.totalNum
         console.log('我是全选的' + this.selectNum)
       },
-      // 提交编辑完成的数据
-      selectExpress(row) {
-        console.log(row)
-        const { id, ...details } = row
-        const data = {
-          assign_express: details.assign_express.id
-        }
-        console.log(data, id)
-        updateManualOrderSubmit(id, data).then(
-          () => {
-            this.$notify({
-              title: '修改成功',
-              type: 'success',
-              offset: 0,
-              duration: 3000
-            })
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '修改出错',
-              message: error.data,
-              type: 'error',
-              offset: 0,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-
-      },
       // 审核单据
       handleSetSpecial() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          setSpecialManualOrderSubmit(this.params).then(
+          setSpecialWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1374,7 +1291,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          setSpecialManualOrderSubmit(this.params).then(
+          setSpecialWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1419,7 +1336,7 @@
       handleResetTag() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          resetTagManualOrderSubmit(this.params).then(
+          resetTagWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1475,7 +1392,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          resetTagManualOrderSubmit(this.params).then(
+          resetTagWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1520,7 +1437,7 @@
       handleCheck() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          checkManualOrderSubmit(this.params).then(
+          checkWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1576,7 +1493,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          checkManualOrderSubmit(this.params).then(
+          checkWorkOrderCreate(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1651,7 +1568,7 @@
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
               if (this.params.allSelectTag === 1) {
-                rejectManualOrderSubmit(this.params).then(
+                rejectWorkOrderCreate(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
@@ -1718,7 +1635,7 @@
                 }
                 const ids = this.multipleSelection.map(item => item.id)
                 this.params.ids = ids
-                rejectManualOrderSubmit(this.params).then(
+                rejectWorkOrderCreate(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
@@ -2000,23 +1917,6 @@
         }
         this.oriInvoiceGoodsListEdit.push(obj)
         console.log(this.oriInvoiceGoodsListEdit)
-      },
-      rowStyle({ row, rowIndex}) {
-        let row_style = {}
-        if (row.assign_express.id === 1) {
-          row_style = {
-            backgroundColor: '#db8449'
-          }
-        } else if (row.assign_express.id === 2) {
-          row_style = {
-            backgroundColor: '#e49e61'
-          }
-        } else if (row.assign_express.id === 3) {
-          row_style = {
-            backgroundColor: '#f39800'
-          }
-        }
-        return row_style
       },
       // 重置筛选
       resetParams() {

@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.keyword" class="grid-content bg-purple" placeholder="请输入关键词" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -33,7 +33,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -55,76 +55,54 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="快递公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
+                      <el-col :span="3"><el-form-item label="处理人" prop="servicer">
+                        <el-input v-model="params.servicer" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
-                        <el-select v-model="params.category" placeholder="请选择事项类型">
+                      <el-col :span="6"><el-form-item label="处理意见" prop="suggestion">
+                        <el-input v-model="params.suggestion" type="suggestion" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="执行人" prop="handler">
+                        <el-input v-model="params.handler" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行内容" prop="feedback">
+                        <el-input v-model="params.feedback" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="3"><el-form-item label="是否理赔">
+                        <el-select v-model="params.is_losing" clearable placeholder="是否理赔">
                           <el-option
-                            v-for="item in optionsCategory"
+                            v-for="item in optionsJudge"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="3"><el-form-item label="是否正向">
+                        <el-select v-model="params.is_forward" clearable placeholder="是否正向">
+                          <el-option
+                            v-for="item in optionsJudge"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+
+                      <el-col :span="3"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-
-                    <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
+                      <el-col :span="6"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
@@ -135,8 +113,31 @@
                           />
                         </div>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+
+                      <el-col :span="6"><el-form-item label="处理时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.submit_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="执行时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.handle_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
                     </el-row>
                   </el-form>
                 </div>
@@ -165,21 +166,14 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          label="工单类型"
-          prop="wo_category"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.wo_category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="标题"
+          label="实务关键字"
           prop="keyword"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.keyword }}</span>
@@ -196,7 +190,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="快递公司"
+          label="公司"
           prop="company"
           sortable="custom"
         >
@@ -204,18 +198,33 @@
             <span>{{ scope.row.company.name }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="初始问题信息"
-          prop="information"
-
+          label="错误原因"
+          prop="mistake_tag"
+          sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.information }}</span>
+            <span>{{ scope.row.mistake_tag.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="工单反馈"
+          label="驳回原因"
+          prop="rejection"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.rejection }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理意见"
+          prop="suggestion"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.suggestion }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="执行内容"
           prop="feedback"
         >
           <template slot-scope="scope">
@@ -223,11 +232,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="逆向结单备注"
-          prop="memo"
+          label="初始问题信息"
+          prop="information"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.information }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -239,12 +250,42 @@
               v-model="scope.row.is_losing"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              @change="handleEditBoolean(scope.row)"
+              disabled
             />
           </template>
 
         </el-table-column>
+        <el-table-column
+          label="理赔金额"
+          prop="indemnification"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.indemnification }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否正向"
+          prop="is_forward"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_forward"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
 
+        </el-table-column>
+        <el-table-column
+          label="备注"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="创建者"
           prop="creator"
@@ -283,18 +324,28 @@
 
 <script>
 import {
-  getWorkOrderSupplierHandle,
-  updateWorkOrderSupplierHandle,
-  exportWorkOrderSupplierHandle,
-  checkWorkOrderSupplierHandle,
-  rejectWorkOrderSupplierHandle
-} from '@/api/wop/storage/supplierhandle'
+  getWorkOrderAudit,
+  updateWorkOrderAudit,
+  exportWorkOrderAudit,
+  excelImportWorkOrderAudit,
+  rejectWorkOrderAudit,
+  checkWorkOrderAudit
+} from '@/api/wop/storage/audit'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
   name: 'submitExpressWorkOrder',
   data() {
+    const validateTicket = (rule, value, callback) => {
+      console.log(this.formAdd.order_category)
+      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
+        callback(new Error('专票必填！'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       DataList: [],
       tableLoading: false,
@@ -308,8 +359,12 @@ export default {
         page: 1,
         allSelectTag: 0
       },
+      dialogVisibleAdd: false,
       dialogVisibleEdit: false,
+      importVisible: false,
+      formAdd: {},
       formEdit: {},
+      importFile: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -324,7 +379,7 @@ export default {
         { value: 4, label: '入库咨询' },
         { value: 5, label: '出库咨询' }
       ],
-      optionsJudgment: [
+      optionsJudge: [
         {
           value: true,
           label: '是'
@@ -333,9 +388,7 @@ export default {
           value: false,
           label: '否'
         }
-      ],
-      checkedDetail: [],
-      checkedDetailEdit: []
+      ]
     }
   },
   created() {
@@ -351,9 +404,24 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.create_time
         }
       }
-      getWorkOrderSupplierHandle(this.params).then(
+      if (typeof (this.params.submit_time) !== 'undefined') {
+        if (this.params.submit_time.length === 2) {
+          this.params.submit_time_after = moment.parseZone(this.params.submit_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.submit_time_before = moment.parseZone(this.params.submit_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.submit_time
+        }
+      }
+      if (typeof (this.params.handle_time) !== 'undefined') {
+        if (this.params.handle_time.length === 2) {
+          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          delete this.params.handle_time
+        }
+      }
+      getWorkOrderAudit(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -369,97 +437,6 @@ export default {
     handleCurrentChange(val) {
       this.params.page = val
       this.fetchData()
-    },
-
-    open() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '导出 Excel',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
-          h('hr', null, ''),
-          h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            exportWorkOrderSupplierHandle(this.params).then(
-              res => {
-                res.data = res.data.map(item => {
-                  return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.create_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
-                  }
-                })
-                const ws = XLSX.utils.json_to_sheet(res.data)
-                const wb = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-                XLSX.writeFile(wb, '列表详情1.xlsx')
-                resultMessage = '表格导出成功啦'
-                resultType = 'success'
-                instance.confirmButtonLoading = false
-                done()
-              },
-              err => {
-                console.log(err)
-                resultMessage = '表格导出失败啦'
-                resultType = 'error'
-                instance.confirmButtonLoading = false
-                done()
-              }
-            )
-          } else {
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        this.$message({
-          type: resultType,
-          message: '最终结果: ' + resultMessage
-        })
-      }).catch(
-        (error) => {
-          console.log(error)
-        }
-      )
     },
     // 选择器，单选和多选（主表的）
     handleSelectionChange(val) {
@@ -477,11 +454,10 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 审核单据
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkWorkOrderSupplierHandle(this.params).then(
+        checkWorkOrderAudit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -489,7 +465,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 3000
+                duration: 0
               })
             }
             if (res.data.false !== 0) {
@@ -537,7 +513,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkWorkOrderSupplierHandle(this.params).then(
+        checkWorkOrderAudit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -545,7 +521,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 3000
+                duration: 0
               })
             }
             if (res.data.false !== 0) {
@@ -586,8 +562,13 @@ export default {
           }
         ).catch(
           (error) => {
-            console.log('######')
-            console.log(error)
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
           }
         )
       }
@@ -612,7 +593,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectWorkOrderSupplierHandle(this.params).then(
+              rejectWorkOrderAudit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -679,7 +660,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectWorkOrderSupplierHandle(this.params).then(
+              rejectWorkOrderAudit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -743,6 +724,97 @@ export default {
         }
       )
     },
+    // 检索用户组选项
+    unique(arr) {
+      // 根据唯一标识no来对数组进行过滤
+      // 定义常量 res,值为一个Map对象实例
+      const res = new Map()
+      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
+      // 如果res中没有某个键，就设置这个键的值为1
+      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
+    },
+    exportExcel() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '导出 Excel',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('hr', null, ''),
+          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
+          h('hr', null, ''),
+          h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            exportWorkOrderAudit(this.params).then(
+              res => {
+                res.data = res.data.map(item => {
+                  return {
+                    事务关键字: item.keyword,
+                    公司: item.company.name,
+                    初始问题信息: item.information,
+                    工单状态: item.order_status.name,
+                    工单事项类型: item.category.name,
+                    是否正向: item.is_forward,
+                    处理时间: item.submit_time,
+                    处理人: item.servicer,
+                    处理间隔: item.services_interval,
+                    处理意见: item.suggestion,
+                    驳回原因: item.rejection,
+                    执行人: item.handler,
+                    执行时间: item.handle_time,
+                    执行间隔: item.handle_interval,
+                    执行内容: item.feedback,
+                    是否理赔: item.is_losing,
+                    理赔金额: item.indemnification,
+                    备注: item.memo,
+                    处理状态: item.handling_status.name,
+                    错误原因: item.mistake_tag.name,
+                    创建时间: item.create_time,
+                    更新时间: item.update_time,
+                    创建者: item.creator
+                  }
+                })
+                const ws = XLSX.utils.json_to_sheet(res.data)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+                XLSX.writeFile(wb, '列表详情1.xlsx')
+                resultMessage = '表格导出成功啦'
+                resultType = 'success'
+                instance.confirmButtonLoading = false
+                done()
+              },
+              err => {
+                console.log(err)
+                resultMessage = '表格导出失败啦'
+                resultType = 'error'
+                instance.confirmButtonLoading = false
+                done()
+              }
+            )
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        this.$message({
+          type: resultType,
+          message: '最终结果: ' + resultMessage
+        })
+      }).catch(
+        (error) => {
+          console.log(error)
+        }
+      )
+    },
     // 公司搜索
     remoteMethodCompany(query) {
       if (query !== '') {
@@ -793,101 +865,17 @@ export default {
         }
       }
     },
-
-    // 编辑丢件返回信息
-    handleEditBoolean(row) {
-      let id = row.id
-      const data = {
-        is_return: row.is_return,
-        is_losing: row.is_losing
-      }
-      updateWorkOrderSupplierHandle(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 70,
-            duration: 0
-          })
-          this.dialogVisibleEdit = false
-          this.fetchData()
-        },
-        err => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${err.data}`,
-            type: 'success',
-            offset: 70,
-            duration: 0
-          })
-        }
-      )
-    },
     handelDoubleClick(row, column, cell, event) {
-      console.log(row)
-      if (column.property === 'feedback') {
-        if (row.wo_category.id === 0) {
-          this.handleFeedback(row)
-        }
-      } else if (column.property === 'memo') {
-        if (row.wo_category.id === 1) {
-          this.handleMemo(row)
-        }
+      if (column.property === 'rejection') {
+        this.handleRejection(row)
       }
     },
-    handleFeedback(row) {
-      this.$prompt('请输入反馈内容', '添加反馈', {
+    handleRejection(row) {
+      this.$prompt('请输入驳回原因', '添加驳回原因', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        inputValue: row.feedback,
-        inputErrorMessage: '输入不能为空',
-        inputValidator: (value) => {
-        if(!value) {
-          return '输入不能为空';
-        }
-      }
-      }).then(
-        ({ value }) => {
-          let CurrentTimeStamp = new Date()
-          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
-          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
-          let id = row.id
-          let data = {
-            feedback: value
-          }
-          updateWorkOrderSupplierHandle(id, data).then(
-            () => {
-              this.$notify({
-                title: '修改成功',
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-              this.fetchData()
-            },
-            err => {
-              this.$notify({
-                title: '修改失败',
-                message: `修改失败：${err.data}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-          )
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
-    },
-    handleMemo(row) {
-      this.$prompt('请输入逆向结单备注', '添加内容', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputValue: row.memo,
+        inputValue: row.rejection,
         inputErrorMessage: '输入不能为空',
         inputValidator: (value) => {
           if(!value) {
@@ -901,73 +889,46 @@ export default {
           value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
-            memo: value
+            rejection: value
           }
-          updateWorkOrderSupplierHandle(id, data).then(
+          updateWorkOrderAudit(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
               this.fetchData()
-            },
-            err => {
+            }).catch(
+            (error) => {
               this.$notify({
                 title: '修改失败',
-                message: `修改失败：${err.data}`,
+                message: `修改失败：${error.data}`,
                 type: 'error',
                 offset: 70,
                 duration: 0
               })
+              this.fetchData()
             }
           )
-        }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
-    },
-    handleChangeProcess(row) {
-      let id = row.id
-      console.log(row)
-      const data = {
-        process_tag: row.process_tag.id
-      }
-      updateWorkOrderSupplierHandle(id, data).then(
-        (res) => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            duration: 0
-          })
-          this.fetchData()
-        }
-      ).catch(
+        }).catch(
         (error) => {
           this.$notify({
             title: '修改失败',
-            message: error.data,
+            message: `修改失败：${error.data}`,
             type: 'error',
+            offset: 70,
             duration: 0
           })
-        }
-      )
+          this.fetchData()
+        })
     },
+
     resetParams() {
       this.params = {
         page: 1
       }
-    },
-    unique(arr) {
-      // 根据唯一标识no来对数组进行过滤
-      // 定义常量 res,值为一个Map对象实例
-      const res = new Map()
-      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
-      // 如果res中没有某个键，就设置这个键的值为1
-      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     }
   }
 }
