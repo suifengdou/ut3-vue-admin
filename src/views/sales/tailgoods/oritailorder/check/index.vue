@@ -36,7 +36,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -258,6 +258,7 @@
         </el-table-column>
         <el-table-column
           label="收件地址"
+          width="230px"
           prop="sent_address"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -281,7 +282,7 @@
         >
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+              <el-tag type="danger" size="mini">{{ item.name.name }}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -294,6 +295,7 @@
         </el-table-column>
         <el-table-column
           label="订单留言"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -753,7 +755,7 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -778,36 +780,28 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     店铺: item.shop.name,
-                    收款开票公司: item.company.name,
                     源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
+                    订单类型: item.order_category.name,
+                    发货模式: item.mode_warehouse.name,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
+                    尾货订单总价: item.amount,
+                    货品总数: item.quantity,
+                    货品名称: JSON.stringify(item.goods_details),
+                    提交时间: item.submit_time,
+                    处理时间: item.handle_time,
+                    订单留言: item.message,
+                    订单反馈: item.feedback,
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    处理标签: item.process_tag.name,
+                    错误原因: item.mistake_tag.name,
+                    订单状态: item.order_status.name,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1096,7 +1090,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1152,7 +1146,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1342,7 +1336,7 @@ export default {
                   if (res.data.success !== 0) {
                     this.$notify({
                       title: '驳回成功',
-                      message: `驳回成功条数：${res.data.success}`,
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -1409,7 +1403,7 @@ export default {
                   if (res.data.success !== 0) {
                     this.$notify({
                       title: '驳回成功',
-                      message: `驳回成功条数：${res.data.success}`,
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000

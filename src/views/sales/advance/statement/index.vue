@@ -11,6 +11,13 @@
             </el-tooltip>
           </div>
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
+              <el-button type="success" @click="exportExcel">导出</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">
@@ -250,6 +257,8 @@
 
 <script>
 import { getStatementList, exportStatement } from '@/api/sales/advance/statements'
+import moment from 'moment'
+import XLSX from 'xlsx'
 
 export default {
   name: 'OriInvoiceSubmit',
@@ -299,6 +308,87 @@ export default {
       ).catch(
         () => {
           this.tableLoading = false
+        }
+      )
+    },
+    // 表格导出
+    exportExcel() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '导出 Excel',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('hr', null, ''),
+          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
+          h('hr', null, ''),
+          h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            exportStatement(this.params).then(
+              res => {
+                res.data = res.data.map(item => {
+                  return {
+                    流水号: item.order_id,
+                    关联账户: item.account.name,
+                    类型: item.category.name,
+                    入账: item.revenue,
+                    支出: item.expenses,
+                    备注: item.memorandum,
+                    创建时间: item.create_time,
+                    更新时间: item.update_time,
+                    创建者: item.creator
+                  }
+                })
+                const ws = XLSX.utils.json_to_sheet(res.data)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+                XLSX.writeFile(wb, '列表详情1.xlsx')
+                resultMessage = '表格导出成功啦'
+                resultType = 'success'
+                instance.confirmButtonLoading = false
+                done()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                done()
+                this.fetchData()
+              }
+            )
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        this.$message({
+          type: resultType,
+          message: '最终结果: ' + resultMessage
+        })
+      }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
         }
       )
     },

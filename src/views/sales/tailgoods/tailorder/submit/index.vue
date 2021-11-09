@@ -90,17 +90,7 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="订单类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
-                          <el-option
-                            v-for="item in optionsCategory"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发货模式" prop="order_category">
+                      <el-col :span="6"><el-form-item label="发货模式" prop="mode_warehouse">
                         <el-select v-model="params.mode_warehouse" placeholder="请选择发票类型">
                           <el-option
                             v-for="item in optionsMode"
@@ -113,37 +103,52 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="来源单号" prop="ori_tail_order">
+                        <el-input v-model="params.ori_tail_order__order_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="收件人" prop="sent_consignee">
+                      <el-col :span="6"><el-form-item label="收件人姓名" prop="sent_consignee">
                         <el-input v-model="params.sent_consignee" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6">
-                        <el-form-item label="手机" prop="sent_smartphone">
-                          <el-input v-model="params.sent_smartphone" type="text" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="6">
-                        <el-form-item label="货品总数" prop="quantity">
-                          <el-input v-model="params.quantity" type="text" />
-                        </el-form-item>
-                      </el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="尾货订单总价" prop="amount">
-                        <el-input v-model="params.amount" type="text" />
+                      <el-col :span="6"><el-form-item label="收件人手机" prop="sent_smartphone">
+                        <el-input v-model="params.sent_smartphone" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="订单留言" prop="message">
-                        <el-input v-model="params.message" type="text" />
+                      <el-col :span="6"><el-form-item label="收件地址" prop="sent_address">
+                        <el-input v-model="params.sent_address" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="快递信息" prop="track_no">
+                        <el-input v-model="params.track_no" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
+                      <el-col :span="6" />
                     </el-row>
+
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
+                      <el-col :span="8"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
@@ -155,6 +160,19 @@
                         </div>
                       </el-form-item></el-col>
                       <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="更新时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.update_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                   </el-form>
@@ -270,6 +288,7 @@
         </el-table-column>
         <el-table-column
           label="收件地址"
+          width="230px"
           prop="sent_address"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -293,7 +312,7 @@
         >
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+              <el-tag type="danger" size="mini">{{ item.name.name }}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -306,6 +325,7 @@
         </el-table-column>
         <el-table-column
           label="订单留言"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -943,6 +963,17 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (typeof (this.params.update_time) !== 'undefined') {
+        if (this.params.update_time.length === 2) {
+          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.order_status) !== 'undefined') {
+        console.log(this.params.order_status)
+        this.params.order_status__in = this.params.order_status.toString()
+        console.log(this.params.order_status__in)
+      }
       getOritailorderSubmitList(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -976,6 +1007,7 @@ export default {
       this.formEdit.order_category = this.formEdit.order_category.id
       this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
       this.formEdit.shop = this.formEdit.shop.id
+
 
       this.optionsCity = [{ label: this.formEdit.sent_city.name, value: this.formEdit.sent_city.id }]
       this.formEdit.sent_city = this.formEdit.sent_city.id

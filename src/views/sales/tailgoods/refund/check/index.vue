@@ -234,7 +234,7 @@
         >
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+              <el-tag type="danger" size="mini">{{ item.name.name }}</el-tag>
             </div>
           </template>
         </el-table-column>

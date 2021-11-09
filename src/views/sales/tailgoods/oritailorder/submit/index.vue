@@ -37,10 +37,10 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="handleImport">导入</el-button>
+              <el-button type="success" @click="importExcel">导入</el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
-              <el-button type="success" @click="open">导出</el-button>
+              <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -175,6 +175,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
       >
@@ -226,6 +227,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="订单编号"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="订单类型"
           prop="order_category"
           sortable="custom"
@@ -270,6 +281,7 @@
         </el-table-column>
         <el-table-column
           label="收件地址"
+          width="230px"
           prop="sent_address"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -293,7 +305,7 @@
         >
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+              <el-tag type="danger" size="mini">{{ item.name.name }}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -307,6 +319,7 @@
 
         <el-table-column
           label="订单留言"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -408,32 +421,6 @@
             </el-form-item></el-col>
             <el-col :span="16"><el-form-item label="手机" prop="sent_smartphone">
               <el-input v-model="formAdd.sent_smartphone" placeholder="请输入手机" />
-            </el-form-item></el-col>
-          </el-row>
-
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-              <template>
-                <el-select
-                  v-model="formAdd.sent_city"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择城市"
-                  :remote-method="remoteMethodCity"
-                >
-                  <el-option
-                    v-for="item in optionsCity"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-              <el-input v-model="formAdd.sent_district" placeholder="请输入名称" />
             </el-form-item></el-col>
           </el-row>
 
@@ -547,7 +534,7 @@
             label-width="80px"
             size="mini"
             :model="formEdit"
-            :rules="rulesEdit"
+            :rules="rules"
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -605,33 +592,16 @@
                   <el-input v-model="formEdit.sent_smartphone" placeholder="请输入手机" />
                 </el-form-item></el-col>
               </el-row>
-
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收件城市" prop="sent_city">
-                  <template>
-                    <el-select
-                      v-model="formEdit.sent_city"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择城市"
-                      :remote-method="remoteMethodCity"
-                    >
-                      <el-option
-                        v-for="item in optionsCity"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                <el-col :span="8"><el-form-item label="城市" prop="sent_city">
+                  <template v-if="formEdit.sent_city != undefined">
+                    <span>{{ formEdit.sent_city.name }}</span>
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收件区县" prop="sent_district">
-                  <el-input v-model="formEdit.sent_district" placeholder="请输入名称" />
+                <el-col :span="16"><el-form-item label="区县" prop="sent_district">
+                  <span>{{ formEdit.sent_district }}</span>
                 </el-form-item></el-col>
               </el-row>
-
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
                   <el-input v-model="formEdit.sent_address" placeholder="请输入名称" />
@@ -732,36 +702,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -770,7 +710,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
   getOritailorderSubmitList,
@@ -823,23 +762,17 @@ export default {
       dialogVisibleEdit: false,
       importVisible: false,
       formAdd: {
-        type: Object,
-        default() {
-          return {
-            order_category: 1
-          }
-        }
+        order_category: 1,
+        shop: 13
       },
-      formEdit: {
-        type: Object,
-        default() {
-          return {
-            id: ''
-          }
-        }
-      },
+      formEdit: {},
       importFile: {},
-      optionsShop: [],
+      optionsShop: [
+        {
+          value: 13,
+          label: '小狗尾货'
+        }
+      ],
       optionsDepartment: [],
       optionsCompany: [],
       optionsPlatform: [],
@@ -890,44 +823,7 @@ export default {
         sent_smartphone: [
           { validator: validateMobile, trigger: 'blur' }
         ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
-        sent_address: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        tableInput: [
-          { required: true, trigger: ['blur', 'change'], message: '请选择' }
-        ]
-      },
-      rulesEdit: {
-        id: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        shop: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ],
-        order_id: [
-          { required: true, message: '请输入源单号', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请选择类型', trigger: 'blur' }
-        ],
-        sent_consignee: [
-          { required: true, message: '请输入收件人姓名', trigger: 'blur' }
-        ],
-        sent_smartphone: [
-          { validator: validateMobile, trigger: 'blur' }
-        ],
-        sent_city: [
-          { required: true, message: '请输选择城市', trigger: 'blur' }
-        ],
-        sent_district: [
-          { required: false, message: '请输入区县', trigger: 'blur' }
-        ],
+
         sent_address: [
           { required: true, message: '请输入地址', trigger: 'blur' }
         ],
@@ -989,9 +885,7 @@ export default {
       this.formEdit.order_category = this.formEdit.order_category.id
       this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
       this.formEdit.shop = this.formEdit.shop.id
-
-      this.optionsCity = [{ label: this.formEdit.sent_city.name, value: this.formEdit.sent_city.id }]
-      this.formEdit.sent_city = this.formEdit.sent_city.id
+      this.formEdit.mode_warehouse = this.formEdit.mode_warehouse.id
       if (this.formEdit.goods_details != undefined) {
         this.optionsGoods = this.formEdit.goods_details.map(item => {
           return { label: item.name.name, value: item.name.id }
@@ -1011,11 +905,12 @@ export default {
         if (!valid) {
           return
         }
+        delete this.formEdit.sent_city
         this.formEdit.goods_details = this.oriInvoiceGoodsListEdit
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'order_category', 'order_status', 'mode_warehouse']
+        const transFieldStr = ['mistake_tag', 'process_tag', 'order_status']
         for (attrStr in transFieldStr) {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }
@@ -1080,52 +975,80 @@ export default {
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
     // 导入
-    getFile(event) {
-      this.importFile.file = event.target.files[0]
-    },
     importExcel() {
-      const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportOritailorderSubmit(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
         }
-      }
-      excelImportOritailorderSubmit(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 3000
-          })
-        },
-        error => {
-          this.$notify({
-            title: '导入错误',
-            message: error,
-            type: 'error',
-            duration: 0
-          })
-        }
-      ).catch(
-        () => {
-          console.log('1')
+      }).then(action => {
+        console.log(action)
+      }).catch(
+        (error) => {
+          console.log(error)
         }
       )
-      this.importVisible = false
-      this.$refs.files.type = 'text'
-      this.$refs.files.value = ''
-      this.$refs.files.type = 'file'
-      this.fetchData()
     },
-    closeImport() {
-      this.importVisible = false
-    },
-    handleImport() {
-      this.importVisible = true
-    },
-    open() {
+    exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
@@ -1150,36 +1073,28 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     店铺: item.shop.name,
-                    收款开票公司: item.company.name,
                     源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
+                    订单类型: item.order_category.name,
+                    发货模式: item.mode_warehouse.name,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
+                    尾货订单总价: item.amount,
+                    货品总数: item.quantity,
+                    货品名称: JSON.stringify(item.goods_details),
+                    提交时间: item.submit_time,
+                    处理时间: item.handle_time,
+                    订单留言: item.message,
+                    订单反馈: item.feedback,
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    处理标签: item.process_tag.name,
+                    错误原因: item.mistake_tag.name,
+                    订单状态: item.order_status.name,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1240,7 +1155,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1296,7 +1211,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1349,7 +1264,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1405,7 +1320,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1463,7 +1378,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1519,7 +1434,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1577,7 +1492,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1633,7 +1548,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1691,7 +1606,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1747,7 +1662,7 @@ export default {
             if (res.data.success !== 0) {
               this.$notify({
                 title: '标记成功',
-                message: `标记成功条数：${res.data.success}`,
+                message: `标记成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1822,7 +1737,7 @@ export default {
                   if (res.data.success !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -1889,7 +1804,7 @@ export default {
                   if (res.data.success !== 0) {
                     this.$notify({
                       title: '取消成功',
-                      message: `取消成功条数：${res.data.success}`,
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -2107,6 +2022,24 @@ export default {
       }
       this.oriInvoiceGoodsListEdit.push(obj)
       console.log(this.oriInvoiceGoodsListEdit)
+    },
+    // 表格的行样式
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.process_tag.id === 8) {
+        row_style = {
+          backgroundColor: '#c7dc68'
+        }
+      } else if (row.process_tag.id === 9) {
+        row_style = {
+          backgroundColor: '#c1d8ac'
+        }
+      } else if (row.process_tag.id === 10) {
+        row_style = {
+          backgroundColor: '#f39800'
+        }
+      }
+      return row_style
     },
     // 重置筛选
     resetParams() {

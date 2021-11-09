@@ -416,6 +416,7 @@ export default {
                     机器序列号: item.manual_order.m_sn,
                     损坏部位: item.manual_order.broken_part,
                     故障描述: item.manual_order.description,
+                    货品名称: item.goods_name.name,
                     货品编码: item.goods_id,
                     单价: item.price,
                     货品数量: item.quantity,

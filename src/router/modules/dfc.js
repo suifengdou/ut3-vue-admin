@@ -10,7 +10,7 @@ const dfcRouter = {
   meta: {
     title: '数格转换',
     icon: 'nested',
-    roles: ['compensation.view_compensation', 'compensation.view_batchcompensation', 'manualorder.view_manualorderexport', 'manualorder.view_manualorder', 'AllPrivileges']
+    roles: ['compensation.view_compensation', 'compensation.view_batchcompensation', 'manualorder.view_manualorderexport', 'manualorder.view_manualorder', 'batchtable.view_origindata', 'AllPrivileges']
   },
   children: [
     {
@@ -148,26 +148,26 @@ const dfcRouter = {
       path: 'tables',
       component: () => import('@/views/dfc/batchtable'), // Parent router-view
       name: 'tables',
-      meta: { title: '表格处理', roles: ['AllPrivileges'] },
+      meta: { title: '表格处理', roles: ['batchtable.view_origindata', 'batchtable.view_batchtable', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'origindata',
           component: () => import('@/views/dfc/batchtable/origindata'),
           name: 'origindata',
-          meta: { title: '原始表格' },
+          meta: { title: '原始表格', roles: ['batchtable.view_origindata', 'AllPrivileges'] },
           children: [
             {
               path: 'odsubmit',
               component: () => import('@/views/dfc/batchtable/origindata/submit'),
               name: 'odsubmit',
-              meta: { title: '表格递交' }
+              meta: { title: '表格递交', roles: ['batchtable.view_origindata', 'AllPrivileges'] }
             },
             {
               path: 'odmanage',
               component: () => import('@/views/dfc/batchtable/origindata/manage'),
               name: 'odmanage',
-              meta: { title: '表格管理' }
+              meta: { title: '表格管理', roles: ['batchtable.view_origindata', 'AllPrivileges'] }
             }
           ]
         },
@@ -175,19 +175,19 @@ const dfcRouter = {
           path: 'batchtable',
           component: () => import('@/views/dfc/batchtable/batchtable'),
           name: 'batchtable',
-          meta: { title: '表格输出' },
+          meta: { title: '表格输出', roles: ['batchtable.view_batchtable', 'AllPrivileges'] },
           children: [
             {
               path: 'btsubmit',
               component: () => import('@/views/dfc/batchtable/batchtable/submit'),
               name: 'btsubmit',
-              meta: { title: '输出处理' }
+              meta: { title: '输出处理', roles: ['batchtable.view_batchtable', 'AllPrivileges'] }
             },
             {
               path: 'btmanage',
               component: () => import('@/views/dfc/batchtable/batchtable/manage'),
               name: 'btmanage',
-              meta: { title: '输出管理' }
+              meta: { title: '输出管理', roles: ['batchtable.view_batchtable', 'AllPrivileges'] }
             }
           ]
         }

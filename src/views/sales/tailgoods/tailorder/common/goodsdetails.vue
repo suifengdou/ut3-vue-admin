@@ -21,6 +21,16 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+              <el-input v-model="params.tail_order__order_id" class="grid-content bg-purple" placeholder="请输入尾货单号" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+
+        </el-col>
         <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -68,15 +78,15 @@
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20" />
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="收件人" prop="tail_order__sent_consignee">
+                        <el-input v-model="params.tail_order__sent_consignee" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
+                      <el-col :span="6"><el-form-item label="手机" prop="tail_order__sent_smartphone">
+                        <el-input v-model="params.tail_order__sent_smartphone" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6">
-                        <el-form-item label="手机" prop="sent_smartphone">
-                          <el-input v-model="params.sent_smartphone" type="text" />
+                        <el-form-item label="快递信息" prop="tail_order__track_no">
+                          <el-input v-model="params.tail_order__track_no" type="text" />
                         </el-form-item>
                       </el-col>
                       <el-col :span="6">
@@ -149,7 +159,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop }}</span>
+            <span>{{ scope.row.shop.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -178,6 +188,7 @@
         </el-table-column>
         <el-table-column
           label="地址"
+          width="230px"
           prop="sent_address"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -266,6 +277,7 @@
         </el-table-column>
         <el-table-column
           label="买家留言"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -278,7 +290,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sent_province }}</span>
+            <span>{{ scope.row.sent_province.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -288,7 +300,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sent_city }}</span>
+            <span>{{ scope.row.sent_city.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -360,8 +372,8 @@ export default {
       params: {
         page: 1,
         allSelectTag: 0,
-        t_order_status: 1,
-        t_mode_warehouse: 1
+        tail_order_order_status: 1,
+        tail_order_mode_warehouse: 1
       },
       optionsProcessTag: [
         { label: '未处理', value: 0 },
@@ -434,7 +446,7 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop,
+                    店铺名称: item.shop.name,
                     原始单号: item.order_id,
                     网名: item.sent_consignee,
                     收件人: item.sent_consignee,
@@ -444,14 +456,15 @@ export default {
                     优惠金额: item.discounts,
                     邮费: item.post_fee,
                     货品价格: item.settlement_price,
+                    应收合计: item.settlement_amount,
                     货品总价: item.settlement_amount,
                     商家编码: item.goods_id,
                     货品名称: item.goods_nickname,
                     货品数量: item.quantity,
                     订单类别: item.order_category,
-                    买家留言: item.message,
-                    省: item.sent_province,
-                    市: item.sent_city,
+                    买家备注: item.message,
+                    省: item.sent_province.name,
+                    市: item.sent_city.name,
                     区: item.sent_district,
                     创建者: item.creator,
                     创建时间: item.create_time

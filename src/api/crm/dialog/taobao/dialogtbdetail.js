@@ -66,6 +66,15 @@ export function checkDialogTBDetail(data) {
   })
 }
 
+// 强制审核
+export function mandatoryCheckDialogTBDetail(data) {
+  return request({
+    url: `/crm/dialog/dialogtbdetail/mandatory_check/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 取消工单
 export function rejectDialogTBDetail(data) {
   return request({

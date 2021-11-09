@@ -2,26 +2,6 @@
   <div class="manualorder-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <div id="operationBoard">
-              <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
-                <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
-                  选中所有的{{ selectNum }}项
-                  <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSetSpecial">特设</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleResetTag">重置</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="点击选中所有筛选出的订单" placement="top-start">
-                <el-button @click="checkAllOption">全选{{ totalNum }}项</el-button>
-              </el-tooltip>
-            </div>
-          </div>
-        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -155,9 +135,7 @@
         border
         style="width: 100%"
         @sort-change="onSortChange"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
@@ -188,13 +166,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
+          label="单据状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column

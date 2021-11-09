@@ -521,11 +521,6 @@
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
               </template>
             </el-table-column>
-            <el-table-column label="含税单价" width="250" prop="price">
-              <template slot-scope="scope">
-                <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
-              </template>
-            </el-table-column>
             <el-table-column label="货品备注" width="250" prop="memorandum">
               <template slot-scope="scope">
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
@@ -680,7 +675,7 @@
                 <span>问题信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="20"><el-form-item label="故障描述" prop="information">
+                <el-col :span="20"><el-form-item label="问题描述" prop="information">
                   <el-input v-model="formEdit.information" placeholder="请输入问题描述" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
@@ -760,11 +755,6 @@
                 <el-table-column label="货品数量" width="250" prop="quantity">
                   <template slot-scope="scope">
                     <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].quantity" type="number" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="含税单价" width="250" prop="price">
-                  <template slot-scope="scope">
-                    <el-input v-model="oriInvoiceGoodsListEdit[scope.row.xh-1].price" type="text" />
                   </template>
                 </el-table-column>
                 <el-table-column label="货品备注" width="250" prop="memorandum">

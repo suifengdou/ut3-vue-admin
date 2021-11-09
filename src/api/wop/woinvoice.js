@@ -44,7 +44,7 @@ export function exportOriInvoiceApplicate(data) {
 export function excelImportOriInvoiceApplicate(data) {
   return request({
     url: `/workorder/invoice/oriinvoiceapp/excel_import/`,
-    method: 'post',
+    method: 'patch',
     data
   })
 }

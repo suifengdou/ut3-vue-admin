@@ -1328,18 +1328,16 @@ export default {
             type: 'success',
             duration: 3000
           })
-        },
-        error => {
+          this.fetchData()
+        }).catch(
+        (error) => {
           this.$notify({
             title: '导入错误',
-            message: error,
+            message: error.data,
             type: 'error',
             duration: 0
           })
-        }
-      ).catch(
-        () => {
-          console.log('1')
+          this.fetchData()
         }
       )
       this.importVisible = false

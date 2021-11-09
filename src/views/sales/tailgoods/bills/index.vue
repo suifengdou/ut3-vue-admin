@@ -12,6 +12,36 @@
           </div>
 
         </el-col>
+        <el-col :span="7" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索标签" placement="top-start">
+              <div class="block">
+                <el-date-picker
+                  v-model="params.create_time"
+                  type="datetimerange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  @blur="fetchData"
+                />
+              </div>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="3" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索标签" placement="top-start">
+              <el-select v-model="params.mode_warehouse" placeholder="标签" clearable @change="fetchData">
+                <el-option
+                  v-for="item in optionsMode"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
@@ -57,7 +87,67 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
+
+                      <el-col :span="6"><el-form-item label="发货模式" prop="mode_warehouse">
+                        <el-select v-model="params.mode_warehouse" placeholder="请选择发货模式">
+                          <el-option
+                            v-for="item in optionsMode"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="账单单号" prop="order_id">
+                        <el-input v-model="params.order_id" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="货品" prop="goods_name">
+                        <template>
+                          <el-select
+                            v-model="params.goods_name"
+                            filterable
+                            default-first-option
+                            remote
+                            reserve-keyword
+                            placeholder="请搜索并选择货品"
+                            :remote-method="remoteMethodGoods"
+                          >
+                            <el-option
+                              v-for="item in optionsGoods"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="收件人姓名" prop="sent_consignee">
+                        <el-input v-model="params.sent_consignee" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件人手机" prop="sent_smartphone">
+                        <el-input v-model="params.sent_smartphone" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="备注" prop="message">
+                        <el-input v-model="params.message" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="公司" prop="company">
                         <template>
                           <el-select
                             v-model="params.company"
@@ -76,62 +166,6 @@
                             />
                           </el-select>
                         </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发票类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
-                          <el-option
-                            v-for="item in optionsCategory"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4" />
-                      <el-col :span="4" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否顺丰">
-                        <el-select v-model="params.is_deliver" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
@@ -479,7 +513,6 @@ import {
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -500,80 +533,21 @@ export default {
       },
       dialogVisibleEdit: false,
       InvoiceIDVisible: false,
-      formEdit: {
-        type: Object,
-        default() {
-          return {
-            id: '',
-            shop: '',
-            company: '',
-            order_id: '',
-            order_category: '',
-            title: '',
-            tax_id: '',
-            phone: '',
-            bank: '',
-            account: '',
-            address: '',
-            remark: '',
-            sent_consignee: '',
-            sent_smartphone: '',
-            sent_city: '',
-            sent_district: '',
-            sent_address: '',
-            amount: '',
-            is_deliver: '',
-            submit_time: '',
-            handle_time: '',
-            handle_interval: '',
-            message: '',
-            memorandum: '',
-            sign_company: '',
-            sign_department: '',
-            nickname: '',
-            create_time: '',
-            update_time: '',
-            is_delete: false,
-            creator: '',
-            process_tag: '',
-            mistake_tag: '',
-            order_status: ''
-          }
-        }
-      },
-      invoiceIDData: {
-        type: Object,
-        default() {
-          return {
-            id: '',
-            memorandum: ''
-          }
-        }
-      },
+      formEdit: {},
+      invoiceIDData: {},
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
       optionsPlatform: [],
-      optionsCity: [],
       optionsGoods: [],
-      optionsCategory: [
+      optionsMode: [
+        {
+          value: 0,
+          label: '回流'
+        },
         {
           value: 1,
-          label: '专票'
-        },
-        {
-          value: 2,
-          label: '普票'
-        }
-      ],
-      optionsIsDeliver: [
-        {
-          value: true,
-          label: '是'
-        },
-        {
-          value: false,
-          label: '否'
+          label: '二手'
         }
       ],
       oriInvoiceGoodsList: [],
@@ -785,30 +759,10 @@ export default {
           // console.log("我是真正的开始检索啦")
           const paramsSearch = {}
           paramsSearch.name = query
-          paramsSearch.category = 5
+          paramsSearch.category = 4
           getCompanyList(paramsSearch).then(
             res => {
               this.optionsCompany = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
-    // 城市搜索
-    remoteMethodCity(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getCityList(paramsSearch).then(
-            res => {
-              this.optionsCity = res.data.results.map(item => {
                 return { label: item.name, value: item.id }
               })
             }

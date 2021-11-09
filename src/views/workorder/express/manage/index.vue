@@ -2,24 +2,6 @@
   <div class="ori-invoice-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <div id="operationBoard">
-              <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
-                <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
-                  选中所有的{{ selectNum }}项
-                  <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="点击选中所有筛选出的订单" placement="top-start">
-                <el-button @click="checkAllOption">全选{{ totalNum }}项</el-button>
-              </el-tooltip>
-            </div>
-          </div>
-        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -232,9 +214,7 @@
         border
         style="width: 100%"
         @sort-change="onSortChange"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
@@ -565,27 +545,23 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-          delete this.params.create_time
         }
       }
       if (typeof (this.params.submit_time) !== 'undefined') {
         if (this.params.submit_time.length === 2) {
           this.params.submit_time_after = moment.parseZone(this.params.submit_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.submit_time_before = moment.parseZone(this.params.submit_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-          delete this.params.submit_time
         }
       }
       if (typeof (this.params.handle_time) !== 'undefined') {
         if (this.params.handle_time.length === 2) {
           this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-          delete this.params.handle_time
         }
       }
       if (typeof (this.params.order_status) !== 'undefined') {
         console.log(this.params.order_status)
         this.params.order_status__in = this.params.order_status.toString()
-        delete this.params.order_status
         console.log(this.params.order_status__in)
       }
       console.log(this.params)

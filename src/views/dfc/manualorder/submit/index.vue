@@ -1030,7 +1030,7 @@
         console.log(values)
         this.formEdit = { ...values }
         this.dialogVisibleEdit = true
-
+        this.formEdit.assign_express = this.formEdit.assign_express.id
         this.formEdit.order_category = this.formEdit.order_category.id
         if (this.formEdit.district !== 'undefined') {
           this.optionsDistrict = [{ label: this.formEdit.district.name, value: this.formEdit.district.id }]

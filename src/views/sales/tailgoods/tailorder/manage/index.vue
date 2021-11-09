@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.sent_smartphone" class="grid-content bg-purple" placeholder="请输入收件人手机" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -57,30 +57,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发票类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
+                      <el-col :span="6"><el-form-item label="发货模式" prop="mode_warehouse">
+                        <el-select v-model="params.mode_warehouse" placeholder="请选择发票类型">
                           <el-option
-                            v-for="item in optionsCategory"
+                            v-for="item in optionsMode"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -90,40 +70,37 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="来源单号" prop="ori_tail_order">
+                        <el-input v-model="params.ori_tail_order__order_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
+                      <el-col :span="6"><el-form-item label="收件人姓名" prop="sent_consignee">
                         <el-input v-model="params.sent_consignee" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="收件人手机" prop="sent_smartphone">
                         <el-input v-model="params.sent_smartphone" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件地址" prop="sent_address">
+                        <el-input v-model="params.sent_address" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="快递信息" prop="track_no">
+                        <el-input v-model="params.track_no" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="4" />
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否顺丰">
-                        <el-select v-model="params.is_deliver" placeholder="是否发顺丰">
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
                           <el-option
-                            v-for="item in optionsIsDeliver"
+                            v-for="item in optionsStatus"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -138,7 +115,7 @@
                     </el-row>
 
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
+                      <el-col :span="8"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
@@ -150,6 +127,19 @@
                         </div>
                       </el-form-item></el-col>
                       <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="8"><el-form-item label="更新时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.update_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                   </el-form>
@@ -222,7 +212,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
+          label="单据状态"
           prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -252,6 +242,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="快递信息"
+          prop="track_no"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.track_no }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="收件人姓名"
         >
           <template slot-scope="scope">
@@ -276,6 +276,7 @@
         </el-table-column>
         <el-table-column
           label="收件地址"
+          width="230px"
           prop="sent_address"
           sortable="custom"
           :sort-orders="['ascending','descending']"
@@ -299,7 +300,7 @@
         >
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.goods_details">
-              <el-button type="warning" size="mini">{{ item.name.name }}</el-button>
+              <el-tag type="warning" size="mini">{{ item.name.name }}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -312,6 +313,7 @@
         </el-table-column>
         <el-table-column
           label="订单留言"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -508,47 +510,7 @@ export default {
       },
       dialogVisibleEdit: false,
       InvoiceIDVisible: false,
-      formEdit: {
-        type: Object,
-        default() {
-          return {
-            id: '',
-            shop: '',
-            company: '',
-            order_id: '',
-            order_category: '',
-            title: '',
-            tax_id: '',
-            phone: '',
-            bank: '',
-            account: '',
-            address: '',
-            remark: '',
-            sent_consignee: '',
-            sent_smartphone: '',
-            sent_city: '',
-            sent_district: '',
-            sent_address: '',
-            amount: '',
-            is_deliver: '',
-            submit_time: '',
-            handle_time: '',
-            handle_interval: '',
-            message: '',
-            memorandum: '',
-            sign_company: '',
-            sign_department: '',
-            nickname: '',
-            create_time: '',
-            update_time: '',
-            is_delete: false,
-            creator: '',
-            process_tag: '',
-            mistake_tag: '',
-            order_status: ''
-          }
-        }
-      },
+      formEdit: {},
       invoiceIDData: {
         type: Object,
         default() {
@@ -564,14 +526,28 @@ export default {
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
-      optionsCategory: [
+      optionsMode: [
+        {
+          value: 0,
+          label: '回流'
+        },
         {
           value: 1,
-          label: '专票'
+          label: '二手'
+        }
+      ],
+      optionsStatus: [
+        {
+          value: 0,
+          label: '已被取消'
+        },
+        {
+          value: 1,
+          label: '发货处理'
         },
         {
           value: 2,
-          label: '普票'
+          label: '发货完成'
         }
       ],
       optionsIsDeliver: [
@@ -600,6 +576,17 @@ export default {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
+      }
+      if (typeof (this.params.update_time) !== 'undefined') {
+        if (this.params.update_time.length === 2) {
+          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.order_status) !== 'undefined') {
+        console.log(this.params.order_status)
+        this.params.order_status__in = this.params.order_status.toString()
+        console.log(this.params.order_status__in)
       }
       getTailOrderList(this.params).then(
         res => {

@@ -10,21 +10,21 @@ const salesChannelRouter = {
   meta: {
     title: '销售业务',
     icon: 'nested',
-    roles: ['advancepayment.view_statements', 'AllPrivileges']
+    roles: ['advancepayment.view_statements', 'advancepayment.view_user_account', 'tailgoods.view_refundorder', 'AllPrivileges']
   },
   children: [
     {
       path: 'advance',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
       name: 'advance',
-      meta: { title: '预存系统', roles: ['advancepayment.view_statements', 'AllPrivileges'] },
+      meta: { title: '预存系统', roles: ['advancepayment.view_statements', 'advancepayment.view_user_account', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'account',
           component: () => import('@/views/sales/advance/account/index'),
           name: '账户',
-          meta: { title: '账户' },
+          meta: { title: '账户', roles: ['advancepayment.view_statements', 'advancepayment.view_user_account', 'AllPrivileges']},
           children: [
             {
               path: 'myaccount',
@@ -44,7 +44,7 @@ const salesChannelRouter = {
           path: 'prestore',
           component: () => import('@/views/sales/advance/prestore/index'),
           name: '预存管理',
-          meta: { title: '预存管理' },
+          meta: { title: '预存管理', roles: ['advancepayment.view_prestore', 'AllPrivileges']},
           children: [
             {
               path: 'submit',
@@ -102,31 +102,31 @@ const salesChannelRouter = {
       path: 'tailgoods',
       name: '尾货订单',
       component: () => import('@/views/sales/tailgoods/index'),
-      meta: { title: '尾货订单', roles: ['AllPrivileges'] },
+      meta: { title: '尾货订单', roles: ['tailgoods.view_refundorder', 'AllPrivileges'] },
       children: [
         {
           path: 'oritailgoods',
           component: () => import('@/views/sales/tailgoods/oritailorder/index'),
           name: '原始尾货单',
-          meta: { title: '原始尾货单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '原始尾货单', roles: ['tailgoods.view_oritailorder', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/sales/tailgoods/oritailorder/submit/index'),
               name: '原始尾货单提交',
-              meta: { title: '原始尾货单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '原始尾货单提交', roles: ['tailgoods.view_user_oritailorder', 'AllPrivileges'] }
             },
             {
               path: 'check',
               component: () => import('@/views/sales/tailgoods/oritailorder/check/index'),
               name: '原始尾货单审核',
-              meta: { title: '原始尾货单审核', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '原始尾货单审核', roles: ['tailgoods.view_handler_oritailorder', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/sales/tailgoods/oritailorder/manage'),
               name: '原始尾货单管理',
-              meta: { title: '原始尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '原始尾货单管理', roles: ['tailgoods.view_oritailorder', 'AllPrivileges'] }
             }
           ]
         },
@@ -134,37 +134,37 @@ const salesChannelRouter = {
           path: 'tailgoods',
           component: () => import('@/views/sales/tailgoods/tailorder/index'),
           name: '尾货单',
-          meta: { title: '尾货单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '尾货单', roles: ['tailgoods.view_tailorder', 'AllPrivileges'] },
           children: [
             {
               path: 'common',
               component: () => import('@/views/sales/tailgoods/tailorder/common/index'),
               name: '重损发货',
-              meta: { title: '重损发货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '重损发货', roles: ['tailgoods.view_user_tailorder', 'AllPrivileges'] }
             },
             {
               path: 'commongoodsdetails',
               component: () => import('@/views/sales/tailgoods/tailorder/common/goodsdetails'),
               name: '重损发货明细',
-              meta: { title: '重损发货明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '重损发货明细', roles: ['tailgoods.view_user_togoods', 'AllPrivileges'] }
             },
             {
               path: 'special',
               component: () => import('@/views/sales/tailgoods/tailorder/special/index'),
               name: '非重损发货',
-              meta: { title: '非重损发货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '非重损发货', roles: ['tailgoods.view_handler_tailorder', 'AllPrivileges'] }
             },
             {
               path: 'specilgoodsdetails',
               component: () => import('@/views/sales/tailgoods/tailorder/special/goodsdetails'),
               name: '非重损发货明细',
-              meta: { title: '非重损发货明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '非重损发货明细', roles: ['tailgoods.view_handler_togoods', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/sales/tailgoods/tailorder/manage'),
               name: '尾货单管理',
-              meta: { title: '尾货单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '尾货单管理', roles: ['tailgoods.view_tailorder', 'AllPrivileges'] }
             },
             {
               path: 'verifyexpense',
@@ -178,31 +178,37 @@ const salesChannelRouter = {
           path: 'refund',
           component: () => import('@/views/sales/tailgoods/refund/index'),
           name: '退款单',
-          meta: { title: '退款单', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] },
+          meta: { title: '退款单', roles: ['tailgoods.view_refundorder', 'AllPrivileges'] },
           children: [
             {
               path: 'submit',
               component: () => import('@/views/sales/tailgoods/refund/submit'),
               name: '退款单提交',
-              meta: { title: '退款单提交', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '退款单提交', roles: ['tailgoods.view_user_refundorder', 'AllPrivileges'] }
             },
             {
               path: 'check',
               component: () => import('@/views/sales/tailgoods/refund/check'),
               name: '退款单审核',
-              meta: { title: '退款单审核', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '退款单审核', roles: ['tailgoods.view_handler_refundorder', 'AllPrivileges'] }
             },
             {
               path: 'receival',
               component: () => import('@/views/sales/tailgoods/refund/receival'),
               name: '退款单收货',
-              meta: { title: '退款单收货', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '退款单收货', roles: ['tailgoods.view_check_refundorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'audit',
+              component: () => import('@/views/sales/tailgoods/refund/audit'),
+              name: '退款单结算',
+              meta: { title: '退款单结算', roles: ['tailgoods.view_user_refundorder', 'AllPrivileges'] }
             },
             {
               path: 'manage',
               component: () => import('@/views/sales/tailgoods/refund/manage'),
               name: '退款单管理',
-              meta: { title: '退款单管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+              meta: { title: '退款单管理', roles: ['tailgoods.view_refundorder', 'AllPrivileges'] }
             },
             {
               path: 'verifyprestore',
@@ -222,7 +228,7 @@ const salesChannelRouter = {
           path: 'bills',
           component: () => import('@/views/sales/tailgoods/bills'),
           name: '对账单明细',
-          meta: { title: '对账单明细', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+          meta: { title: '对账单明细', roles: ['tailgoods.view_accountinfo', 'AllPrivileges'] }
         }
       ]
     }

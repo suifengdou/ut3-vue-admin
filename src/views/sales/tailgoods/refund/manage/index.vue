@@ -58,7 +58,7 @@
                         </template>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="订单类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
+                        <el-select v-model="params.order_category" placeholder="请选择类型">
                           <el-option
                             v-for="item in optionsCategory"
                             :key="item.value"
@@ -68,7 +68,7 @@
                         </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="发货模式" prop="order_category">
-                        <el-select v-model="params.mode_warehouse" placeholder="请选择发票类型">
+                        <el-select v-model="params.mode_warehouse" placeholder="请选择发货模式">
                           <el-option
                             v-for="item in optionsMode"
                             :key="item.value"

@@ -34,13 +34,28 @@
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
 
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索标签" placement="top-start">
               <el-select v-model="params.process_tag" placeholder="标签" clearable @change="fetchData">
                 <el-option
                   v-for="item in optionsProcess"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="3" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索标签" placement="top-start">
+              <el-select v-model="params.category" placeholder="标签" clearable @change="fetchData">
+                <el-option
+                  v-for="item in optionsCategory"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
