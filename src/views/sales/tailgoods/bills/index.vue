@@ -325,6 +325,7 @@
 
         <el-table-column
           label="订单留言"
+          width="270px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>

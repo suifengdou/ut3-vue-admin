@@ -559,7 +559,7 @@
             <el-col :span="8" :offset="16"><el-form-item size="large">
               <div class="btn-warpper">
                 <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
+                <el-button type="primary" @click="handleCheckAdd">立即保存</el-button>
               </div>
             </el-form-item></el-col>
           </el-row>
@@ -662,9 +662,6 @@
                 <el-col :span="8"><el-form-item label="姓名" prop="name">
                   <el-input v-model="formEdit.name" placeholder="请输入名称" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="支付宝" prop="alipay_id">
-                  <el-input v-model="formEdit.alipay_id" placeholder="请输入名称" />
-                </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="补偿金额" prop="compensation">
@@ -697,7 +694,7 @@
                 <el-col :span="8" :offset="16"><el-form-item size="large">
                   <div class="btn-warpper">
                     <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
+                    <el-button type="primary" @click="handleCheckEdit">立即保存</el-button>
                   </div>
                 </el-form-item></el-col>
               </el-row>
@@ -910,6 +907,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
+      console.log(data)
       updateCompensationCheck(id, data).then(
         () => {
           this.$notify({

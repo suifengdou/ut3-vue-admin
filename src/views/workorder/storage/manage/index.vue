@@ -357,6 +357,9 @@
 
         <el-table-column
           label="更新时间"
+          prop="update_time"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.update_time }}</span>

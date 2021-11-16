@@ -388,7 +388,7 @@
           label="来源单号"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
+            <span>{{ scope.row.ori_order.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -551,6 +551,7 @@ export default {
                     区: item.district.name,
                     订单号: item.order_id,
                     创建者: item.creator,
+                    来源单号: item.ori_order.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

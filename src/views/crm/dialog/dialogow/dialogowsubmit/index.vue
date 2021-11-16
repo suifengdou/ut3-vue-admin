@@ -67,6 +67,9 @@
                       <el-col :span="6"><el-form-item label="发货手机" prop="mobile">
                         <el-input v-model="params.mobile" type="text" />
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="UT单号" prop="erp_order_id">
+                        <el-input v-model="params.erp_order_id" type="text" />
+                      </el-form-item></el-col>
 
                     </el-row>
                     <el-row :gutter="20">
@@ -148,6 +151,16 @@
             />
           </template>
 
+        </el-table-column>
+        <el-table-column
+          label="UT单号"
+          prop="erp_order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="购买店铺"

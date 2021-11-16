@@ -990,9 +990,7 @@ export default {
       if (column.property === 'rejection') {
         this.handleRejection(row)
       } else if (column.property === 'feedback') {
-        if (row.is_customer_post === false) {
-          this.handleFeedback(row)
-        }
+        this.handleFeedback(row)
       }
       this.fetchData()
     },

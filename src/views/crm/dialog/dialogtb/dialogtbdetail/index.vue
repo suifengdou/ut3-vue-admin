@@ -58,11 +58,14 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="网名" prop="dialog">
+                      <el-col :span="6"><el-form-item label="网名" prop="dialog">
                         <el-input v-model="params.dialog" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="讲话人" prop="sayer">
+                      <el-col :span="6"><el-form-item label="讲话人" prop="sayer">
                         <el-input v-model="params.sayer" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="UT单号" prop="erp_order_id">
+                        <el-input v-model="params.erp_order_id" type="text" />
                       </el-form-item></el-col>
 
                       <el-col :span="6" />
@@ -97,6 +100,7 @@
                       <el-col :span="20"><el-form-item label="内容" prop="content">
                         <el-input v-model="params.content" type="text" />
                       </el-form-item></el-col>
+
 
                       <el-col :span="6" />
                       <el-col :span="6" />

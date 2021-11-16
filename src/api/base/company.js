@@ -25,3 +25,18 @@ export function updateCompany(id, data) {
     data
   })
 }
+
+// 导入工单
+export function excelImportCompany(data) {
+  return request({
+    url: `/base/company/excel_import/`,
+    method: 'patch',
+    data
+  })
+}
+
+
+
+
+
+

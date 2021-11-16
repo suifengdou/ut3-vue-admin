@@ -576,7 +576,9 @@ import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
   name: 'submitExpressWorkOrder',
+
   data() {
+
     return {
       DataList: [],
       tableLoading: false,

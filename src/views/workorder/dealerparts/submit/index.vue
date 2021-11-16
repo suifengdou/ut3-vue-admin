@@ -205,6 +205,7 @@
         <el-table-column
           label="问题信息"
           prop="information"
+          width="250px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -243,6 +244,7 @@
         <el-table-column
           label="地址"
           prop="address"
+          width="230px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -298,6 +300,7 @@
         </el-table-column>
         <el-table-column
           label="故障描述"
+          width="270px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.description }}</span>
@@ -813,36 +816,6 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button type="primary" @click="importExcel">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -1103,67 +1076,8 @@
           })
         })
       },
-      // 检索用户组选项
-      unique(arr) {
-        // 根据唯一标识no来对数组进行过滤
-        // 定义常量 res,值为一个Map对象实例
-        const res = new Map()
-        // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
-        // 如果res中没有某个键，就设置这个键的值为1
-        return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-      },
-      // 导入
-      getFile(event) {
-        this.importFile.file = event.target.files[0]
-      },
-      importExcel() {
-        const importformData = new FormData()
-        importformData.append('file', this.importFile.file)
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-        excelImportWorkOrderSubmit(importformData, config).then(
-          res => {
-            this.$notify({
-              title: '导入结果',
-              message: res.data,
-              type: 'success',
-              duration: 3000
-            })
-          },
-          error => {
-            this.$notify({
-              title: '导入错误',
-              message: error,
-              type: 'error',
-              duration: 0
-            })
-          }
-        ).catch(
-          () => {
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-          }
-        )
-        this.importVisible = false
-        this.$refs.files.type = 'text'
-        this.$refs.files.value = ''
-        this.$refs.files.type = 'file'
-        this.fetchData()
-      },
-      closeImport() {
-        this.importVisible = false
-      },
-      handleImport() {
-        this.importVisible = true
-      },
+
+      // 导出
       exportExcel() {
         const h = this.$createElement
         let resultMessage, resultType

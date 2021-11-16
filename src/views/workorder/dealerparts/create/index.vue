@@ -34,9 +34,9 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <!--<el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">-->
-              <!--<el-button type="success" @click="handleImport">导入</el-button>-->
-            <!--</el-tooltip>-->
+            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
+              <el-button type="success" @click="importExcel">导入</el-button>
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -208,6 +208,7 @@
         <el-table-column
           label="问题信息"
           prop="information"
+          width="250px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -246,6 +247,7 @@
         <el-table-column
           label="地址"
           prop="address"
+          width="230px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -301,6 +303,7 @@
         </el-table-column>
         <el-table-column
           label="故障描述"
+          width="270px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.description }}</span>
@@ -443,7 +446,7 @@
             <span>问题信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="20"><el-form-item label="故障描述" prop="information">
+            <el-col :span="20"><el-form-item label="问题信息" prop="information">
               <el-input v-model="formAdd.information" placeholder="请输入问题描述" />
             </el-form-item></el-col>
             <el-col :span="8" />

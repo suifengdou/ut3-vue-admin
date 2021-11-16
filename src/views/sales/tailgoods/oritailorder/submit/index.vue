@@ -906,6 +906,7 @@ export default {
           return
         }
         delete this.formEdit.sent_city
+        console.log(this.oriInvoiceGoodsListEdit)
         this.formEdit.goods_details = this.oriInvoiceGoodsListEdit
         const { id, ...data } = this.formEdit
         let attrStr

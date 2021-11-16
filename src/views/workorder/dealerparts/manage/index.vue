@@ -178,6 +178,7 @@
         <el-table-column
           label="问题信息"
           prop="information"
+          width="250px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -216,6 +217,7 @@
         <el-table-column
           label="地址"
           prop="address"
+          width="230px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -271,6 +273,7 @@
         </el-table-column>
         <el-table-column
           label="故障描述"
+          width="270px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.description }}</span>

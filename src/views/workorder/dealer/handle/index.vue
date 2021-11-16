@@ -569,17 +569,11 @@ export default {
       if (column.property === 'rejection') {
         this.handleRejection(row)
       } else if (column.property === 'suggestion') {
-        if (row.is_customer_post === false) {
-          this.handleSuggestion(row)
-        }
+        this.handleSuggestion(row)
       } else if (column.property === 'return_express_company') {
-        if (row.is_customer_post === false) {
-          this.handleReturnExpress(row)
-        }
+        this.handleReturnExpress(row)
       } else if (column.property === 'return_express_id') {
-        if (row.is_customer_post === false) {
-          this.handleReturnTrack(row)
-        }
+        this.handleReturnTrack(row)
       }
       this.fetchData()
     },

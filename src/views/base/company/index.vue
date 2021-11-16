@@ -12,6 +12,13 @@
           </div>
 
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
+              <el-button type="success" @click="handleImport">导入</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
@@ -372,6 +379,36 @@
         </div>
       </template>
     </el-dialog>
+    <!--导入模态窗-->
+    <el-dialog
+      title="导入"
+      :visible.sync="importVisible"
+      width="33%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form ref="importForm" label-width="10%" :data="importFile">
+        <div>
+          <h3>特别注意</h3>
+          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
+        </div>
+        <hr>
+        <el-form-item label="文件">
+          <input ref="files" type="file" @change="getFile($event)">
+        </el-form-item>
+        <hr>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="6">
+            <el-form-item>
+              <el-button type="primary" @click="importExcel">导入文件</el-button>
+              <el-button type="error" @click="closeImport">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -379,10 +416,11 @@
       </center>
     </div>
   </div>
+
 </template>
 
 <script>
-import { getCompanyList, createCompany, updateCompany } from '@/api/base/company'
+import { getCompanyList, createCompany, updateCompany, excelImportCompany } from '@/api/base/company'
 import moment from 'moment'
 export default {
   name: 'OriInvoiceSubmit',
@@ -397,8 +435,10 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
+      importVisible: false,
       formAdd: {},
       formEdit: {},
+      importFile: {},
       optionsCategory: [
         {
           label: '本埠公司',
@@ -572,6 +612,54 @@ export default {
           }
         }
       }
+    },
+    // 导入
+    getFile(event) {
+      this.importFile.file = event.target.files[0]
+    },
+    importExcel() {
+      const importformData = new FormData()
+      importformData.append('file', this.importFile.file)
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      this.tableLoading = true
+      excelImportCompany(importformData, config).then(
+        res => {
+          this.$notify({
+            title: '导入结果',
+            message: res.data,
+            type: 'success',
+            duration: 0
+          })
+        },
+        error => {
+          this.$notify({
+            title: '导入错误',
+            message: error,
+            type: 'error',
+            duration: 0
+          })
+        }
+      ).catch(
+        () => {
+          console.log('1')
+        }
+      )
+      this.$refs.files.type = 'text'
+      this.$refs.files.value = ''
+      this.$refs.files.type = 'file'
+      this.closeImport()
+      this.tableLoading = false
+      this.fetchData()
+    },
+    closeImport() {
+      this.importVisible = false
+    },
+    handleImport() {
+      this.importVisible = true
     },
     // 重置筛选
     resetParams() {

@@ -58,14 +58,16 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="网名" prop="dialog">
+                      <el-col :span="6"><el-form-item label="网名" prop="dialog">
                         <el-input v-model="params.dialog" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="讲话人" prop="sayer">
+                      <el-col :span="6"><el-form-item label="讲话人" prop="sayer">
                         <el-input v-model="params.sayer" type="text" />
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="UT单号" prop="erp_order_id">
+                        <el-input v-model="params.erp_order_id" type="text" />
+                      </el-form-item></el-col>
 
-                      <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -166,6 +168,15 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="UT单号"
+          prop="erp_order_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column

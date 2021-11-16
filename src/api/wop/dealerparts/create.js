@@ -43,7 +43,7 @@ export function exportWorkOrderCreate(data) {
 export function excelImportWorkOrderCreate(data) {
   return request({
     url: `/workorder/dealerparts/dpcreate/excel_import/`,
-    method: 'post',
+    method: 'patch',
     data
   })
 }

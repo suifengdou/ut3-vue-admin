@@ -11,7 +11,18 @@
             </el-tooltip>
           </div>
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <!--<el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">-->
+            <!--<el-button type="success" @click="handleImport">导入</el-button>-->
+            <!--</el-tooltip>-->
+            <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
+              <el-button type="success" @click="exportExcel">导出</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
       </el-row>
+
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">
           <div class="grid-content bg-purple">
@@ -72,11 +83,24 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="receiver">
+                      <el-col :span="6"><el-form-item label="收件人" prop="receiver">
                         <el-input v-model="params.receiver" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="手机" prop="mobile">
+                      <el-col :span="6"><el-form-item label="手机" prop="mobile">
                         <el-input v-model="params.mobile" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4" />
+                      <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="4"><el-form-item label="省" prop="province">
+                        <el-input v-model="params.province__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4"><el-form-item label="市" prop="city">
+                        <el-input v-model="params.city__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="4"><el-form-item label="区" prop="district">
+                        <el-input v-model="params.district__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="4" />
                       <el-col :span="4" />
@@ -331,7 +355,7 @@
 </template>
 
 <script>
-import { getManualOrderManageList } from '@/api/dfc/manualorder/manualorder'
+import { getManualOrderManageList, exportManualOrderManage } from '@/api/dfc/manualorder/manualorder'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -422,7 +446,82 @@ export default {
       this.params.page = val
       this.fetchData()
     },
-
+    // 导出
+    exportExcel() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '导出 Excel',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('hr', null, ''),
+          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
+          h('hr', null, ''),
+          h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            exportManualOrderSubmit(this.params).then(
+              res => {
+                res.data = res.data.map(item => {
+                  return {
+                    店铺: item.shop.name,
+                    网名: item.nickname,
+                    收件人: item.receiver,
+                    地址: item.address,
+                    手机: item.mobile,
+                    订单号: item.order_id,
+                    单据类型: item.order_category.name,
+                    机器序列号: item.m_sn,
+                    故障部位: item.broken_part,
+                    故障描述: item.description,
+                    客服: item.servicer,
+                    创建时间: item.create_time,
+                    更新时间: item.update_time,
+                    创建者: item.creator,
+                    处理标签: item.process_tag.name,
+                    错误原因: item.mistake_tag.name
+                  }
+                })
+                const ws = XLSX.utils.json_to_sheet(res.data)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+                XLSX.writeFile(wb, '列表详情1.xlsx')
+                resultMessage = '表格导出成功啦'
+                resultType = 'success'
+                instance.confirmButtonLoading = false
+                done()
+              },
+              err => {
+                console.log(err)
+                resultMessage = '表格导出失败啦'
+                resultType = 'error'
+                instance.confirmButtonLoading = false
+                done()
+              }
+            )
+          } else {
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        this.$message({
+          type: resultType,
+          message: '最终结果: ' + resultMessage
+        })
+      }).catch(
+        (error) => {
+          console.log(error)
+        }
+      )
+    },
     // 货品搜索
     remoteMethodGoods(query) {
       if (query !== '') {
