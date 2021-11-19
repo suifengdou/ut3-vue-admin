@@ -75,3 +75,11 @@ export function getOriginDataManageList(params) {
     params
   })
 }
+
+export function exportOriginDataManage(params) {
+  return request({
+    url: '/dfc/batchdata/origindatamanage/export/',
+    method: 'get',
+    params
+  })
+}

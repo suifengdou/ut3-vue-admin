@@ -83,7 +83,7 @@
                         </template>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="批次号" prop="batch_order">
-                        <el-input v-model="params.params.batch_order__order_id" type="text" />
+                        <el-input v-model="params.batch_order__order_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>

@@ -358,7 +358,6 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-          delete this.params.create_time
         }
       }
       getMODetailList(this.params).then(

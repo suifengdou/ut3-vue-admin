@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入订单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -50,40 +50,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="开票公司" prop="company">
-                        <template>
-                          <el-select
-                            v-model="params.company"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择公司"
-                            :remote-method="remoteMethodCompany"
-                          >
-                            <el-option
-                              v-for="item in optionsCompany"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发票类型" prop="order_category">
-                        <el-select v-model="params.order_category" placeholder="请选择发票类型">
-                          <el-option
-                            v-for="item in optionsCategory"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
+                      <el-col :span="6"><el-form-item label="订单号" prop="order_id">
                         <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
@@ -93,36 +63,26 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="发票抬头" prop="title">
-                        <el-input v-model="params.title" type="text" />
+                      <el-col :span="6"><el-form-item label="收件人" prop="receiver">
+                        <el-input v-model="params.receiver" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="税号" prop="tax_id">
-                        <el-input v-model="params.tax_id" type="text" />
+                      <el-col :span="6"><el-form-item label="手机" prop="mobile">
+                        <el-input v-model="params.mobile" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="收件人" prop="sent_consignee">
-                        <el-input v-model="params.sent_consignee" type="text" />
+                      <el-col :span="8"><el-form-item label="商家编码" prop="goods_id">
+                        <el-input v-model="params.goods_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="8"><el-form-item label="收件手机" prop="sent_smartphone">
-                        <el-input v-model="params.sent_smartphone" type="text" />
+                      <el-col :span="8"><el-form-item label="UT单号" prop="erp_order_id">
+                        <el-input v-model="params.erp_order_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="4" />
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否顺丰">
-                        <el-select v-model="params.is_deliver" placeholder="是否发顺丰">
-                          <el-option
-                            v-for="item in optionsIsDeliver"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
@@ -322,7 +282,7 @@
 </template>
 
 <script>
-import { getOriginDataManageList } from '@/api/dfc/batchtable/origindata'
+import { getOriginDataManageList, exportOriginDataManage } from '@/api/dfc/batchtable/origindata'
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -443,36 +403,24 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriInvoiceSubmit(this.params).then(
+            exportOriginDataManage(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
                     店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
+                    订单号: item.order_id,
+                    网名: item.nickname,
+                    收件人: item.receiver,
                     地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    手机: item.mobile,
+                    商家编码: item.goods_id,
+                    货品名称: item.goods_name.name,
+                    货品数量: item.quantity,
+                    买家备注: item.buyer_remark,
+                    客服备注: item.cs_memoranda,
+                    状态: item.order_status.name,
+                    处理人: item.submit_user,
+                    UT单号: item.erp_order_id,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,

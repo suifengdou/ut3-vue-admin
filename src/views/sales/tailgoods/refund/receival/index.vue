@@ -374,7 +374,7 @@
 
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>开票货品相关信息</span>
+                <span>货品相关信息</span>
               </div>
               <el-table
                 ref="tableEdit"

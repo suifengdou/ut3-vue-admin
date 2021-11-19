@@ -379,7 +379,7 @@
         </div>
       </template>
     </el-dialog>
-    <!--导入模态窗-->
+    导入模态窗
     <el-dialog
       title="导入"
       :visible.sync="importVisible"
@@ -387,14 +387,14 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <el-form ref="importForm" label-width="10%" :data="importFile">
+      <el-form ref="importForm" label-width="10%" :data="importFiles">
         <div>
           <h3>特别注意</h3>
           <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
         </div>
         <hr>
         <el-form-item label="文件">
-          <input ref="files" type="file" @change="getFile($event)">
+          <input ref="files" type="file" multiple="multiple" @change="getFile($event)">
         </el-form-item>
         <hr>
         <el-row :gutter="30">
@@ -415,6 +415,9 @@
         <el-pagination background layout="total, prev, pager, next, jumper" :total="totalNum" :page-size="pageSize" @current-change="handleCurrentChange" />
       </center>
     </div>
+    <!--<div class="photo-container">-->
+      <!--<img src="http://ut3s2.oss-cn-beijing.aliyuncs.com/2021%2F11%2F16%2F2021111683878c91171338902e0fe0fb97a8c47a.png" />-->
+    <!--</div>-->
   </div>
 
 </template>
@@ -438,7 +441,7 @@ export default {
       importVisible: false,
       formAdd: {},
       formEdit: {},
-      importFile: {},
+      importFiles: [],
       optionsCategory: [
         {
           label: '本埠公司',
@@ -615,11 +618,16 @@ export default {
     },
     // 导入
     getFile(event) {
-      this.importFile.file = event.target.files[0]
+      for (var i = 0; i < event.target.files.length; i++) {
+        this.importFiles.push(event.target.files[i])
+        console.log(this.importFiles)
+      }
     },
     importExcel() {
       const importformData = new FormData()
-      importformData.append('file', this.importFile.file)
+      for (let i = 0; i < this.importFiles.length; i++) {
+        importformData.append('files', this.importFiles[i])
+      }
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data'

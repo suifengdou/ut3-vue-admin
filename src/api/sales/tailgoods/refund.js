@@ -181,7 +181,7 @@ export function getRefundOrderManageList(params) {
 export function exportRefundOrderManage(data) {
   return request({
     url: `/sales/tailgoods/refundordersubmit/export/`,
-    method: 'patch',
+    method: 'get',
     data
   })
 }

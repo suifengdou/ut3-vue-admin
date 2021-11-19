@@ -321,6 +321,7 @@
         <el-table-column
           label="收件地址"
           prop="sent_address"
+          width="250px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -337,6 +338,7 @@
         </el-table-column>
         <el-table-column
           label="订单留言"
+          width="290px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.message }}</span>
@@ -961,31 +963,31 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
+                    退换单号: item.order_id,
+                    源单号: item.tail_order.order_id,
+                    订单状态: item.order_status.name,
+                    退款类型: item.order_category.name,
+                    发货模式: item.mode_warehouse.name,
                     收件人姓名: item.sent_consignee,
                     收件人手机: item.sent_smartphone,
                     收件城市: item.sent_city.name,
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
+                    货品总数: item.quantity,
+                    货品信息: JSON.stringify(item.goods_details),
+                    申请退款总额: item.amount,
+                    源订单总额: item.ori_amount,
+                    到货总数: item.receipted_quantity,
+                    到货退款总额: item.receipted_amount,
+                    返回快递信息: item.track_no,
                     申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
+                    退款处理时间: item.handle_time,
+                    退款处理间隔: item.handle_interval,
                     工单留言: item.message,
-                    工单反馈: item.memorandum,
+                    工单反馈: item.feedback,
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    退换货信息原因: item.info_refund,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,

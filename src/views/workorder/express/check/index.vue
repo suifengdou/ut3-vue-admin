@@ -184,10 +184,27 @@
                           />
                         </div>
                       </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+
                       <el-col :span="6"><el-form-item label="执行时间">
                         <div class="block">
                           <el-date-picker
                             v-model="params.handle_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+
+                      <el-col :span="6"><el-form-item label="更新时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.update_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -489,6 +506,24 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (typeof (this.params.submit_time) !== 'undefined') {
+        if (this.params.submit_time.length === 2) {
+          this.params.submit_time_after = moment.parseZone(this.params.submit_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.submit_time_before = moment.parseZone(this.params.submit_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.handle_time) !== 'undefined') {
+        if (this.params.handle_time.length === 2) {
+          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.update_time) !== 'undefined') {
+        if (this.params.update_time.length === 2) {
+          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
       getWorkOrderCheck(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -531,37 +566,32 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
+                    快递单号: item.track_id,
+                    快递公司: item.company.name,
+                    工单事项类型: item.category.name,
+                    初始问题信息: item.information,
+                    提交时间: item.submit_time,
+                    提交人: item.servicer,
+                    反馈间隔: item.services_interval,
+                    处理意见: item.suggestion,
+                    处理人: item.handler,
+                    处理时间: item.handle_time,
+                    处理间隔: item.handle_interval,
+                    反馈内容: item.feedback,
+                    是否理赔: item.is_losing,
+                    理赔金额: item.indemnification,
+                    是否返回: item.is_return,
+                    返回单号: item.return_express_id,
+                    备注: item.memo,
+                    驳回原因: item.rejection,
+                    工单状态: item.order_status.name,
+                    是否正向: item.is_forward,
+                    处理标签: item.process_tag.name,
+                    处理状态: item.handling_status,
+                    错误原因: item.mistake_tag,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    创建者: item.creator
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -924,6 +954,65 @@ export default {
       } else {
         this.options = []
       }
+    },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'rejection') {
+        this.handleRejection(row)
+      }
+    },
+    handleRejection(row) {
+      this.$prompt('请输入驳回原因', '添加驳回原因', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.rejection,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            rejection: value
+          }
+          updateWorkOrderCheck(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
     },
     // 排序
     onSortChange({ prop, order }) {
