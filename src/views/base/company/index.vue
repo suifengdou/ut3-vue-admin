@@ -379,7 +379,7 @@
         </div>
       </template>
     </el-dialog>
-    导入模态窗
+    <!--导入模态窗-->
     <el-dialog
       title="导入"
       :visible.sync="importVisible"
@@ -409,6 +409,7 @@
       </el-form>
 
     </el-dialog>
+
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -439,9 +440,12 @@ export default {
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       importVisible: false,
+
       formAdd: {},
       formEdit: {},
       importFiles: [],
+      url: '',
+      srcList: [],
       optionsCategory: [
         {
           label: '本埠公司',

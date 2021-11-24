@@ -9,7 +9,8 @@ const state = {
   introduction: '',
   company: '',
   department: '',
-  roles: []
+  roles: [],
+  uploadSize: 4
 }
 
 const mutations = {

@@ -115,8 +115,8 @@
                       </el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="尾货订单总价" prop="amount">
-                        <el-input v-model="params.amount" type="text" />
+                      <el-col :span="6"><el-form-item label="物流单号" prop="track_no">
+                        <el-input v-model="params.track_no" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="订单留言" prop="message">
                         <el-input v-model="params.message" type="text" />

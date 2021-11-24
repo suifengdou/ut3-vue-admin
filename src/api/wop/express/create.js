@@ -48,6 +48,15 @@ export function excelImportWorkOrder(data) {
   })
 }
 
+// 导入工单
+export function photoImportWorkOrder(data) {
+  return request({
+    url: `/workorder/express/ewocreate/photo_import/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 审核工单
 export function checkWorkOrder(data) {
   return request({

@@ -264,6 +264,20 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="图片上传"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoUpload(scope.row)">上传</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="图片查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="备注"
         >
           <template slot-scope="scope">
@@ -497,6 +511,59 @@
         </div>
       </template>
     </el-dialog>
+    <!--导入图片模态窗-->
+    <el-dialog
+      title="导入"
+      :visible.sync="importVisible"
+      width="33%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form ref="importForm" label-width="10%" :data="importFiles">
+        <div>
+          <h3>特别注意</h3>
+          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
+        </div>
+        <hr>
+        <el-form-item label="文件">
+          <input ref="photofiles" type="file" multiple="multiple" @change="getFile($event)">
+        </el-form-item>
+        <hr>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="6">
+            <el-form-item>
+              <el-button type="primary" @click="importPhotoes">导入文件</el-button>
+              <el-button type="error" @click="closeImport">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+
+    </el-dialog>
+    <!--图片查看模态窗-->
+    <el-dialog
+      title="图片查看"
+      :visible.sync="photoViewVisible"
+      width="200px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="demo-image__preview">
+        <div class="block">
+          <p class="demonstration">点击预览图，即可依次查看大图</p>
+          <div align="center">
+            <el-image
+              style="width: 100px; height: 100px;"
+              :src="url"
+              :preview-src-list="srcList">
+            </el-image>
+          </div>
+
+        </div>
+      </div>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -513,6 +580,7 @@
     updateWorkOrder,
     exportWorkOrder,
     excelImportWorkOrder,
+    photoImportWorkOrder,
     checkWorkOrder,
     rejectWorkOrder
   } from '@/api/wop/express/create'
@@ -538,8 +606,14 @@
         },
         dialogVisibleAdd: false,
         dialogVisibleEdit: false,
+        importVisible: false,
+        photoViewVisible: false,
         formAdd: {},
         formEdit: {},
+        photoData: {},
+        importFiles: [],
+        url: '',
+        srcList: [],
         optionsShop: [],
         optionsDepartment: [],
         optionsCompany: [],
@@ -700,6 +774,109 @@
           })
         })
       },
+      // 图片上传模块
+      handlePhotoUpload(userValue) {
+        this.photoData.id = userValue.id
+        this.importVisible = true
+
+      },
+      getFile(event) {
+        const filetypes =[".jpg",".png"]
+        let filemaxsize = 1024*2
+        let fileSize = 0
+        for (var i = 0; i < event.target.files.length; i++) {
+          let file = event.target.files[i]
+          let verify_type = false
+          let suffix_name = file.name.substring(file.name.indexOf('.'))
+          console.log(suffix_name)
+          fileSize = file.size / 1048576
+          console.log(fileSize)
+          if (fileSize > this.$store.state.user.uploadSize) {
+            this.$notify({
+              title: '错误详情',
+              message: '文件最大4M',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.$refs.photofiles.type = 'text'
+            this.$refs.photofiles.value = ''
+            this.$refs.photofiles.type = 'file'
+            this.importFiles = []
+            return false
+          }
+          for (let i = 0; i < filetypes.length; i++) {
+            if (filetypes[i] == suffix_name) {
+              verify_type = true
+              break
+            }
+          }
+          if (!verify_type) {
+            this.$notify({
+              title: '错误详情',
+              message: '文件只支持png,jpg',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.$refs.photofiles.type = 'text'
+            this.$refs.photofiles.value = ''
+            this.$refs.photofiles.type = 'file'
+            this.importFiles = []
+            return false
+          }
+          this.importFiles.push(file)
+        }
+      },
+      importPhotoes() {
+        const importformData = new FormData()
+        for (let i = 0; i < this.importFiles.length; i++) {
+          importformData.append('files', this.importFiles[i])
+        }
+        importformData.append('id', this.photoData.id)
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+        this.tableLoading = true
+        photoImportWorkOrder(importformData, config).then(
+          res => {
+            this.$notify({
+              title: '导入结果',
+              message: res.data,
+              type: 'success',
+              duration: 0
+            })
+          }).catch(
+          (error) => {
+            console.log('1')
+            this.$notify({
+              title: '导入错误',
+              message: error.data,
+              type: 'error',
+              duration: 0
+            })
+          }
+        )
+        this.closeImport()
+        this.tableLoading = false
+        this.fetchData()
+      },
+      closeImport() {
+        this.$refs.photofiles.type = 'text'
+        this.$refs.photofiles.value = ''
+        this.$refs.photofiles.type = 'file'
+        this.importVisible = false
+      },
+      // 查看图片
+      handlePhotoView(userValue) {
+        console.log(userValue)
+        this.photoViewVisible = true
+        this.srcList = userValue.photo_details.map(item => item.name)
+        this.url = this.srcList[0]
+      },
+
       // 导入
       importExcel() {
         const h = this.$createElement

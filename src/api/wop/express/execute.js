@@ -30,6 +30,15 @@ export function exportWorkOrderExecute(data) {
   })
 }
 
+// 导出工单
+export function photoImportWorkOrderExecute(data) {
+  return request({
+    url: `/workorder/express/ewoexecute/photo_import/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 审核工单
 export function checkWorkOrderExecute(data) {
   return request({

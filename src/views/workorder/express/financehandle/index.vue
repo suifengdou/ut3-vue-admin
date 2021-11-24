@@ -154,10 +154,8 @@
         :data="DataList"
         border
         style="width: 100%"
-        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
-        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -314,6 +312,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="图片查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="备注"
         >
           <template slot-scope="scope">
@@ -347,6 +352,29 @@
 
       </el-table>
     </div>
+    <!--图片查看模态窗-->
+    <el-dialog
+      title="图片查看"
+      :visible.sync="photoViewVisible"
+      width="200px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="demo-image__preview">
+        <div class="block">
+          <p class="demonstration">点击预览图，即可依次查看大图</p>
+          <div align="center">
+            <el-image
+              style="width: 100px; height: 100px;"
+              :src="url"
+              :preview-src-list="srcList">
+            </el-image>
+          </div>
+
+        </div>
+      </div>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -393,6 +421,9 @@ export default {
         page: 1,
         allSelectTag: 0
       },
+      photoViewVisible: false,
+      url: '',
+      srcList: [],
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -408,6 +439,17 @@ export default {
         { value: 6, label: '虚假签收' },
         { value: 7, label: '丢件破损' },
         { value: 8, label: '其他异常' }
+      ],
+      optionsProcess: [
+        { value: 0, label: '未分类' },
+        { value: 1, label: '待截单' },
+        { value: 2, label: '签复核' },
+        { value: 3, label: '改地址' },
+        { value: 4, label: '催派查' },
+        { value: 5, label: '丢件核' },
+        { value: 6, label: '纠纷中' },
+        { value: 7, label: '需理赔' },
+        { value: 8, label: '其他类' }
       ],
       optionsJudgment: [
         {
@@ -468,6 +510,13 @@ export default {
       this.params.allSelectTag = 1
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
+    },
+    // 查看图片
+    handlePhotoView(userValue) {
+      console.log(userValue)
+      this.photoViewVisible = true
+      this.srcList = userValue.photo_details.map(item => item.name)
+      this.url = this.srcList[0]
     },
     handleCheck() {
       this.tableLoading = true

@@ -331,6 +331,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="图片查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="备注"
         >
           <template slot-scope="scope">
@@ -364,6 +371,29 @@
 
       </el-table>
     </div>
+    <!--图片查看模态窗-->
+    <el-dialog
+      title="图片查看"
+      :visible.sync="photoViewVisible"
+      width="200px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="demo-image__preview">
+        <div class="block">
+          <p class="demonstration">点击预览图，即可依次查看大图</p>
+          <div align="center">
+            <el-image
+              style="width: 100px; height: 100px;"
+              :src="url"
+              :preview-src-list="srcList">
+            </el-image>
+          </div>
+
+        </div>
+      </div>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -401,6 +431,9 @@ export default {
         page: 1,
         allSelectTag: 0
       },
+      photoViewVisible: false,
+      url: '',
+      srcList: [],
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -473,6 +506,13 @@ export default {
     handleCurrentChange(val) {
       this.params.page = val
       this.fetchData()
+    },
+    // 查看图片
+    handlePhotoView(userValue) {
+      console.log(userValue)
+      this.photoViewVisible = true
+      this.srcList = userValue.photo_details.map(item => item.name)
+      this.url = this.srcList[0]
     },
 
     exportExcel() {

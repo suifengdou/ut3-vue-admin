@@ -1303,7 +1303,7 @@ export default {
       ).catch(
         (error) => {
           this.$notify({
-            title: '更新错误',
+            title: '创建错误',
             message: `错误详情：${error.data}`,
             type: 'error',
             offset: 70,

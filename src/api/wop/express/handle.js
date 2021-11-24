@@ -34,7 +34,16 @@ export function exportWorkOrderHandle(data) {
 export function excelImportWorkOrderHandle(data) {
   return request({
     url: `/workorder/express/ewohandle/excel_import/`,
-    method: 'post',
+    method: 'patch',
+    data
+  })
+}
+
+// 导入图片
+export function photoImportWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/photo_import/`,
+    method: 'patch',
     data
   })
 }
