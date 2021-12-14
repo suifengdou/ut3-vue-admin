@@ -1253,7 +1253,7 @@ export default {
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_category', 'order_status']
+        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_status']
         for (attrStr in transFieldStr) {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }

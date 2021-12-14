@@ -2,7 +2,7 @@
   <div class="ori-invoice-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="6" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
@@ -20,7 +20,15 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击显示我创建的工单" placement="top-start">
+              <el-button type="success" @click="myWorkOrder">我的工单</el-button>
+            </el-tooltip>
+          </div>
+
+        </el-col>
+        <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
               <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
@@ -30,7 +38,7 @@
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="4" class="titleBar">
 
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索标签" placement="top-start">
@@ -502,6 +510,10 @@ export default {
           this.tableLoading = false
         }
       )
+    },
+    myWorkOrder() {
+      this.params.creator = this.$store.state.user.name
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.params.page = val

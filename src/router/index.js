@@ -13,6 +13,7 @@ import crmChannelRouter from './modules/crm'
 import dfcRouter from './modules/dfc'
 import utilsRouter from './modules/utils'
 import psiChannelRouter from './modules/psi'
+import intSalesChannelRouter from './modules/intsales'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -101,6 +102,7 @@ export const asyncRoutes = [
   utilsRouter,
   workOrderRouter,
   salesChannelRouter,
+  intSalesChannelRouter,
   crmChannelRouter,
   dfcRouter,
   psiChannelRouter,

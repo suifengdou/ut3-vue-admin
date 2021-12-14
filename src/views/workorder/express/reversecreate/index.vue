@@ -848,6 +848,8 @@
               type: 'success',
               duration: 0
             })
+            this.fetchData()
+            this.closeImport()
           }).catch(
           (error) => {
             console.log('1')
@@ -859,9 +861,6 @@
             })
           }
         )
-        this.closeImport()
-        this.tableLoading = false
-        this.fetchData()
       },
       closeImport() {
         this.$refs.photofiles.type = 'text'

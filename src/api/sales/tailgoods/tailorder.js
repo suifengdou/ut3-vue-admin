@@ -269,7 +269,7 @@ export function getTailOrderList(params) {
 // 导出工单
 export function exportTailOrder(data) {
   return request({
-    url: `/sales/tailgoods/tailordercommon/export/`,
+    url: `/sales/tailgoods/tailorder/export/`,
     method: 'patch',
     data
   })

@@ -93,10 +93,12 @@
                       <el-col :span="6"><el-form-item label="源单号" prop="order_id">
                         <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="UT单号" prop="erp_order_id">
+                        <el-input v-model="params.erp_order_id" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -165,7 +167,13 @@
             <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
-
+        <el-table-column
+          label="UT单号"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.erp_order_id }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="店铺"
           prop="shop"

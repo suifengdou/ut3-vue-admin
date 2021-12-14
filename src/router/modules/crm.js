@@ -123,7 +123,7 @@ const crmChannelRouter = {
             {
               path: 'dialogtb',
               component: () => import('@/views/crm/dialog/dialogtb/dialogtb'),
-              name: 'dialogtb',
+              name: 'dialogtb-customer',
               meta: { title: '淘系对话-客户', roles: ['dialog.view_dialogtb', 'AllPrivileges'] }
             },
             {
@@ -161,7 +161,7 @@ const crmChannelRouter = {
             {
               path: 'dialogjd',
               component: () => import('@/views/crm/dialog/dialogjd/dialogjd'),
-              name: 'dialogjd',
+              name: 'dialogjd-customer',
               meta: { title: '京东对话-客户', roles: ['dialog.view_dialogjd', 'AllPrivileges'] }
             },
             {
@@ -199,7 +199,7 @@ const crmChannelRouter = {
             {
               path: 'dialogow',
               component: () => import('@/views/crm/dialog/dialogow/dialogow'),
-              name: 'dialogow',
+              name: 'dialogow-customer',
               meta: { title: '官网对话-客户', roles: ['dialog.view_dialogow', 'AllPrivileges'] }
             },
             {
@@ -277,9 +277,9 @@ const crmChannelRouter = {
               meta: { title: '原始单-提交', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
             },
             {
-              path: 'orimaintenance',
+              path: 'orimaintenancemanage',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenance'),
-              name: 'orimaintenance',
+              name: 'orimaintenancemanage',
               meta: { title: '原始单-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
             }
           ]
@@ -303,9 +303,9 @@ const crmChannelRouter = {
               meta: { title: '维修单-判责', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
-              path: 'maintenance',
+              path: 'maintenancemanage',
               component: () => import('@/views/crm/service/maintenance/maintenance'),
-              name: 'maintenance',
+              name: 'maintenancemanage',
               meta: { title: '维修单-管理', roles: ['service.view_maintenance', 'AllPrivileges'] }
             }
           ]

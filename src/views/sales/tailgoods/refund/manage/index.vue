@@ -180,7 +180,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.tail_order.order_id }}</span>
+            <span>{{ scope.row.tail_order.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -204,13 +204,23 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
+          label="货品"
+          prop="goods_details"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.goods_details">
+              <el-tag type="success" size="mini" effect="dark"><span>{{ item.name.name }}*{{ item.quantity }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="退换货信息原因"
+          prop="info_refund"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <span>{{ scope.row.info_refund }}</span>
           </template>
         </el-table-column>
         <el-table-column

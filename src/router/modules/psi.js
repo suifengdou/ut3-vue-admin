@@ -41,9 +41,9 @@ const psiChannelRouter = {
           ]
         },
         {
-          path: 'inbound',
+          path: 'utinbound',
           component: () => import('@/views/psi/inbound/inbound'),
-          name: 'inbound',
+          name: 'utinbound',
           meta: { title: '入库管理' },
           children: [
             {

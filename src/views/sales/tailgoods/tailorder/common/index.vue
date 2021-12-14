@@ -860,6 +860,7 @@ export default {
                     收件人手机: item.sent_smartphone,
                     收件城市: item.sent_city.name,
                     收件地址: item.sent_address,
+                    货品信息: JSON.stringify(item.goods_details),
                     结算总价: item.amount,
                     货品总数: item.quantity,
                     订单留言: item.message,

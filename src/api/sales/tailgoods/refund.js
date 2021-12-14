@@ -180,8 +180,8 @@ export function getRefundOrderManageList(params) {
 // 导出单据
 export function exportRefundOrderManage(data) {
   return request({
-    url: `/sales/tailgoods/refundordersubmit/export/`,
-    method: 'get',
+    url: `/sales/tailgoods/refundordermanage/export/`,
+    method: 'patch',
     data
   })
 }

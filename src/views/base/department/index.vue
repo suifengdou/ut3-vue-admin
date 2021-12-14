@@ -104,6 +104,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="所属中心"
+          prop="center"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.center.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="部门ID"
           prop="d_id"
           sortable="custom"
@@ -167,6 +177,26 @@
               <el-input v-model="formAdd.d_id" placeholder="请输入ID" />
             </el-form-item></el-col>
           </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="所属部门" prop="center">
+              <el-select
+                v-model="formAdd.center"
+                filterable
+                default-first-option
+                remote
+                reserve-keyword
+                placeholder="请选择类别"
+                :remote-method="remoteMethodCenter"
+              >
+                <el-option
+                  v-for="item in optionsCenter"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item></el-col>
+          </el-row>
         </el-card>
         <el-card class="box-card">
           <el-row :gutter="20">
@@ -210,6 +240,26 @@
                   <el-input v-model="formEdit.d_id" placeholder="请输入ID" />
                 </el-form-item></el-col>
               </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="所属部门" prop="center">
+                  <el-select
+                    v-model="formEdit.center"
+                    filterable
+                    default-first-option
+                    remote
+                    reserve-keyword
+                    placeholder="请选择类别"
+                    :remote-method="remoteMethodCenter"
+                  >
+                    <el-option
+                      v-for="item in optionsCenter"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item></el-col>
+              </el-row>
             </el-card>
             <el-card class="box-card">
               <el-row :gutter="20">
@@ -236,6 +286,7 @@
 
 <script>
 import { getDepartmentList, createDepartment, updateDepartment } from '@/api/base/department'
+import { getCenterList } from '@/api/base/center'
 export default {
   name: 'OriInvoiceSubmit',
   data() {
@@ -251,6 +302,7 @@ export default {
       dialogVisibleEdit: false,
       formAdd: {},
       formEdit: {},
+      optionsCenter: [],
       rules: {
         name: [
           { required: true, message: '请选择店铺', trigger: 'blur' }
@@ -391,6 +443,25 @@ export default {
             return sort === 'ascending' ? 1 : -1
           }
         }
+      }
+    },
+    // 搜索中心
+    remoteMethodCenter(query) {
+      console.log(query)
+      if (query !== '') {
+        setTimeout(() => {
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getCenterList(paramsSearch).then(
+            res => {
+              this.optionsCenter = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsCenter = []
       }
     },
     // 重置筛选

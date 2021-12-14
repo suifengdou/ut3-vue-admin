@@ -1212,9 +1212,7 @@ export default {
 
     // 跳出编辑对话框
     handleEdit(values) {
-      console.log(values)
       this.formEdit = { ...values }
-      this.dialogVisibleEdit = true
 
       // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
       // console.log(currentShop)
@@ -1222,7 +1220,6 @@ export default {
       this.formEdit.shop = this.formEdit.shop.id
       // console.log(this.optionsShop)
       // console.log(this.formEdit.shop)
-
       this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
       this.formEdit.company = this.formEdit.company.id
 
@@ -1232,8 +1229,8 @@ export default {
       this.optionsGoods = this.formEdit.goods_details.map(item => {
         return { label: item.name.name, value: item.name.id }
       })
-      console.log(this.optionsGoods)
       this.formEdit.order_category = this.formEdit.order_category.id
+      console.log(this.formEdit)
       this.oriInvoiceGoodsListEdit = []
       let goods
       for (goods in this.formEdit.goods_details) {
@@ -1241,7 +1238,8 @@ export default {
         this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
         this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[goods])
       }
-      console.log(this.oriInvoiceGoodsListEdit)
+      this.dialogVisibleEdit = true
+
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -1253,7 +1251,7 @@ export default {
         const { id, ...data } = this.formEdit
         let attrStr
         console.log(data)
-        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_category', 'order_status']
+        const transFieldStr = ['mistake_tag', 'process_tag', 'sign_company', 'sign_department', 'order_status']
         for (attrStr in transFieldStr) {
           data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
         }

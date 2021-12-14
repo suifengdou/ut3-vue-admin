@@ -15,7 +15,7 @@
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增店铺</el-button>
+              <el-button type="primary" @click="add">新增</el-button>
             </el-tooltip>
           </div>
 
@@ -28,7 +28,6 @@
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
-            <el-button type="success" @click="test">测试</el-button>
           </div>
         </el-col>
       </el-row>
@@ -118,6 +117,36 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="缩写"
+          prop="abbreviation"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.abbreviation }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="电话区号"
+          prop="area_code"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.area_code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="区域"
+          prop="area"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.area }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -161,58 +190,23 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>相关信息</span>
+            <span>国别信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="店铺名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="国家及地区" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入国家及地区" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="店铺分组" prop="group_name">
-              <el-input v-model="formAdd.group_name" placeholder="请输入类型" />
+            <el-col :span="8"><el-form-item label="缩写" prop="abbreviation">
+              <el-input v-model="formAdd.abbreviation" placeholder="请输入缩写" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="关联公司" prop="company">
-              <template>
-                <el-select
-                  v-model="formAdd.company"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodCompany"
-                >
-                  <el-option
-                    v-for="item in optionsCompany"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
+            <el-col :span="8"><el-form-item label="电话区号" prop="area_code">
+              <el-input v-model="formAdd.area_code" placeholder="请输入电话区号" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="平台类型" prop="platform">
-              <template>
-                <el-select
-                  v-model="formAdd.platform"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请选择公司"
-                  :remote-method="remoteMethodPlatform"
-                >
-                  <el-option
-                    v-for="item in optionsPlatform"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
+            <el-col :span="8"><el-form-item label="区域" prop="area">
+              <el-input v-model="formAdd.area" placeholder="请输入区域" />
             </el-form-item></el-col>
-
           </el-row>
         </el-card>
         <el-card class="box-card">
@@ -247,58 +241,23 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>相关信息</span>
+                <span>国别信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="店铺名称" prop="name">
-                  <el-input v-model="formEdit.name" placeholder="请输入名称" />
+                <el-col :span="8"><el-form-item label="国家及地区" prop="name">
+                  <el-input v-model="formEdit.name" placeholder="请输入国家及地区" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="店铺分组" prop="group_name">
-                  <el-input v-model="formEdit.group_name" placeholder="请输入类型" />
+                <el-col :span="8"><el-form-item label="缩写" prop="abbreviation">
+                  <el-input v-model="formEdit.abbreviation" placeholder="请输入缩写" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="关联公司" prop="company">
-                  <template>
-                    <el-select
-                      v-model="formEdit.company"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodCompany"
-                    >
-                      <el-option
-                        v-for="item in optionsCompany"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
+                <el-col :span="8"><el-form-item label="电话区号" prop="area_code">
+                  <el-input v-model="formEdit.area_code" placeholder="请输入电话区号" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="平台类型" prop="platform">
-                  <template>
-                    <el-select
-                      v-model="formEdit.platform"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择平台"
-                      :remote-method="remoteMethodPlatform"
-                    >
-                      <el-option
-                        v-for="item in optionsPlatform"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
+                <el-col :span="8"><el-form-item label="区域" prop="area">
+                  <el-input v-model="formEdit.area" placeholder="请输入区域" />
                 </el-form-item></el-col>
-
               </el-row>
             </el-card>
             <el-card class="box-card">
@@ -500,32 +459,6 @@ export default {
                     源单号: item.order_id,
                     发票类型: item.order_category.name,
                     发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.create_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -586,13 +519,6 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
-
-      this.optionsCompany = [{ label: this.formEdit.company.name, value: this.formEdit.company.id }]
-      this.formEdit.company = this.formEdit.company.id
-
-      this.optionsPlatform = [{ label: this.formEdit.platform.name, value: this.formEdit.platform.id }]
-      this.formEdit.platform = this.formEdit.platform.id
-
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
@@ -602,12 +528,6 @@ export default {
           return
         }
         const { id, ...data } = this.formEdit
-        console.log(data)
-        let attrStr
-        const transFieldStr = ['order_status']
-        for (attrStr in transFieldStr) {
-          data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-        }
         updateNationality(id, data).then(
           () => {
             this.dialogVisibleEdit = false

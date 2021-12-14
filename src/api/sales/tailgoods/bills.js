@@ -11,11 +11,11 @@ export function getBillsList(params) {
 }
 
 // 导出工单
-export function exportBills(params) {
+export function exportBills(data) {
   return request({
     url: `/sales/tailgoods/tgaccount/export/`,
-    method: 'get',
-    params
+    method: 'patch',
+    data
   })
 }
 

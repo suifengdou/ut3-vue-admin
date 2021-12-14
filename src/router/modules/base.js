@@ -20,6 +20,12 @@ const baseRouter = {
       meta: { title: '公司管理', roles: ['company.view_company', 'AllPrivileges'] }
     },
     {
+      path: 'center',
+      name: '中心管理',
+      component: () => import('@/views/base/center/index'),
+      meta: { title: '中心管理', roles: ['department.view_department',  'AllPrivileges'] }
+    },
+    {
       path: 'department',
       name: '部门管理',
       component: () => import('@/views/base/department/index'),

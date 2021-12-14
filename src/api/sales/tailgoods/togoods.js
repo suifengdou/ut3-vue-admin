@@ -11,11 +11,11 @@ export function getTailOrderGoodsCommonList(params) {
 }
 
 // 导出工单
-export function exportTailOrderGoodsCommon(params) {
+export function exportTailOrderGoodsCommon(data) {
   return request({
     url: `/sales/tailgoods/togoodscommon/export/`,
-    method: 'get',
-    params
+    method: 'patch',
+    data
   })
 }
 
@@ -48,11 +48,11 @@ export function getTailOrderGoodsSpecialList(params) {
 }
 
 // 导出工单
-export function exportTailOrderGoodsSpecial(params) {
+export function exportTailOrderGoodsSpecial(data) {
   return request({
     url: `/sales/tailgoods/togoodsspecial/export/`,
-    method: 'get',
-    params
+    method: 'patch',
+    data
   })
 }
 
