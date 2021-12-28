@@ -103,6 +103,32 @@ const crmChannelRouter = {
       ]
     },
     {
+      path: 'vipwechat',
+      name: 'vipwechat',
+      component: () => import('@/views/crm/vipwechat'),
+      meta: { title: '微信VIP', roles: ['customers.view_customer', 'AllPrivileges'] },
+      children: [
+        {
+          path: 'specialist',
+          component: () => import('@/views/crm/vipwechat/specialist'),
+          name: 'specialist',
+          meta: { title: '专属客服', roles: ['customers.view_customer', 'AllPrivileges'] }
+        },
+        {
+          path: 'myself',
+          component: () => import('@/views/crm/vipwechat/myself'),
+          name: 'myself',
+          meta: { title: '导入客户', roles: ['customers.view_customer', 'AllPrivileges'] }
+        },
+        {
+          path: 'manage',
+          component: () => import('@/views/crm/vipwechat/manage'),
+          name: 'manage',
+          meta: { title: '客户管理', roles: ['customers.view_customer', 'AllPrivileges'] }
+        }
+      ]
+    },
+    {
       path: 'dialog',
       name: 'dialog',
       component: () => import('@/views/crm/dialog'),

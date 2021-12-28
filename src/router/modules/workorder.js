@@ -250,7 +250,127 @@ const workOrderRouter = {
           meta: { title: '经销商配件管理', icon: 'workorder', roles: ['dealerparts.view_dealerparts', 'AllPrivileges'] }
         }
       ]
-    }
+    },
+    {
+      path: 'satisfaction',
+      name: '用户体验工单',
+      component: () => import('@/views/workorder/satisfaction'),
+      meta: { title: '用户体验工单', icon: 'workorder', roles: ['express.view_expressworkorder', 'AllPrivileges'] },
+      redirect: 'noRedirect',
+      children: [
+        {
+          path: 'orisatisfaction',
+          component: () => import('@/views/workorder/satisfaction/orisatisfaction'),
+          name: '原始体验单',
+          meta: { title: '原始体验单', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'create',
+              component: () => import('@/views/workorder/satisfaction/orisatisfaction/create'),
+              name: '原单创建',
+              meta: { title: '原单创建', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'handle',
+              component: () => import('@/views/workorder/satisfaction/orisatisfaction/handle'),
+              name: '原单处理',
+              meta: { title: '原单处理', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/workorder/satisfaction/orisatisfaction/manage'),
+              name: '原单管理',
+              meta: { title: '原单管理', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+          ]
+        },
+        {
+          path: 'satisfaction',
+          component: () => import('@/views/workorder/satisfaction/satisfaction'),
+          name: '体验单',
+          meta: { title: '体验单', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'handle',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/handle'),
+              name: '体验单领取',
+              meta: { title: '体验单领取', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'myself',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/myself'),
+              name: '我的待执行',
+              meta: { title: '我的待执行', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'execute',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/execute'),
+              name: '待执行查询',
+              meta: { title: '待执行查询', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/manage'),
+              name: '体验单管理',
+              meta: { title: '体验单管理', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+          ]
+        },
+        {
+          path: 'service',
+          component: () => import('@/views/workorder/satisfaction/service'),
+          name: '服务单',
+          meta: { title: '服务单', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'myself',
+              component: () => import('@/views/workorder/satisfaction/service/myself'),
+              name: '服务单个人',
+              meta: { title: '服务单个人', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'handle',
+              component: () => import('@/views/workorder/satisfaction/service/handle'),
+              name: '有效服务单',
+              meta: { title: '有效服务单', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/workorder/satisfaction/service/manage'),
+              name: '服务单管理',
+              meta: { title: '服务单管理', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+          ]
+        },
+        {
+          path: 'invoice',
+          component: () => import('@/views/workorder/satisfaction/invoice'),
+          name: '发货单',
+          meta: { title: '发货单', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'create',
+              component: () => import('@/views/workorder/satisfaction/invoice/create'),
+              name: '发货单创建',
+              meta: { title: '发货单创建', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'check',
+              component: () => import('@/views/workorder/satisfaction/invoice/check'),
+              name: '发货单审核',
+              meta: { title: '发货单审核', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/workorder/satisfaction/invoice/manage'),
+              name: '发货单管理',
+              meta: { title: '发货单管理', icon: 'workorder', roles: ['dealers.view_user_dealerworkorder', 'AllPrivileges'] }
+            },
+          ]
+        },
+      ]
+    },
+
   ]
 }
 

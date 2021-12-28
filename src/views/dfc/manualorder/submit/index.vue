@@ -949,7 +949,7 @@
           },
           {
             value: 2,
-            label: '申通'
+            label: '圆通'
           },
           {
             value: 3,

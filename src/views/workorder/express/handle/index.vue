@@ -22,6 +22,16 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="复制当前筛选条件下所有快递单号" placement="top-start">
+              <el-button type="success" class="btn" @click="copytracks(all_track_id, $event)">
+                单号
+              </el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -66,7 +76,7 @@
         </el-col>
         <el-col :span="5" class="titleBar">
 
-          <div class="grid-content bg-purple">
+            <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -467,6 +477,8 @@ import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
 import XLSX from 'xlsx'
+import handleClipboard from '@/utils/clipboard'
+
 export default {
   name: 'submitExpressWorkOrder',
   data() {
@@ -477,6 +489,7 @@ export default {
       pageSize: 30,
       selectNum: 0,
       checkList: [],
+      all_track_id: '',
       tableData: {
       },
       params: {
@@ -551,6 +564,9 @@ export default {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
+          const data = res.data.results.map(item => item.track_id)
+          console.log(data)
+          this.all_track_id = data
           console.log(res.data.results)
         }
       ).catch(
@@ -1542,6 +1558,9 @@ export default {
           })
           this.fetchData()
         })
+    },
+    copytracks(data, event) {
+      handleClipboard(data, event)
     },
     resetParams() {
       this.params = {

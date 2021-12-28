@@ -22,6 +22,16 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="复制当前快递单号" placement="top-start">
+              <el-button type="success" class="btn" @click="copytracks(all_track_id, $event)">
+                单号
+              </el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -32,6 +42,7 @@
           </div>
 
         </el-col>
+
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
@@ -479,6 +490,7 @@ import { getGoodsList } from '@/api/base/goods'
 import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
+import handleClipboard from '@/utils/clipboard'
 export default {
   name: 'TailorderCheck',
   data() {
@@ -489,6 +501,7 @@ export default {
       pageSize: 30,
       selectNum: 0,
       checkList: [],
+      all_track_id: [],
       tableData: {
       },
       params: {
@@ -551,10 +564,9 @@ export default {
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
+          const data = res.data.results.map(item => item.track_no)
+          console.log(data)
+          this.all_track_id = data
         }
       ).catch(
         () => {
@@ -1247,6 +1259,10 @@ export default {
           this.fetchData()
         }
       )
+    },
+    // 复制当前页快递单号
+    copytracks(data, event) {
+      handleClipboard(data, event)
     },
     // 货品搜索
     remoteMethodGoods(query) {

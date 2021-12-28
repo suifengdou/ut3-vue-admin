@@ -1,11 +1,11 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="modetail-manage-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.manual_order" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
+              <el-input v-model="params.manual_order__mobile" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -61,9 +61,29 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="手机" prop="manual_order">
-                        <el-input v-model="params.manual_order" type="text" />
+                        <el-input v-model="params.manual_order__mobile" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="UT单号" prop="manual_order">
+                        <el-input v-model="params.manual_order__erp_order_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="部门名称" prop="manual_order">
+                        <el-input v-model="params.manual_order__department__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="整机SN" prop="manual_order">
+                        <el-input v-model="params.manual_order__m_sn" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="店铺名称" prop="manual_order">
+                        <el-input v-model="params.manual_order__shop__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="用户昵称" prop="manual_order">
+                        <el-input v-model="params.manual_order__nickname" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -261,6 +281,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="创建部门"
+          prop="manual_order"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.manual_order.department }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -422,6 +452,7 @@ export default {
                     单据状态: item.order_status.name,
                     物流公司: item.logistics_name,
                     物流单号: item.logistics_no,
+                    创建部门: item.manual_order.department,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator

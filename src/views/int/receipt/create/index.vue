@@ -161,12 +161,13 @@
         </el-table-column>
         <el-table-column
           label="反馈内容"
-          prop="feedback"
+          prop="rejection"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
+            <span>{{ scope.row.rejection
+              }}</span>
           </template>
         </el-table-column>
         <el-table-column

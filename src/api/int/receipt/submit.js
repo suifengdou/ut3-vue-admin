@@ -67,21 +67,28 @@ export function rejectReceiptSubmit(data) {
 }
 
 // 设置特殊
-export function setSpecialReceiptSubmit(data) {
+export function confirmReceiptSubmit(data) {
   return request({
-    url: `/int/intreceipt/submit/set_special/`,
+    url: `/int/intreceipt/submit/confirm/`,
     method: 'patch',
     data
   })
 }
 
 // 重置标记
-export function resetTagReceiptSubmit(data) {
+export function resetReceiptSubmit(data) {
   return request({
-    url: `/int/intreceipt/submit/reset_tag/`,
+    url: `/int/intreceipt/submit/reset_confirm/`,
     method: 'patch',
     data
   })
 }
 
-
+// 导入图片
+export function photoImportReceiptSubmit(data) {
+  return request({
+    url: `/int/intreceipt/submit/photo_import/`,
+    method: 'patch',
+    data
+  })
+}

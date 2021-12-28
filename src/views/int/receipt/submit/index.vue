@@ -10,7 +10,7 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -39,14 +39,6 @@
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增</el-button>
-            </el-tooltip>
-          </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -128,6 +120,7 @@
         :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -161,12 +154,75 @@
         </el-table-column>
         <el-table-column
           label="反馈内容"
-          prop="feedback"
+          prop="rejection"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
+            <span>{{ scope.row.rejection }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="信息说明"
+          prop="information"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.information }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理意见"
+          prop="suggestion"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.suggestion }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="认领人"
+          prop="handler"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handler }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="145px"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handleConfirm(scope.row)">认领</el-button>
+            <el-button type="danger" size="mini" @click="handleReset(scope.row)">重置</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否到账"
+          prop="is_return"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_received"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="付款账户"
+          prop="payment_account"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.payment_account }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -239,13 +295,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="可拆金额"
-          prop="remaining"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
+          label="图片上传"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.remaining }}</span>
+            <el-button type="danger" size="mini" @click="handlePhotoUpload(scope.row)">上传</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="图片查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -294,201 +354,58 @@
         </el-table-column>
       </el-table>
     </div>
-    <!--新建添加模态窗-->
+    <!--导入图片模态窗-->
     <el-dialog
-      title="新增"
-      width="80%"
-      :visible.sync="dialogVisibleAdd"
+      title="导入"
+      :visible.sync="importVisible"
+      width="33%"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>收款单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="付款账户" prop="payment_account">
-              <el-input v-model="formAdd.payment_account" placeholder="请输入付款账户" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="付款ID" prop="payment_account_id">
-              <el-input v-model="formAdd.payment_account_id" placeholder="请输入付款账户ID" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="账户" prop="account">
-              <template>
-                <el-select
-                  v-model="formAdd.account"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择账户"
-                  :remote-method="remoteMethodAccount"
-                >
-                  <el-option
-                    v-for="item in optionsAccount"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="币种" prop="currency">
-              <template>
-                <el-select
-                  v-model="formAdd.currency"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选择币种"
-                  :remote-method="remoteMethodCurrency"
-                >
-                  <el-option
-                    v-for="item in optionsCurrency"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="交易流水号" prop="bank_sn">
-              <el-input v-model="formAdd.bank_sn" placeholder="请输入交易流水号" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="存入金额" prop="amount">
-              <el-input v-model="formAdd.amount" type="number" placeholder="请输入存入金额" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="备注" prop="memorandum">
-              <el-input v-model="formAdd.memorandum" placeholder="请输入备注" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="8" :offset="16"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
+      <el-form ref="importForm" label-width="10%" :data="importFiles">
+        <div>
+          <h3>特别注意</h3>
+          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
+        </div>
+        <hr>
+        <el-form-item label="文件">
+          <input ref="photofiles" type="file" multiple="multiple" @change="getFile($event)">
+        </el-form-item>
+        <hr>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="6">
+            <el-form-item>
+              <el-button type="primary" @click="importPhotoes">导入文件</el-button>
+              <el-button type="error" @click="closeImport">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
       </el-form>
+
     </el-dialog>
-    <!--修改信息模态窗-->
+    <!--图片查看模态窗-->
     <el-dialog
-      title="编辑"
-      width="80%"
-      :visible.sync="dialogVisibleEdit"
+      title="图片查看"
+      :visible.sync="photoViewVisible"
+      width="200px"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rules"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>收款单相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="付款账户" prop="payment_account">
-                  <el-input v-model="formEdit.payment_account" placeholder="请输入付款账户" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="付款账户ID" prop="payment_account_id">
-                  <el-input v-model="formEdit.payment_account_id" placeholder="请输入付款账户ID" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="账户" prop="account">
-                  <template>
-                    <el-select
-                      v-model="formEdit.account"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择账户"
-                      :remote-method="remoteMethodAccount"
-                    >
-                      <el-option
-                        v-for="item in optionsAccount"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="币种" prop="currency">
-                  <template>
-                    <el-select
-                      v-model="formEdit.currency"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择币种"
-                      :remote-method="remoteMethodCurrency"
-                    >
-                      <el-option
-                        v-for="item in optionsCurrency"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="交易流水号" prop="bank_sn">
-                  <el-input v-model="formEdit.bank_sn" placeholder="请输入交易流水号" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="存入金额" prop="amount">
-                  <el-input v-model="formEdit.amount" placeholder="请输入存入金额" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="备注" prop="memorandum">
-                  <el-input v-model="formEdit.memorandum" placeholder="请输入备注" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="8" :offset="16"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
+      <div class="demo-image__preview">
+        <div class="block">
+          <p class="demonstration">点击预览图，即可依次查看大图</p>
+          <div align="center">
+            <el-image
+              style="width: 100px; height: 100px;"
+              :src="url"
+              :preview-src-list="srcList">
+            </el-image>
+          </div>
+
         </div>
-      </template>
+      </div>
+
     </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
@@ -508,7 +425,10 @@
     exportReceiptSubmit,
     excelImportReceiptSubmit,
     checkReceiptSubmit,
-    rejectReceiptSubmit
+    rejectReceiptSubmit,
+    photoImportReceiptSubmit,
+    confirmReceiptSubmit,
+    resetReceiptSubmit
   } from '@/api/int/receipt/submit'
   import { getCurrencyList } from '@/api/int/account/currency'
   import { getAccountList } from '@/api/int/account/account'
@@ -535,8 +455,14 @@
         },
         dialogVisibleAdd: false,
         dialogVisibleEdit: false,
+        importVisible: false,
+        photoViewVisible: false,
         formAdd: {},
         formEdit: {},
+        photoData: {},
+        importFiles: [],
+        url: '',
+        srcList: [],
         optionsAccount: [],
         optionsCurrency: [],
         optionsCompany: [],
@@ -599,82 +525,357 @@
         this.params.page = val
         this.fetchData()
       },
+      // 图片上传模块
+      handlePhotoUpload(userValue) {
+        this.photoData.id = userValue.id
+        this.importVisible = true
 
-      // 跳出编辑对话框
-      handleEdit(values) {
-        console.log(values)
-        this.formEdit = { ...values }
-        this.dialogVisibleEdit = true
-
-        let attrStr
-        const transFieldStr = ['category', 'mistake_tag', 'order_status']
-        for (attrStr in transFieldStr) {
-          this.formEdit[transFieldStr[attrStr]] = this.formEdit[transFieldStr[attrStr]].id
+      },
+      // 设置处理意见和反馈内容
+      handelDoubleClick(row, column, cell, event) {
+        if (column.property === 'rejection') {
+          this.handleRejection(row)
+        } else if (column.property === 'suggestion') {
+          this.handleSuggestion(row)
         }
-
-        this.optionsCurrency = [{ label: this.formEdit.currency.name, value: this.formEdit.currency.id }]
-        this.formEdit.currency = this.formEdit.currency.id
-        this.optionsAccount = [{ label: this.formEdit.account.name, value: this.formEdit.account.id }]
-        this.formEdit.account = this.formEdit.account.id
       },
-      // 提交编辑完成的数据
-      handleSubmitEdit() {
-        this.$refs.handleFormEdit.validate(valid => {
-          if (!valid) {
-            return
-          }
-          const { id, ...data } = this.formEdit
-          updateReceiptSubmit(id, data).then(
-            () => {
-              this.dialogVisibleEdit = false
-              this.fetchData()
-            }).catch(
-            (error) => {
-              this.$notify({
-                title: '错误详情',
-                message: error.data,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
+      handleSuggestion(row) {
+        this.$prompt('请输入处理意见', '添加处理意见', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          inputValue: row.suggestion,
+          inputErrorMessage: '输入不能为空',
+          inputValidator: (value) => {
+            if(!value) {
+              return '输入不能为空';
             }
-          )
-        })
+          }
+        }).then(
+          ({ value }) => {
+            let CurrentTimeStamp = new Date()
+            let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+            value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+            let id = row.id
+            let data = {
+              suggestion: value
+            }
+            updateReceiptSubmit(id, data).then(
+              () => {
+                this.$notify({
+                  title: '修改成功',
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+                this.fetchData()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '修改失败',
+                  message: `修改失败：${error.data}`,
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
+                this.fetchData()
+              }
+            )
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '修改失败',
+              message: `修改失败：${error.data}`,
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          })
+      },
+      handleRejection(row) {
+        this.$prompt('请输入驳回原因', '添加驳回原因', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          inputValue: row.rejection,
+          inputErrorMessage: '输入不能为空',
+          inputValidator: (value) => {
+            if(!value) {
+              return '输入不能为空';
+            }
+          }
+        }).then(
+          ({ value }) => {
+            let CurrentTimeStamp = new Date()
+            let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+            value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+            let id = row.id
+            let data = {
+              rejection: value
+            }
+            updateReceiptSubmit(id, data).then(
+              () => {
+                this.$notify({
+                  title: '修改成功',
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+                this.fetchData()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '修改失败',
+                  message: `修改失败：${error.data}`,
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
+                this.fetchData()
+              }
+            )
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '修改失败',
+              message: `修改失败：${error.data}`,
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          })
+      },
+      // 认领收款
+      handleConfirm(row) {
+        const h = this.$createElement
+        let resultMessage, resultType
+        this.$msgbox({
+          title: '确认领款',
+          message: h('p', null, [
+            h('h3', { style: 'color: teal' }, '特别注意：'),
+            h('hr', null, ''),
+            h('span', null, '点击确认，设置当前领款人，只有领款人是自己才可以审核收款单。'),
+            h('hr', null, ''),
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              const data = {
+                id: row.id
+              }
+              instance.confirmButtonLoading = true
+              instance.confirmButtonText = '执行中...'
+              confirmReceiptSubmit(data).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '认领成功',
+                      message: `认领成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 3000
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '认领失败',
+                      message: `认领失败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 0
+                    })
+                    this.$notify({
+                      title: '错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  this.fetchData()
+                  instance.confirmButtonLoading = false
+                  done()
+                })
+            } else {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          }
+        }).then(action => {
+          console.log(action)
+        }).catch(
+          (error) => {
+            console.log(error)
+          }
+        )
+      },
+      handleReset(row) {
+        const h = this.$createElement
+        let resultMessage, resultType
+        this.$msgbox({
+          title: '确认领款',
+          message: h('p', null, [
+            h('h3', { style: 'color: teal' }, '特别注意：'),
+            h('hr', null, ''),
+            h('span', null, '清空当前认领人。'),
+            h('hr', null, ''),
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              const data = {
+                id: row.id
+              }
+              instance.confirmButtonLoading = true
+              instance.confirmButtonText = '执行中...'
+              resetReceiptSubmit(data).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '清空成功',
+                      message: `清空成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 3000
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '清空失败',
+                      message: `清空失败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 0
+                    })
+                    this.$notify({
+                      title: '错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  this.fetchData()
+                  instance.confirmButtonLoading = false
+                  done()
+                })
+            } else {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          }
+        }).then(action => {
+          console.log(action)
+        }).catch(
+          (error) => {
+            console.log(error)
+          }
+        )
+      },
+      // 导入图片
+      getFile(event) {
+        const filetypes =[".jpg",".png"]
+        let filemaxsize = 1024*2
+        let fileSize = 0
+        for (var i = 0; i < event.target.files.length; i++) {
+          let file = event.target.files[i]
+          let verify_type = false
+          let suffix_name = file.name.substring(file.name.indexOf('.'))
+          console.log(suffix_name)
+          fileSize = file.size / 1048576
+          console.log(fileSize)
+          if (fileSize > this.$store.state.user.uploadSize) {
+            this.$notify({
+              title: '错误详情',
+              message: '文件最大4M',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.$refs.photofiles.type = 'text'
+            this.$refs.photofiles.value = ''
+            this.$refs.photofiles.type = 'file'
+            this.importFiles = []
+            return false
+          }
+          for (let i = 0; i < filetypes.length; i++) {
+            if (filetypes[i] == suffix_name) {
+              verify_type = true
+              break
+            }
+          }
+          if (!verify_type) {
+            this.$notify({
+              title: '错误详情',
+              message: '文件只支持png,jpg',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.$refs.photofiles.type = 'text'
+            this.$refs.photofiles.value = ''
+            this.$refs.photofiles.type = 'file'
+            this.importFiles = []
+            return false
+          }
+          this.importFiles.push(file)
+        }
+      },
+      importPhotoes() {
+        const importformData = new FormData()
+        for (let i = 0; i < this.importFiles.length; i++) {
+          importformData.append('files', this.importFiles[i])
+        }
+        importformData.append('id', this.photoData.id)
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+        this.tableLoading = true
+        photoImportReceiptSubmit(importformData, config).then(
+          res => {
+            this.$notify({
+              title: '导入结果',
+              message: res.data,
+              type: 'success',
+              duration: 0
+            })
+            this.fetchData()
+            this.closeImport()
+          }).catch(
+          (error) => {
+            console.log('1')
+            this.$notify({
+              title: '导入错误',
+              message: error.data,
+              type: 'error',
+              duration: 0
+            })
+          }
+        )
+      },
+      closeImport() {
+        this.$refs.photofiles.type = 'text'
+        this.$refs.photofiles.value = ''
+        this.$refs.photofiles.type = 'file'
+        this.importVisible = false
+      },
+      // 查看图片
+      handlePhotoView(userValue) {
+        console.log(userValue)
+        this.photoViewVisible = true
+        this.srcList = userValue.photo_details.map(item => item.name)
+        this.url = this.srcList[0]
+        console.log(this.srcList)
       },
 
-      // 关闭修改界面
-      handleCancelEdit() {
-        this.dialogVisibleEdit = false
-        this.$refs.handleFormEdit.resetFields()
-        this.handleDeleteAllDetails()
-      },
-      // 添加界面
-      add() {
-        this.dialogVisibleAdd = true
-      },
-      // 关闭添加界面
-      handleCancelAdd() {
-        this.dialogVisibleAdd = false
-        this.$refs.handleFormAdd.resetFields()
-      },
-      // 提交创建
-      handleSubmitAdd() {
-        console.log(this.formAdd)
-        createReceiptSubmit(this.formAdd).then(
-          () => {
-            this.fetchData()
-            this.handleCancelAdd()
-          }
-        ).catch((error) => {
-          this.$notify({
-            title: '错误详情',
-            message: error.data,
-            type: 'error',
-            offset: 210,
-            duration: 0
-          })
-        })
-      },
       // 导入
       importExcel() {
         const h = this.$createElement
@@ -861,7 +1062,7 @@
                   message: `审核成功条数：${res.data.successful}`,
                   type: 'success',
                   offset: 70,
-                  duration: 3000
+                  duration: 0
                 })
               }
               if (res.data.false !== 0) {
@@ -887,7 +1088,7 @@
               console.log('我是全选错误返回')
               this.$notify({
                 title: '错误详情',
-                message: error.response.data,
+                message: error.data,
                 type: 'error',
                 offset: 210,
                 duration: 0
@@ -917,7 +1118,7 @@
                   message: `审核成功条数：${res.data.successful}`,
                   type: 'success',
                   offset: 70,
-                  duration: 3000
+                  duration: 0
                 })
               }
               if (res.data.false !== 0) {
@@ -949,7 +1150,7 @@
               delete this.params.ids
               this.$notify({
                 title: '错误详情',
-                message: error.response.data,
+                message: error.data,
                 type: 'error',
                 offset: 210,
                 duration: 0
@@ -958,8 +1159,13 @@
             }
           ).catch(
             (error) => {
-              console.log('######')
-              console.log(error)
+              this.$notify({
+                title: '错误详情',
+                message: error.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
             }
           )
         }
@@ -968,11 +1174,10 @@
         const h = this.$createElement
         let resultMessage, resultType
         this.$msgbox({
-          title: '取消工单',
+          title: '驳回工单',
           message: h('p', null, [
-            h('h3', { style: 'color: teal' }, '特别注意：'),
             h('hr', null, ''),
-            h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+            h('span', null, '驳回收款单到认领！'),
             h('hr', null, '')
           ]),
           showCancelButton: true,
@@ -988,8 +1193,8 @@
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '取消成功',
-                        message: `取消成功条数：${res.data.successful}`,
+                        title: '驳回成功',
+                        message: `驳回成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -997,8 +1202,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '取消失败',
-                        message: `取消败条数：${res.data.false}`,
+                        title: '驳回失败',
+                        message: `驳回败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -1015,22 +1220,15 @@
                     instance.confirmButtonLoading = false
                     done()
                     this.fetchData()
-                  },
-                  error => {
-                    console.log('我是全选错误返回')
+                  }).catch(
+                  (error) => {
                     this.$notify({
                       title: '异常错误详情',
-                      message: error.response.data,
+                      message: error.data,
                       type: 'error',
                       offset: 210,
                       duration: 0
                     })
-                    instance.confirmButtonLoading = false
-                    done()
-                    this.fetchData()
-                  }
-                ).catch(
-                  () => {
                     instance.confirmButtonLoading = false
                     done()
                     this.fetchData()
@@ -1055,8 +1253,8 @@
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '取消成功',
-                        message: `取消成功条数：${res.data.successful}`,
+                        title: '驳回成功',
+                        message: `驳回成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -1064,8 +1262,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '取消失败',
-                        message: `取消败条数：${res.data.false}`,
+                        title: '驳回失败',
+                        message: `驳回败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -1082,22 +1280,15 @@
                     instance.confirmButtonLoading = false
                     done()
                     this.fetchData()
-                  },
-                  error => {
-                    console.log('我是全选错误返回')
+                  }).catch(
+                  (error) => {
                     this.$notify({
                       title: '异常错误详情',
-                      message: error.response.data,
+                      message: error.data,
                       type: 'error',
                       offset: 210,
                       duration: 0
                     })
-                    instance.confirmButtonLoading = false
-                    done()
-                    this.fetchData()
-                  }
-                ).catch(
-                  () => {
                     instance.confirmButtonLoading = false
                     done()
                     this.fetchData()

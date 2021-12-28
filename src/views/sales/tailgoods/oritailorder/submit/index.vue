@@ -426,13 +426,13 @@
 
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
-              <el-input v-model="formAdd.sent_address" placeholder="请输入名称" />
+              <el-input v-model="formAdd.sent_address" placeholder="请输入地址" />
             </el-form-item></el-col>
             <el-col :span="8" />
           </el-row>
           <el-row :gutter="20">
             <el-col :span="16"><el-form-item label="订单留言" prop="message">
-              <el-input v-model="formAdd.message" placeholder="请输入名称" />
+              <el-input type="textarea" :rows="5" v-model="formAdd.message" placeholder="请输入留言" />
             </el-form-item></el-col>
             <el-col :span="8" />
           </el-row>
@@ -604,13 +604,13 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="收件地址" prop="sent_address">
-                  <el-input v-model="formEdit.sent_address" placeholder="请输入名称" />
+                  <el-input v-model="formEdit.sent_address" placeholder="请输入地址" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="订单留言" prop="message">
-                  <el-input v-model="formEdit.message" placeholder="请输入名称" />
+                  <el-input type="textarea" :rows="5" v-model="formEdit.message" placeholder="请输入留言" />
                 </el-form-item></el-col>
                 <el-col :span="8" />
               </el-row>
