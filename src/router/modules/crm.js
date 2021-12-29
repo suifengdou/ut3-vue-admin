@@ -106,25 +106,25 @@ const crmChannelRouter = {
       path: 'vipwechat',
       name: 'vipwechat',
       component: () => import('@/views/crm/vipwechat'),
-      meta: { title: '微信VIP', roles: ['customers.view_customer', 'AllPrivileges'] },
+      meta: { title: '微信VIP', roles: ['vipwechat.view_vipwechat', 'AllPrivileges'] },
       children: [
         {
           path: 'specialist',
           component: () => import('@/views/crm/vipwechat/specialist'),
           name: 'specialist',
-          meta: { title: '专属客服', roles: ['customers.view_customer', 'AllPrivileges'] }
+          meta: { title: '专属客服', roles: ['vipwechat.view_specialist', 'AllPrivileges'] }
         },
         {
           path: 'myself',
           component: () => import('@/views/crm/vipwechat/myself'),
           name: 'myself',
-          meta: { title: '导入客户', roles: ['customers.view_customer', 'AllPrivileges'] }
+          meta: { title: '导入客户', roles: ['vipwechat.view_vipwechat', 'AllPrivileges'] }
         },
         {
           path: 'manage',
           component: () => import('@/views/crm/vipwechat/manage'),
           name: 'manage',
-          meta: { title: '客户管理', roles: ['customers.view_customer', 'AllPrivileges'] }
+          meta: { title: '客户管理', roles: ['vipwechat.view_vipwechat', 'AllPrivileges'] }
         }
       ]
     },
