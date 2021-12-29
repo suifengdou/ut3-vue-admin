@@ -10,6 +10,7 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -232,7 +233,22 @@
             </div>
           </template>
         </el-table-column>
-
+        <el-table-column
+          label="涉及货品数"
+          prop="quantity"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及花费"
+          prop="cost"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="省"
           prop="province"
@@ -696,6 +712,7 @@
     exportInvoiceCheck,
     excelImportInvoiceCheck,
     checkInvoiceCheck,
+    fixInvoiceCheck,
     rejectInvoiceCheck
   } from '@/api/wop/satisfaction/invoice/check'
   import { getShopList } from '@/api/base/shop'
@@ -1188,6 +1205,120 @@
                 this.$notify({
                   title: '审核失败',
                   message: `审核失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              console.log(this.params)
+              console.log(this.params.ids)
+
+              delete this.params.ids
+              this.fetchData()
+            },
+            error => {
+              console.log('我是单选错误返回')
+              console.log(this)
+              console.log(error.response)
+              delete this.params.ids
+              this.$notify({
+                title: '错误详情',
+                message: error.response.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          ).catch(
+            (error) => {
+              console.log('######')
+              console.log(error)
+            }
+          )
+        }
+      },
+      handleFix() {
+        this.tableLoading = true
+        if (this.params.allSelectTag === 1) {
+          fixInvoiceCheck(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '修复成功',
+                  message: `修复成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '修复失败',
+                  message: `修复失败条数：${res.data.false}`,
+                  type: 'error',
+                  offset: 140,
+                  duration: 0
+                })
+                this.$notify({
+                  title: '错误详情',
+                  message: res.data.error,
+                  type: 'error',
+                  offset: 210,
+                  duration: 0
+                })
+              }
+              delete this.params.allSelectTag
+              this.fetchData()
+            },
+            error => {
+              console.log('我是全选错误返回')
+              this.$notify({
+                title: '错误详情',
+                message: error.response.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        } else {
+          console.log(this.multipleSelection)
+          if (typeof (this.multipleSelection) === 'undefined') {
+            this.$notify({
+              title: '错误详情',
+              message: '未选择订单无法审核',
+              type: 'error',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
+          const ids = this.multipleSelection.map(item => item.id)
+          this.params.ids = ids
+          fixInvoiceCheck(this.params).then(
+            res => {
+              if (res.data.successful !== 0) {
+                this.$notify({
+                  title: '修复成功',
+                  message: `修复成功条数：${res.data.successful}`,
+                  type: 'success',
+                  offset: 70,
+                  duration: 3000
+                })
+              }
+              if (res.data.false !== 0) {
+                this.$notify({
+                  title: '修复失败',
+                  message: `修复失败条数：${res.data.false}`,
                   type: 'error',
                   offset: 140,
                   duration: 0

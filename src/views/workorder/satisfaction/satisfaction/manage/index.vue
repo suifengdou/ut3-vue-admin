@@ -191,13 +191,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
+          label="订单状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -211,12 +211,12 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="用户ID"
-          prop="nickname"
+          label="下次预约时间"
+          prop="appointment"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.nickname }}</span>
+            <span>{{ scope.row.appointment }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -237,10 +237,28 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="接洽电话"
+          prop="mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="进度查看"
         >
           <template slot-scope="scope">
             <el-button type="danger" size="mini" @click="handleProgressView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="服务单花费"
+          prop="cost"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -419,7 +437,7 @@
     </el-dialog>
     <!--进程查看模态窗-->
     <el-dialog
-      title="文档查看"
+      title="进度查看"
       :visible.sync="progressViewVisible"
       width="90%"
       border
@@ -452,7 +470,24 @@
             width="120px"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.stage }}</span>
+              <div v-if="scope.row.stage==1">
+                <span>初始提交</span>
+              </div>
+              <div v-else-if="scope.row.stage==2">
+                <span>处理初期</span>
+              </div>
+              <div v-else-if="scope.row.stage==3">
+                <span>处理中期</span>
+              </div>
+              <div v-else-if="scope.row.stage==4">
+                <span>处理后期</span>
+              </div>
+              <div v-else-if="scope.row.stage==5">
+                <span>处理结束</span>
+              </div>
+              <div v-else>
+                <span>错误</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column

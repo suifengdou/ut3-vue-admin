@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复工单</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -200,12 +199,27 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="合计花费"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及货品数"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="客户姓名"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.receiver }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="客户地址"
           prop="address"
@@ -427,37 +441,11 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>服务工单相关信息</span>
+                <span>服务单相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="原始标题" prop="title">
-                  <span>{{ formEdit.title }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
-                  <span>{{ formEdit.nickname }}</span>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="诉求" prop="mobile">
-                  <span>{{ formEdit.demand }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户姓名" prop="name">
-                  <el-input v-model="formEdit.name" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="客户地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>客户相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="原始标题" prop="title">
-                  <el-input v-model="formEdit.title" placeholder="请输入原始工单标题" />
+                <el-col :span="8"><el-form-item label="服务标题" prop="title">
+                  <el-input v-model="formEdit.title" placeholder="请输入服务标题" />
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
                   <el-input v-model="formEdit.nickname" placeholder="请输入用户ID" />
@@ -465,112 +453,18 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="接洽电话" prop="mobile">
-                  <el-input v-model="formEdit.mobile" placeholder="请输入原始工单标题" />
+                  <el-input v-model="formEdit.mobile" placeholder="请输入接洽电话" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户姓名" prop="name">
-                  <el-input v-model="formEdit.name" placeholder="请输入原始工单标题" />
+                <el-col :span="8"><el-form-item label="客户姓名" prop="receiver">
+                  <el-input v-model="formEdit.receiver" placeholder="请输入客户姓名" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="客户地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入原始工单标题" />
+                  <el-input v-model="formEdit.address" placeholder="请输入客户地址" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>问题相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="货品" prop="goods_name">
-                  <template>
-                    <el-select
-                      v-model="formEdit.goods_name"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodGoods"
-                    >
-                      <el-option
-                        v-for="item in optionsGoods"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="货品数量" prop="quantity">
-                  <el-input type="number" v-model="formEdit.quantity" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="机器SN" prop="m_sn">
-                  <el-input v-model="formEdit.m_sn" placeholder="请输入机器SN" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="购买时间" prop="purchase_time">
-                  <el-date-picker
-                    v-model="formEdit.purchase_time"
-                    type="datetime"
-                    placeholder="选择日期时间"
-                    default-time="12:00:00">
-                  </el-date-picker>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="诉求" prop="demand">
-                  <el-input v-model="formEdit.demand" placeholder="请输入诉求" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="问题描述" prop="information">
-                  <el-input type="textarea" :rows="7" v-model="formEdit.information" placeholder="请输入问题描述" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="是否企微好友" prop="is_friend">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_friend"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="10"><el-form-item label="微信ID" prop="wechat_id">
-                  <el-input v-model="formEdit.wechat_id" placeholder="请输入微信ID" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_losing"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入留言" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-
 
             <el-card class="box-card">
               <el-row :gutter="20">
@@ -689,23 +583,22 @@
 
 <script>
 import {
-  getServiceWorkOrderHandle,
-  createServiceWorkOrderHandle,
-  updateServiceWorkOrderHandle,
-  exportServiceWorkOrderHandle,
-  excelImportServiceWorkOrderHandle,
-  photoImportServiceWorkOrderHandle,
-  checkServiceWorkOrderHandle,
-  fixServiceWorkOrderHandle,
-  rejectServiceWorkOrderHandle
-} from '@/api/wop/satisfaction/service/handle'
+  getServiceWorkOrderMyself,
+  createServiceWorkOrderMyself,
+  updateServiceWorkOrderMyself,
+  exportServiceWorkOrderMyself,
+  excelImportServiceWorkOrderMyself,
+  photoImportServiceWorkOrderMyself,
+  checkServiceWorkOrderMyself,
+  rejectServiceWorkOrderMyself
+} from '@/api/wop/satisfaction/service/myself'
 import { deleteOSWOFiles } from '@/api/wop/satisfaction/oswofiles/manage'
 import { createInvoiceCreate } from '@/api/wop/satisfaction/invoice/create'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'ServiceServiceWorkOrderHandle',
+  name: 'ServiceServiceWorkOrderMyself',
 
   data() {
 
@@ -807,7 +700,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getServiceWorkOrderHandle(this.params).then(
+      getServiceWorkOrderMyself(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -831,11 +724,12 @@ export default {
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
 
-      this.optionsGoods = [{ label: this.formEdit.goods_name.name, value: this.formEdit.goods_name.id }]
-      this.formEdit.goods_name = this.formEdit.goods_name.id
-
-      this.formEdit.mistake_tag = this.formEdit.mistake_tag.id
-      this.formEdit.order_status = this.formEdit.order_status.id
+      let attrStr
+      console.log(this.formEdit)
+      const transFieldStr = ['mistake_tag', 'process_tag', 'order_status', 'province', 'city', 'district', 'customer', 'swo_order']
+      for (attrStr in transFieldStr) {
+        this.formEdit[transFieldStr[attrStr]] = this.formEdit[transFieldStr[attrStr]].id
+      }
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -844,7 +738,7 @@ export default {
           return
         }
         const { id, ...data } = this.formEdit
-        updateServiceWorkOrderHandle(id, data).then(
+        updateServiceWorkOrderMyself(id, data).then(
           () => {
             this.$notify({
               title: '更新成功',
@@ -964,7 +858,7 @@ export default {
         }
       }
       this.tableLoading = true
-      photoImportServiceWorkOrderHandle(importformData, config).then(
+      photoImportServiceWorkOrderMyself(importformData, config).then(
         res => {
           this.$notify({
             title: '导入结果',
@@ -1057,7 +951,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportServiceWorkOrderHandle(importformData, config).then(
+            excelImportServiceWorkOrderMyself(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -1126,7 +1020,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportServiceWorkOrderHandle(this.params).then(
+            exportServiceWorkOrderMyself(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1210,7 +1104,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkServiceWorkOrderHandle(this.params).then(
+        checkServiceWorkOrderMyself(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1265,7 +1159,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkServiceWorkOrderHandle(this.params).then(
+        checkServiceWorkOrderMyself(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1280,111 +1174,6 @@ export default {
               this.$notify({
                 title: '审核失败',
                 message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          }).catch(
-          (error) => {
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1437,7 +1226,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectServiceWorkOrderHandle(this.params).then(
+              rejectServiceWorkOrderMyself(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1497,7 +1286,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectServiceWorkOrderHandle(this.params).then(
+              rejectServiceWorkOrderMyself(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({

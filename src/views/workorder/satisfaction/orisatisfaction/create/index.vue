@@ -446,7 +446,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请选择公司"
+                  placeholder="请选择货品"
                   :remote-method="remoteMethodGoods"
                 >
                   <el-option

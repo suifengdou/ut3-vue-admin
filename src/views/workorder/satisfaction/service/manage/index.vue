@@ -132,13 +132,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
+          label="订单状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -165,6 +165,20 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.demand }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="合计花费"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及货品数"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -230,23 +244,16 @@
 
 <script>
 import {
-  getServiceWorkOrderHandle,
-  createServiceWorkOrderHandle,
-  updateServiceWorkOrderHandle,
-  exportServiceWorkOrderHandle,
-  excelImportServiceWorkOrderHandle,
-  photoImportServiceWorkOrderHandle,
-  checkServiceWorkOrderHandle,
-  fixServiceWorkOrderHandle,
-  rejectServiceWorkOrderHandle
-} from '@/api/wop/satisfaction/service/handle'
+  getServiceWorkOrderManage,
+  exportServiceWorkOrderManage,
+} from '@/api/wop/satisfaction/service/manage'
 import { deleteOSWOFiles } from '@/api/wop/satisfaction/oswofiles/manage'
 import { createInvoiceCreate } from '@/api/wop/satisfaction/invoice/create'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'ServiceServiceWorkOrderHandle',
+  name: 'ServiceServiceWorkOrderManage',
 
   data() {
 
@@ -348,7 +355,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getServiceWorkOrderHandle(this.params).then(
+      getServiceWorkOrderManage(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -377,38 +384,6 @@ export default {
 
       this.formEdit.mistake_tag = this.formEdit.mistake_tag.id
       this.formEdit.order_status = this.formEdit.order_status.id
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      this.$refs.handleFormEdit.validate(valid => {
-        if (!valid) {
-          return
-        }
-        const { id, ...data } = this.formEdit
-        updateServiceWorkOrderHandle(id, data).then(
-          () => {
-            this.$notify({
-              title: '更新成功',
-              type: 'success',
-              offset: 70,
-              duration: 3000
-            })
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 70,
-              duration: 0
-            })
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          }
-        )
-      })
     },
 
     // 关闭修改界面
@@ -462,80 +437,6 @@ export default {
         })
       })
     },
-    // 图片上传模块
-    handlePhotoUpload(userValue) {
-      this.photoData.id = userValue.id
-      this.importVisible = true
-
-    },
-    getFile(event) {
-      let fileSize = 0
-      for (var i = 0; i < event.target.files.length; i++) {
-        let file = event.target.files[i]
-        let suffix_name = file.name.substring(file.name.indexOf('.'))
-        console.log(suffix_name)
-        fileSize = file.size / 1048576
-        console.log(fileSize)
-        if (fileSize > this.$store.state.user.uploadSize) {
-          this.$notify({
-            title: '错误详情',
-            message: '文件最大20M',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.$refs.photofiles.type = 'text'
-          this.$refs.photofiles.value = ''
-          this.$refs.photofiles.type = 'file'
-          this.importFiles = []
-          return false
-        }
-        this.importFiles.push(file)
-      }
-    },
-    importPhotoes() {
-      const importformData = new FormData()
-      for (let i = 0; i < this.importFiles.length; i++) {
-        importformData.append('files', this.importFiles[i])
-      }
-      importformData.append('id', this.photoData.id)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      this.tableLoading = true
-      photoImportServiceWorkOrderHandle(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-          this.$refs.photofiles.type = 'text'
-          this.$refs.photofiles.value = ''
-          this.$refs.photofiles.type = 'file'
-          this.importVisible = false
-          this.fetchData()
-        }).catch(
-        (error) => {
-          console.log('1')
-          this.$notify({
-            title: '导入错误',
-            message: error.data,
-            type: 'error',
-            duration: 0
-          })
-        }
-      )
-    },
-    closeImport() {
-      this.$refs.photofiles.type = 'text'
-      this.$refs.photofiles.value = ''
-      this.$refs.photofiles.type = 'file'
-      this.importVisible = false
-    },
     // 查看图片
     handlePhotoView(userValue) {
       console.log(userValue)
@@ -568,84 +469,6 @@ export default {
       )
     },
     // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-              name: 'importfile',
-              type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportServiceWorkOrderHandle(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-      }).catch(
-        (error) => {
-          this.$notify({
-            title: '失败原因',
-            message: error.data,
-            type: 'success',
-            duration: 0
-          })
-        }
-      )
-    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -667,7 +490,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportServiceWorkOrderHandle(this.params).then(
+            exportServiceWorkOrderManage(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -746,361 +569,6 @@ export default {
       this.params.allSelectTag = 1
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
-    },
-    // 审核单据
-    handleCheck() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        checkServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        checkServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          }).catch(
-          (error) => {
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          }).catch(
-          (error) => {
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleReject() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '取消工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectServiceWorkOrderHandle(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }).catch(
-                (error) => {
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法取消',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectServiceWorkOrderHandle(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }).catch(
-                (error) => {
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        (error) => {
-          this.$notify({
-            title: '异常错误详情',
-            message: error.data,
-            type: 'error',
-            offset: 210,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
     },
     // 货品搜索
     remoteMethodGoods(query) {

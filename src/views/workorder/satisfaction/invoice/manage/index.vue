@@ -127,13 +127,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
+          label="订单状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -198,7 +198,22 @@
             </div>
           </template>
         </el-table-column>
-
+        <el-table-column
+          label="涉及货品数"
+          prop="quantity"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及花费"
+          prop="cost"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="省"
           prop="province"

@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复工单</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -197,6 +196,20 @@
         >
           <template slot-scope="scope">
             <el-button type="danger" size="mini" @click="add(scope.row)">创建</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="合计花费"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及货品数"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -696,7 +709,6 @@ import {
   excelImportServiceWorkOrderHandle,
   photoImportServiceWorkOrderHandle,
   checkServiceWorkOrderHandle,
-  fixServiceWorkOrderHandle,
   rejectServiceWorkOrderHandle
 } from '@/api/wop/satisfaction/service/handle'
 import { deleteOSWOFiles } from '@/api/wop/satisfaction/oswofiles/manage'
@@ -1280,111 +1292,6 @@ export default {
               this.$notify({
                 title: '审核失败',
                 message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          }).catch(
-          (error) => {
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixServiceWorkOrderHandle(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '修复成功',
-                message: `修复成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '修复失败',
-                message: `修复失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0

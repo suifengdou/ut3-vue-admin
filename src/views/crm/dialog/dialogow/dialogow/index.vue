@@ -70,7 +70,9 @@
 
                     </el-row>
                     <el-row :gutter="20">
-
+                      <el-col :span="6"><el-form-item label="会话ID" prop="call_id">
+                        <el-input v-model="params.call_id" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="收件人" prop="receiver">
                         <el-input v-model="params.receiver" type="text" />
                       </el-form-item></el-col>

@@ -266,6 +266,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="下次预约时间"
+          prop="appointment"
+          sortable="custom"
+          width="108px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.appointment }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="进度查看"
         >
           <template slot-scope="scope">
@@ -277,6 +287,14 @@
         >
           <template slot-scope="scope">
             <el-button type="danger" size="mini" @click="addProgress(scope.row)">新增</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="服务单花费"
+          prop="cost"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -332,7 +350,7 @@
           label="客户姓名"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
+            <span>{{ scope.row.receiver }}</span>
           </template>
         </el-table-column>
         <el-table-column

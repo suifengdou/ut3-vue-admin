@@ -455,7 +455,7 @@
     </el-dialog>
     <!--进程查看模态窗-->
     <el-dialog
-      title="文档查看"
+      title="进度查看"
       :visible.sync="progressViewVisible"
       width="90%"
       border
@@ -488,7 +488,24 @@
             width="120px"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.stage }}</span>
+              <div v-if="scope.row.stage==1">
+                <span>初始提交</span>
+              </div>
+              <div v-else-if="scope.row.stage==2">
+                <span>处理初期</span>
+              </div>
+              <div v-else-if="scope.row.stage==3">
+                <span>处理中期</span>
+              </div>
+              <div v-else-if="scope.row.stage==4">
+                <span>处理后期</span>
+              </div>
+              <div v-else-if="scope.row.stage==5">
+                <span>处理结束</span>
+              </div>
+              <div v-else>
+                <span>错误</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column

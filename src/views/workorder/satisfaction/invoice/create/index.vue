@@ -234,6 +234,22 @@
         </el-table-column>
 
         <el-table-column
+          label="涉及货品数"
+          prop="quantity"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="涉及花费"
+          prop="cost"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cost }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="省"
           prop="province"
         >

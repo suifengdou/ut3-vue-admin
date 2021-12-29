@@ -188,13 +188,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
+          label="订单状态"
+          prop="order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
