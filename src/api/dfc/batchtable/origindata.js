@@ -57,6 +57,15 @@ export function checkOriginDataSubmit(data) {
   })
 }
 
+// 修复工单
+export function fixOriginDataSubmit(data) {
+  return request({
+    url: `/dfc/batchdata/origindatasubmit/fix/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 取消工单
 export function rejectOriginDataSubmit(data) {
   return request({

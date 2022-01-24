@@ -116,8 +116,14 @@ const intSalesChannelRouter = {
           meta: { title: '收款单关联', roles: ['AllPrivileges']},
         },
         {
-          path: 'account',
-          component: () => import('@/views/int/account/account'),
+          path: 'balance',
+          component: () => import('@/views/int/receipt/balance'),
+          name: '收款单结算',
+          meta: { title: '收款单结算', roles: ['AllPrivileges']},
+        },
+        {
+          path: 'manage',
+          component: () => import('@/views/int/receipt/manage'),
           name: '收款单管理',
           meta: { title: '收款单管理', roles: ['AllPrivileges']},
         }

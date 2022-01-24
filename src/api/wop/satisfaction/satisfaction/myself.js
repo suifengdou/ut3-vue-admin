@@ -52,7 +52,7 @@ export function excelImportWorkOrderMyself(data) {
 export function photoImportWorkOrderMyself(data) {
   return request({
     url: `/workorder/satisfaction/swomyself/photo_import/`,
-    method: 'patch',
+    method: 'put',
     data
   })
 }

@@ -1054,11 +1054,11 @@
         console.log(this.optionsGoods)
 
         this.oriInvoiceGoodsListEdit = []
-        let goods
-        for (goods in this.formEdit.goods_details) {
-          this.formEdit.goods_details[goods].xh = goods + 1
-          this.formEdit.goods_details[goods].goods_name = this.formEdit.goods_details[goods].name.id
-          this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[goods])
+        let index
+        for (index in this.formEdit.goods_details) {
+          this.formEdit.goods_details[index].xh = index + 1
+          this.formEdit.goods_details[index].goods_name = this.formEdit.goods_details[index].name.id
+          this.oriInvoiceGoodsListEdit.push(this.formEdit.goods_details[index])
           console.log(this.oriInvoiceGoodsListEdit)
         }
         console.log(this.oriInvoiceGoodsListEdit)

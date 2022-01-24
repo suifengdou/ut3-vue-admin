@@ -1177,7 +1177,7 @@
           title: '驳回工单',
           message: h('p', null, [
             h('hr', null, ''),
-            h('span', null, '驳回收款单到认领！'),
+            h('span', null, '驳回收款单到创建！'),
             h('hr', null, '')
           ]),
           showCancelButton: true,

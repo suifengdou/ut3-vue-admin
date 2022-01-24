@@ -94,9 +94,10 @@ export function getManualOrderManageList(params) {
 }
 
 
-export function exportManualOrderManage(params) {
+export function exportManualOrderManage(data) {
   return request({
     url: '/dfc/manualorder/momanage/export/',
     method: 'patch',
+    data
   })
 }

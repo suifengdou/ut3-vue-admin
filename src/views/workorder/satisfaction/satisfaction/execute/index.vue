@@ -298,6 +298,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="体验指数"
+          prop="feeling_index"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.feeling_index }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="是否企微好友"
           prop="is_friend"
         >
@@ -664,7 +672,7 @@
         <el-row :gutter="30">
           <el-col :span="12" :offset="6">
             <el-form-item>
-              <el-button type="primary" @click="importPhotoes">导入文件</el-button>
+              <el-button id="importButton" type="primary" @click="importPhotoes">导入文件</el-button>
               <el-button type="error" @click="closeImport">取消</el-button>
             </el-form-item>
           </el-col>
@@ -1116,6 +1124,8 @@ export default {
       }
     },
     importPhotoes() {
+      let obj = document.getElementById('importButton')
+      obj.innerHTML = '正在导入......'
       const importformData = new FormData()
       for (let i = 0; i < this.importFiles.length; i++) {
         importformData.append('files', this.importFiles[i])
@@ -1135,23 +1145,30 @@ export default {
             type: 'success',
             duration: 0
           })
+          this.$refs.photofiles.type = 'text'
+          this.$refs.photofiles.value = ''
+          this.$refs.photofiles.type = 'file'
+          this.fetchData()
+          this.importVisible = false
+          this.progressViewVisible = false
+          obj.innerHTML = '导入文件'
         }).catch(
         (error) => {
-          console.log('1')
           this.$notify({
             title: '导入错误',
             message: error.data,
             type: 'error',
             duration: 0
           })
+          this.$refs.photofiles.type = 'text'
+          this.$refs.photofiles.value = ''
+          this.$refs.photofiles.type = 'file'
+          this.fetchData()
+          this.importVisible = false
+          this.progressViewVisible = false
+          obj.innerHTML = '导入文件'
         }
       )
-      this.$refs.photofiles.type = 'text'
-      this.$refs.photofiles.value = ''
-      this.$refs.photofiles.type = 'file'
-      this.fetchData()
-      this.importVisible = false
-      this.progressViewVisible = false
     },
     closeImport() {
       this.$refs.photofiles.type = 'text'
@@ -1260,31 +1277,32 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    快递单号: item.track_id,
-                    快递公司: item.company.name,
-                    工单事项类型: item.category.name,
-                    初始问题信息: item.information,
-                    提交时间: item.submit_time,
-                    提交人: item.servicer,
-                    反馈间隔: item.services_interval,
-                    处理意见: item.suggestion,
-                    处理人: item.handler,
-                    处理时间: item.handle_time,
-                    处理间隔: item.handle_interval,
-                    反馈内容: item.feedback,
-                    是否理赔: item.is_losing,
-                    是否返回: item.is_return,
-                    返回单号: item.return_express_id,
-                    备注: item.memo,
-                    驳回原因: item.rejection,
+                    工单编号: item.order_id,
+                    工单标题: item.title,
+                    用户ID: item.nickname,
+                    用户: item.customer.name,
+                    购买时间: item.purchase_interval,
+                    货品名称: item.goods_name.name,
+                    货品数量: item.quantity,
+                    机器SN: item.m_sn,
+                    客户姓名: item.receiver,
+                    客户地址: item.address,
+                    手机: item.mobile,
+                    是否微友: item.is_friend,
+                    微信ID: item.cs_wechat,
+                    专属客服: item.specialist.name,
+                    诉求: item.demand,
+                    领取人: item.handler,
+                    领取时间: item.handle_time,
+                    领取间隔: item.handle_interval,
+                    进度标签: item.stage.name,
+                    下次预约: item.appointment,
                     工单状态: item.order_status.name,
-                    是否正向: item.is_forward,
-                    处理标签: item.process_tag.name,
-                    处理状态: item.handling_status,
-                    错误原因: item.mistake_tag,
+                    备注: item.memo,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator
+                    创建者: item.creator,
+                    服务金额: item.cost
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1792,6 +1810,8 @@ export default {
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'cs_wechat') {
         this.handleCSWechat(row)
+      } else if (column.property === 'feeling_index') {
+        this.handleFeelingIndex(row)
       }
     },
     handleCSWechat(row) {
@@ -1814,7 +1834,7 @@ export default {
           let data = {
             cs_wechat: value
           }
-          updateWorkOrderExecute(id, data).then(
+          updateWorkOrderMyself(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
@@ -1840,6 +1860,58 @@ export default {
           this.$notify({
             title: '修改失败',
             message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
+    },
+    handleFeelingIndex(row) {
+      this.$prompt('请输入体验指数', '体验指数', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.cs_wechat,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let id = row.id
+          let data = {
+            feeling_index: value
+          }
+          updateWorkOrderMyself(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              console.log(error)
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${JSON.stringify(error.data)}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${JSON.stringify(error.data)}`,
             type: 'error',
             offset: 70,
             duration: 0

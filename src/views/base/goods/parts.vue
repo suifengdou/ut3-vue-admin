@@ -12,14 +12,6 @@
           </div>
 
         </el-col>
-        <el-col :span="7" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增货品</el-button>
-            </el-tooltip>
-          </div>
-
-        </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">

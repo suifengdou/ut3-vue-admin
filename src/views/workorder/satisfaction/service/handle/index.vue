@@ -192,6 +192,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="失效时间"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.expiration_date }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建费用单"
         >
           <template slot-scope="scope">
@@ -263,6 +270,7 @@
 
       </el-table>
     </div>
+    <!--新建添加模态窗-->
     <!--新建添加模态窗-->
     <el-dialog
       title="新增"
@@ -440,37 +448,11 @@
           >
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>服务工单相关信息</span>
+                <span>服务单相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="原始标题" prop="title">
-                  <span>{{ formEdit.title }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
-                  <span>{{ formEdit.nickname }}</span>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="诉求" prop="mobile">
-                  <span>{{ formEdit.demand }}</span>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户姓名" prop="name">
-                  <el-input v-model="formEdit.name" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="客户地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>客户相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="原始标题" prop="title">
-                  <el-input v-model="formEdit.title" placeholder="请输入原始工单标题" />
+                <el-col :span="8"><el-form-item label="服务标题" prop="title">
+                  <el-input v-model="formEdit.title" placeholder="请输入服务标题" />
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
                   <el-input v-model="formEdit.nickname" placeholder="请输入用户ID" />
@@ -478,112 +460,28 @@
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="接洽电话" prop="mobile">
-                  <el-input v-model="formEdit.mobile" placeholder="请输入原始工单标题" />
+                  <el-input v-model="formEdit.mobile" placeholder="请输入接洽电话" />
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="客户姓名" prop="name">
-                  <el-input v-model="formEdit.name" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="客户地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入原始工单标题" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>问题相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="货品" prop="goods_name">
-                  <template>
-                    <el-select
-                      v-model="formEdit.goods_name"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择公司"
-                      :remote-method="remoteMethodGoods"
-                    >
-                      <el-option
-                        v-for="item in optionsGoods"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="货品数量" prop="quantity">
-                  <el-input type="number" v-model="formEdit.quantity" placeholder="请输入原始工单标题" />
+                <el-col :span="8"><el-form-item label="客户姓名" prop="receiver">
+                  <el-input v-model="formEdit.receiver" placeholder="请输入客户姓名" />
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="机器SN" prop="m_sn">
-                  <el-input v-model="formEdit.m_sn" placeholder="请输入机器SN" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="购买时间" prop="purchase_time">
+                <el-col :span="8"><el-form-item label="失效时间" prop="expiration_date">
                   <el-date-picker
-                    v-model="formEdit.purchase_time"
+                    v-model="formEdit.expiration_date"
                     type="datetime"
-                    placeholder="选择日期时间"
-                    default-time="12:00:00">
+                    placeholder="选择失效时间"
+                    default-time="9:00:00">
                   </el-date-picker>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="诉求" prop="demand">
-                  <el-input v-model="formEdit.demand" placeholder="请输入诉求" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="问题描述" prop="information">
-                  <el-input type="textarea" :rows="7" v-model="formEdit.information" placeholder="请输入问题描述" />
+                <el-col :span="16"><el-form-item label="客户地址" prop="address">
+                  <el-input v-model="formEdit.address" placeholder="请输入客户地址" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="是否企微好友" prop="is_friend">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_friend"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="10"><el-form-item label="微信ID" prop="wechat_id">
-                  <el-input v-model="formEdit.wechat_id" placeholder="请输入微信ID" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="是否理赔" prop="is_losing">
-                  <template slot-scope="scope">
-                    <el-switch
-                      v-model="formEdit.is_losing"
-                      active-color="#13ce66"
-                      inactive-color="#ff4949"
-                    />
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="工单留言" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入留言" />
-                </el-form-item></el-col>
-                <el-col :span="8" />
-              </el-row>
-            </el-card>
-
 
             <el-card class="box-card">
               <el-row :gutter="20">
@@ -783,8 +681,8 @@ export default {
         purchase_time: [
           { required: true, message: '请输入购买时间', trigger: 'blur' }
         ],
-        goods_name: [
-          { required: true, message: '请选择货品', trigger: 'blur', type: 'number' }
+        expiration_date: [
+          { required: true, message: '请选择失效时间', trigger: 'blur' }
         ],
         quantity: [
           { required: true, message: '请输入数量', trigger: 'blur' }

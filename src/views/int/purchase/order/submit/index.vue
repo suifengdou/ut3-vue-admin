@@ -933,52 +933,24 @@
           },
           {
             value: 1,
-            label: '未付定金未排产'
+            label: '未排产'
           },
           {
             value: 2,
-            label: '未付定金已排产'
+            label: '已排产'
           },
           {
             value: 3,
-            label: '未付定金未发货'
+            label: '未发货'
           },
           {
             value: 4,
-            label: '未付定金已发货'
+            label: '已发货'
           },
           {
             value: 5,
-            label: '已付定金未排产'
-          },
-          {
-            value: 6,
-            label: '已付定金已排产'
-          },
-          {
-            value: 7,
-            label: '已付定金未发货'
-          },
-          {
-            value: 8,
-            label: '已付定金已发货'
-          },
-          {
-            value: 9,
-            label: '未付尾款未发货'
-          },
-          {
-            value: 10,
-            label: '未付尾款已发货'
-          },
-          {
-            value: 11,
-            label: '已付尾款未发货'
-          },
-          {
-            value: 12,
-            label: '已付尾款已发货'
-          },
+            label: '已完成'
+          }
         ],
         rules: {
           order_id: [
@@ -1108,7 +1080,6 @@
           )
         })
       },
-
       // 关闭修改界面
       handleCancelEdit() {
         this.dialogVisibleEdit = false

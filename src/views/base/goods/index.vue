@@ -507,8 +507,20 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请选择店铺', trigger: 'blur' }
-        ]
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        goods_id: [
+          { required: true, message: '请输入编码', trigger: 'blur' }
+        ],
+        category: [
+          { required: true, message: '请选择类别', trigger: 'blur', type: 'number' }
+        ],
+        goods_attribute: [
+          { required: true, message: '请选择属性', trigger: 'blur', type: 'number' }
+        ],
+        goods_number: [
+          { required: true, message: '请输入排序', trigger: 'blur' }
+        ],
       }
     }
   },
@@ -566,13 +578,11 @@ export default {
       ).catch(
         (error) => {
           this.$notify({
-            title: '更新错误',
+            title: '创建错误',
             message: error.data,
             type: 'error',
             duration: 0
           })
-          this.handleCancelAdd()
-          this.fetchData()
         }
       )
     },
@@ -613,8 +623,6 @@ export default {
               type: 'error',
               duration: 0
             })
-            this.dialogVisibleEdit = false
-            this.fetchData()
           }
         )
       })

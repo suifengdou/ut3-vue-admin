@@ -76,9 +76,9 @@ export function setSpecialReceiptExecute(data) {
 }
 
 // 重置标记
-export function resetTagReceiptExecute(data) {
+export function createStatementReceiptExecute(data) {
   return request({
-    url: `/int/intreceipt/execute/reset_tag/`,
+    url: `/int/intreceipt/execute/create_statement/`,
     method: 'patch',
     data
   })

@@ -192,6 +192,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="失效时间"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.expiration_date }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建费用单"
         >
           <template slot-scope="scope">
@@ -460,6 +467,16 @@
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="失效时间" prop="expiration_date">
+                  <el-date-picker
+                    v-model="formEdit.expiration_date"
+                    type="datetime"
+                    placeholder="选择失效时间"
+                    default-time="9:00:00">
+                  </el-date-picker>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="客户地址" prop="address">
                   <el-input v-model="formEdit.address" placeholder="请输入客户地址" />
                 </el-form-item></el-col>
@@ -664,8 +681,8 @@ export default {
         purchase_time: [
           { required: true, message: '请输入购买时间', trigger: 'blur' }
         ],
-        goods_name: [
-          { required: true, message: '请选择货品', trigger: 'blur', type: 'number' }
+        expiration_date: [
+          { required: true, message: '请选择失效时间', trigger: 'blur' }
         ],
         quantity: [
           { required: true, message: '请输入数量', trigger: 'blur' }
@@ -1024,28 +1041,20 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    快递单号: item.track_id,
-                    快递公司: item.company.name,
-                    工单事项类型: item.category.name,
-                    初始问题信息: item.information,
-                    提交时间: item.submit_time,
-                    提交人: item.servicer,
-                    反馈间隔: item.services_interval,
-                    处理意见: item.suggestion,
-                    处理人: item.handler,
-                    处理时间: item.handle_time,
-                    处理间隔: item.handle_interval,
-                    反馈内容: item.feedback,
-                    是否理赔: item.is_losing,
-                    是否返回: item.is_return,
-                    返回单号: item.return_express_id,
-                    备注: item.memo,
-                    驳回原因: item.rejection,
+                    体验单: item.swo_order.name,
+                    服务编号: item.order_id,
+                    服务标题: item.title,
+                    用户ID: item.nickname,
+                    用户: item.customer.name,
+                    客户姓名: item.receiver,
+                    客户地址: item.address,
+                    手机: item.mobile,
+                    诉求: item.demand,
+                    失效时间: item.expiration_date,
                     工单状态: item.order_status.name,
-                    是否正向: item.is_forward,
-                    处理标签: item.process_tag.name,
-                    处理状态: item.handling_status,
-                    错误原因: item.mistake_tag,
+                    服务金额: item.cost,
+                    货品总数: item.quantity,
+                    备注: item.memo,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator

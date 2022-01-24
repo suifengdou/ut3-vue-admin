@@ -238,7 +238,7 @@
         <el-table-column
           label="标记"
           prop="sign"
-          width="169px"
+          width="115px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
@@ -531,7 +531,224 @@
       </template>
     </el-dialog>
 
+    <!--新建异常单模态窗-->
+    <el-dialog
+      title="新建异常单"
+      width="80%"
+      :visible.sync="dialogVisibleEdit"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <template>
+        <div class="handleFormEdit">
+          <el-form
+            ref="handleFormException"
+            label-width="80px"
+            size="mini"
+            :model="formEdit"
+            :rules="rules"
+          >
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>订单相关信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="PI单号" prop="order_id">
+                  <el-input v-model="formEdit.order_id" placeholder="请输入PI单号" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="经销商" prop="distributor">
+                  <template>
+                    <el-select
+                      v-model="formEdit.distributor"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择经销商"
+                      :remote-method="remoteMethodDistributor"
+                    >
+                      <el-option
+                        v-for="item in optionsDistributor"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
+                  <el-select v-model="formEdit.order_category" placeholder="请选择单据类型">
+                    <el-option
+                      v-for="item in optionsCategory"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item></el-col>
+              </el-row>
 
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="合同编号" prop="contract_id">
+                  <el-input v-model="formEdit.contract_id" placeholder="请输入合同编号" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="收款账户" prop="account">
+                  <template>
+                    <el-select
+                      v-model="formEdit.account"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择收款账户"
+                      :remote-method="remoteMethodAccount"
+                    >
+                      <el-option
+                        v-for="item in optionsAccount"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="贸易方式" prop="trade_mode">
+                  <el-select v-model="formEdit.trade_mode" placeholder="请选择贸易方式">
+                    <el-option
+                      v-for="item in optionsMode"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="定金" prop="deposit">
+                  <el-input v-model="formEdit.deposit" placeholder="请输入定金" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="16"><el-form-item label="地址" prop="address">
+                  <el-input v-model="formEdit.address" placeholder="请输入地址" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="16"><el-form-item label="备注" prop="memo">
+                  <el-input v-model="formEdit.memo" placeholder="请输入备注" />
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>货品相关信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsEdit">添加</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="success"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteDetailsEdit"
+                >删除</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteAllDetailsEdit"
+                >清空</el-button></el-col>
+                <el-col :span="10" />
+                <el-col :span="4" />
+                <el-col :span="4" />
+              </el-row>
+              <el-table
+                ref="tableEdit"
+                border
+                :data="OrderDetailsList"
+                :row-class-name="rowClassName"
+                @selection-change="handleDetailSelectionChangeEdit"
+              >
+                <el-table-column type="selection" width="30" align="center" />
+                <el-table-column label="序号" align="center" prop="xh" width="50">
+                  <template slot-scope="scope">
+                    <span>{{ OrderDetailsList[scope.row.xh-1].xh }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="名称" width="250" prop="goods_name">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="OrderDetailsList[scope.row.xh-1].goods_name"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择货品"
+                      :remote-method="remoteMethodGoods"
+                    >
+                      <el-option
+                        v-for="item in optionsGoods"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="货品数量" width="250" prop="quantity">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="含税单价" width="250" prop="price">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="币种" width="250" prop="currency">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="OrderDetailsList[scope.row.xh-1].currency"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择币种"
+                      :remote-method="remoteMethodCurrency"
+                    >
+                      <el-option
+                        v-for="item in optionsCurrency"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="货品备注" width="250" prop="memorandum">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+            <el-card class="box-card">
+              <el-row :gutter="20">
+                <el-col :span="8" :offset="16"><el-form-item size="large">
+                  <div class="btn-warpper">
+                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
+                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
+                  </div>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+          </el-form>
+        </div>
+      </template>
+    </el-dialog>
     <!--导入模态窗-->
     <el-dialog
       title="导入"
@@ -653,52 +870,24 @@
           },
           {
             value: 1,
-            label: '未付定金未排产'
+            label: '未排产'
           },
           {
             value: 2,
-            label: '未付定金已排产'
+            label: '已排产'
           },
           {
             value: 3,
-            label: '未付定金未发货'
+            label: '未发货'
           },
           {
             value: 4,
-            label: '未付定金已发货'
+            label: '已发货'
           },
           {
             value: 5,
-            label: '已付定金未排产'
-          },
-          {
-            value: 6,
-            label: '已付定金已排产'
-          },
-          {
-            value: 7,
-            label: '已付定金未发货'
-          },
-          {
-            value: 8,
-            label: '已付定金已发货'
-          },
-          {
-            value: 9,
-            label: '未付尾款未发货'
-          },
-          {
-            value: 10,
-            label: '未付尾款已发货'
-          },
-          {
-            value: 11,
-            label: '已付尾款未发货'
-          },
-          {
-            value: 12,
-            label: '已付尾款已发货'
-          },
+            label: '已完成'
+          }
         ],
         OrderDetailsList: [],
         checkedDetail: [],
@@ -755,6 +944,75 @@
         this.dialogVisibleEdit = false
         this.$refs.handleFormEdit.resetFields()
       },
+
+      // 跳出编辑对话框
+      handleAddException(values) {
+        console.log(values)
+        this.Exception = { ...values }
+        this.dialogVisibleException = true
+
+        let attrStr
+        const transFieldStr = ['sign', 'mistake_tag', 'process_tag', 'collection_status', 'order_status', 'department', 'order_category', 'trade_mode']
+        for (attrStr in transFieldStr) {
+          this.Exception[transFieldStr[attrStr]] = this.Exception[transFieldStr[attrStr]].id
+        }
+
+        this.optionsDistributor = [{ label: this.formEdit.distributor.name, value: this.formEdit.distributor.id }]
+        this.formEdit.distributor = this.formEdit.distributor.id
+        this.optionsAccount = [{ label: this.formEdit.account.name, value: this.formEdit.account.id }]
+        this.formEdit.account = this.formEdit.account.id
+        this.optionsCurrency = [{ label: this.formEdit.currency.name, value: this.formEdit.currency.id }]
+        this.formEdit.currency = this.formEdit.currency.id
+
+        this.optionsGoods = this.formEdit.goods_details.map(item => {
+          return { label: item.goods_name.name, value: item.goods_name.id }
+        })
+
+        this.ExceptionDetailsList = []
+        let goods_index
+        for (goods_index in this.formEdit.goods_details) {
+          this.formEdit.goods_details[goods_index].xh = goods_index + 1
+          this.formEdit.goods_details[goods_index].goods_name = this.formEdit.goods_details[goods_index].goods_name.id
+          this.ExceptionDetailsList.push(this.formEdit.goods_details[goods_index])
+          console.log(this.ExceptionDetailsList)
+        }
+      },
+      // 提交编辑完成的数据
+      handleSubmitException() {
+        this.$refs.handleFormEdit.validate(valid => {
+          if (!valid) {
+            return
+          }
+          console.log('在编辑')
+          this.formEdit.goods_details = this.OrderDetailsList
+          const { id, ...data } = this.formEdit
+
+          console.log(data)
+          updateIntPurchaseOrderSubmit(id, data).then(
+            () => {
+              this.dialogVisibleEdit = false
+              this.OrderDetailsList = []
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '错误详情',
+                message: error.data,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+          )
+        })
+      },
+      // 关闭修改界面
+      handleCancelException() {
+        this.dialogVisibleEdit = false
+        this.$refs.handleFormEdit.resetFields()
+        this.handleDeleteAllDetails()
+      },
+
       // 检索用户组选项
       unique(arr) {
         // 根据唯一标识no来对数组进行过滤
@@ -1380,11 +1638,11 @@
           }
         } else if (row.sign.id === 4) {
           row_style = {
-            backgroundColor: '#f05654'
+            backgroundColor: '#e17b34'
           }
         } else if (row.sign.id === 5) {
           row_style = {
-            backgroundColor: '#e17b34'
+            backgroundColor: '#40de5a'
           }
         } else if (row.sign.id === 6) {
           row_style = {

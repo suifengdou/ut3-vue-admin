@@ -73,9 +73,17 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="原始单号" prop="erp_order_id">
-                        <el-input v-model="params.erp_order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="单据状态" prop="order_status">
+                        <el-select v-model="params.order_status" placeholder="请选择单据类型">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
+
                       <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
                       </el-form-item></el-col>
@@ -93,26 +101,16 @@
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="4"><el-form-item label="省" prop="province">
-                        <el-input v-model="params.province__name" type="text" />
+                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
+                        <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="4"><el-form-item label="市" prop="city">
-                        <el-input v-model="params.city__name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4"><el-form-item label="区" prop="district">
-                        <el-input v-model="params.district__name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="4" />
-                      <el-col :span="4" />
-                    </el-row>
-                    <el-row :gutter="20">
-
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
+
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -387,11 +385,29 @@ export default {
       optionsCategory: [
         {
           value: 1,
-          label: '专票'
+          label: '质量问题'
         },
         {
           value: 2,
-          label: '普票'
+          label: '开箱即损'
+        },
+        {
+          value: 3,
+          label: '礼品赠品'
+        }
+      ],
+      optionsStatus: [
+        {
+          value: 0,
+          label: '已取消'
+        },
+        {
+          value: 1,
+          label: '未处理'
+        },
+        {
+          value: 2,
+          label: '已导入'
         }
       ],
       optionsIsDeliver: [
@@ -467,7 +483,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportManualOrderSubmit(this.params).then(
+            exportManualOrderManage(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -481,6 +497,7 @@ export default {
                     机器序列号: item.m_sn,
                     故障部位: item.broken_part,
                     故障描述: item.description,
+                    货品: JSON.stringify(item.goods_details),
                     客服: item.servicer,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
