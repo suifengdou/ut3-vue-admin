@@ -10,7 +10,7 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -39,6 +39,14 @@
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
+        </el-col>
+        <el-col :span="7" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
+              <el-button type="primary" @click="add">新增</el-button>
+            </el-tooltip>
+          </div>
+
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -198,8 +206,8 @@
         <el-table-column
           label="经销商"
           prop="distributor"
-          width="120px"
           sortable="custom"
+          width="120px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
@@ -233,24 +241,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.order_category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="标记"
-          prop="sign"
-          width="115px"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.sign.id"  @change="selectSign(scope.row)">
-              <el-option
-                v-for="item in optionsSign"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -389,9 +379,219 @@
 
       </el-table>
     </div>
+    <!--新建添加模态窗-->
+    <el-dialog
+      title="新增"
+      width="80%"
+      :visible.sync="dialogVisibleAdd"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form
+        ref="handleFormAdd"
+        label-width="88px"
+        size="mini"
+        :rules="rules"
+        :model="formAdd"
+      >
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>订单相关信息</span>
+          </div>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="PI单号" prop="order_id">
+              <el-input v-model="formAdd.order_id" placeholder="请输入PI单号" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="经销商" prop="distributor">
+              <template>
+                <el-select
+                  v-model="formAdd.distributor"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择经销商"
+                  :remote-method="remoteMethodDistributor"
+                >
+                  <el-option
+                    v-for="item in optionsDistributor"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
+              <el-select v-model="formAdd.order_category" placeholder="请选择单据类型">
+                <el-option
+                  v-for="item in optionsCategory"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item></el-col>
+          </el-row>
 
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="合同编号" prop="contract_id">
+              <el-input v-model="formAdd.contract_id" placeholder="请输入合同编号" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="收款账户" prop="account">
+              <template>
+                <el-select
+                  v-model="formAdd.account"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择收款账户"
+                  :remote-method="remoteMethodAccount"
+                >
+                  <el-option
+                    v-for="item in optionsAccount"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="贸易方式" prop="trade_mode">
+              <el-select v-model="formAdd.trade_mode" placeholder="请选择贸易方式">
+                <el-option
+                  v-for="item in optionsMode"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="定金" prop="deposit">
+              <el-input v-model="formAdd.deposit" placeholder="请输入定金" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="16"><el-form-item label="地址" prop="address">
+              <el-input v-model="formAdd.address" placeholder="请输入地址" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="16"><el-form-item label="备注" prop="memo">
+              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
+            </el-form-item></el-col>
+          </el-row>
+        </el-card>
+
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>货品相关信息</span>
+          </div>
+          <el-row :gutter="20">
+            <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="success"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteDetails"
+            >删除</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteAllDetails"
+            >清空</el-button></el-col>
+            <el-col :span="10" />
+            <el-col :span="4" />
+            <el-col :span="4" />
+          </el-row>
+          <el-table
+            ref="tableAdd"
+            border
+            :data="OrderDetailsList"
+            :row-class-name="rowClassName"
+            @selection-change="handleDetailSelectionChange"
+          >
+            <el-table-column type="selection" width="30" align="center" />
+            <el-table-column label="序号" align="center" prop="xh" width="50" />
+            <el-table-column label="名称" width="250" prop="goods_name">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="OrderDetailsList[scope.row.xh-1].goods_name"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择货品"
+                  :remote-method="remoteMethodGoods"
+                >
+                  <el-option
+                    v-for="item in optionsGoods"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="货品数量" width="250" prop="quantity">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
+              </template>
+            </el-table-column>
+            <el-table-column label="含税单价" width="250" prop="price">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
+              </template>
+            </el-table-column>
+            <el-table-column label="币种" width="250" prop="currency">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="OrderDetailsList[scope.row.xh-1].currency"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择币种"
+                  :remote-method="remoteMethodCurrency"
+                >
+                  <el-option
+                    v-for="item in optionsCurrency"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="货品备注" width="250" prop="memorandum">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-card class="box-card">
+          <el-row :gutter="20">
+            <el-col :span="8" :offset="16"><el-form-item size="large">
+              <div class="btn-warpper">
+                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
+                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
+              </div>
+            </el-form-item></el-col>
+          </el-row>
+        </el-card>
+
+      </el-form>
+    </el-dialog>
     <!--修改信息模态窗-->
-
     <el-dialog
       title="编辑"
       width="80%"
@@ -609,211 +809,6 @@
         </div>
       </template>
     </el-dialog>
-
-    <!--新建异常单模态窗-->
-
-    <el-dialog
-      title="新增异常单"
-      width="80%"
-      :visible.sync="dialogVisibleException"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormException">
-          <el-form
-            ref="handleFormException"
-            label-width="80px"
-            size="mini"
-            :model="formException"
-            :rules="rules"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>订单相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="PI单号" prop="order_id">
-                  <el-input v-model="formException.order_id" placeholder="请输入PI单号" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="单据状态" prop="order_status">
-                  <template v-if="formException.distributor != undefined">
-                    <span>{{ formException.distributor.name }}</span>
-                  </template>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
-                  <el-select v-model="formException.order_category" placeholder="请选择单据类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="合同编号" prop="contract_id">
-                  <el-input v-model="formException.contract_id" placeholder="请输入合同编号" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收款账户" prop="account">
-                  <template>
-                    <el-select
-                      v-model="formException.account"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择收款账户"
-                      :remote-method="remoteMethodAccount"
-                    >
-                      <el-option
-                        v-for="item in optionsAccount"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="贸易方式" prop="trade_mode">
-                  <el-select v-model="formException.trade_mode" placeholder="请选择贸易方式">
-                    <el-option
-                      v-for="item in optionsMode"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="定金" prop="deposit">
-                  <el-input v-model="formException.deposit" placeholder="请输入定金" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="地址" prop="address">
-                  <el-input v-model="formException.address" placeholder="请输入地址" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="备注" prop="memo">
-                  <el-input v-model="formException.memo" placeholder="请输入备注" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>货品相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsException">添加</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="success"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteDetailsException"
-                >删除</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteAllDetailsException"
-                >清空</el-button></el-col>
-                <el-col :span="10" />
-                <el-col :span="4" />
-                <el-col :span="4" />
-              </el-row>
-              <el-table
-                ref="tableException"
-                border
-                :data="OrderDetailsList"
-                :row-class-name="rowClassName"
-                @selection-change="handleDetailSelectionChangeException"
-              >
-                <el-table-column type="selection" width="30" align="center" />
-                <el-table-column label="序号" align="center" prop="xh" width="50">
-                  <template slot-scope="scope">
-                    <span>{{ OrderDetailsList[scope.row.xh-1].xh }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="名称" width="250" prop="goods_name">
-                  <template slot-scope="scope">
-                    <el-select
-                      v-model="OrderDetailsList[scope.row.xh-1].goods_name"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择货品"
-                      :remote-method="remoteMethodGoods"
-                    >
-                      <el-option
-                        v-for="item in optionsGoods"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-table-column>
-                <el-table-column label="货品数量" width="250" prop="quantity">
-                  <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="含税单价" width="250" prop="price">
-                  <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="币种" width="250" prop="currency">
-                  <template slot-scope="scope">
-                    <el-select
-                      v-model="OrderDetailsList[scope.row.xh-1].currency"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择币种"
-                      :remote-method="remoteMethodCurrency"
-                    >
-                      <el-option
-                        v-for="item in optionsCurrency"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-table-column>
-                <el-table-column label="货品备注" width="250" prop="memorandum">
-                  <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="8" :offset="16"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelException">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitException">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
     <!--导入模态窗-->
     <el-dialog
       title="导入"
@@ -856,13 +851,14 @@
 
 <script>
   import {
-    getIntPurchaseOrderCheckList,
-    updateIntPurchaseOrderCheck,
-    exportIntPurchaseOrderCheck,
-    excelImportIntPurchaseOrderCheck,
-    checkIntPurchaseOrderCheck,
-    rejectIntPurchaseOrderCheck,
-  } from '@/api/int/purchase/order/check'
+    getExceptionIPOCheckList,
+    createExceptionIPOCheck,
+    updateExceptionIPOCheck,
+    exportExceptionIPOCheck,
+    excelImportExceptionIPOCheck,
+    checkExceptionIPOCheck,
+    rejectExceptionIPOCheck,
+  } from '@/api/int/purchase/exception/check'
   import { getMyDistributorList } from '@/api/int/distributor/distributor/mydistributor'
   import { getAccountList } from '@/api/int/account/account'
   import { getCurrencyList } from '@/api/int/account/currency'
@@ -873,7 +869,7 @@
   import moment from 'moment'
   import XLSX from 'xlsx'
   export default {
-    name: 'IntPurchaseOrderCheck',
+    name: 'ExceptionIPOCheck',
     data() {
       return {
         DataList: [],
@@ -888,11 +884,11 @@
           page: 1,
           allSelectTag: 0
         },
+        dialogVisibleAdd: false,
         dialogVisibleEdit: false,
         importVisible: false,
-        dialogVisibleException: false,
+        formAdd: {},
         formEdit: {},
-        formException: {},
         importFile: {},
         optionsDistributor: [],
         optionsDepartment: [],
@@ -956,6 +952,35 @@
             label: '已完成'
           }
         ],
+        rules: {
+          order_id: [
+            { required: true, message: '请输入PI单号', trigger: 'blur' }
+          ],
+          distributor: [
+            { required: true, message: '请选择店铺', trigger: 'blur', type: 'number' }
+          ],
+          account: [
+            { required: true, message: '请选择账号', trigger: 'blur', type: 'number' }
+          ],
+          currency: [
+            { required: true, message: '请选择币种', trigger: 'blur', type: 'number' }
+          ],
+          contract_id: [
+            { required: true, message: '请输入合同编号', trigger: 'blur' }
+          ],
+          order_category: [
+            { required: true, message: '请选择类型', trigger: 'blur', type: 'number' }
+          ],
+          trade_mode: [
+            { required: true, message: '请选择贸易模式', trigger: 'blur', type: 'number' }
+          ],
+          deposit: [
+            { required: true, message: '请输入定金', trigger: 'blur' }
+          ],
+          address: [
+            { required: true, message: '请输入地址', trigger: 'blur' }
+          ],
+        },
         OrderDetailsList: [],
         checkedDetail: [],
         checkedDetailEdit: []
@@ -976,7 +1001,7 @@
             this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
           }
         }
-        getIntPurchaseOrderCheckList(this.params).then(
+        getExceptionIPOCheckList(this.params).then(
           res => {
             this.DataList = res.data.results
             this.totalNum = res.data.count
@@ -993,35 +1018,17 @@
         this.params.page = val
         this.fetchData()
       },
+
       // 跳出编辑对话框
       handleEdit(values) {
         console.log(values)
         this.formEdit = { ...values }
         this.dialogVisibleEdit = true
-        this.OrderDetailsList = []
-        let goods_index
-        for (goods_index in this.formEdit.goods_details) {
-          this.formEdit.goods_details[goods_index].xh = goods_index + 1
-          this.OrderDetailsList.push(this.formEdit.goods_details[goods_index])
-          console.log(this.OrderDetailsList)
-        }
-      },
-      // 关闭修改界面
-      handleCancelEdit() {
-        this.dialogVisibleEdit = false
-        this.$refs.handleFormEdit.resetFields()
-      },
-
-      // 跳出编辑对话框
-      handleAddException(values) {
-        console.log(values)
-        this.Exception = { ...values }
-        this.dialogVisibleException = true
 
         let attrStr
         const transFieldStr = ['sign', 'mistake_tag', 'process_tag', 'collection_status', 'order_status', 'department', 'order_category', 'trade_mode']
         for (attrStr in transFieldStr) {
-          this.Exception[transFieldStr[attrStr]] = this.Exception[transFieldStr[attrStr]].id
+          this.formEdit[transFieldStr[attrStr]] = this.formEdit[transFieldStr[attrStr]].id
         }
 
         this.optionsDistributor = [{ label: this.formEdit.distributor.name, value: this.formEdit.distributor.id }]
@@ -1035,17 +1042,17 @@
           return { label: item.goods_name.name, value: item.goods_name.id }
         })
 
-        this.ExceptionDetailsList = []
+        this.OrderDetailsList = []
         let goods_index
         for (goods_index in this.formEdit.goods_details) {
           this.formEdit.goods_details[goods_index].xh = goods_index + 1
           this.formEdit.goods_details[goods_index].goods_name = this.formEdit.goods_details[goods_index].goods_name.id
-          this.ExceptionDetailsList.push(this.formEdit.goods_details[goods_index])
-          console.log(this.ExceptionDetailsList)
+          this.OrderDetailsList.push(this.formEdit.goods_details[goods_index])
+          console.log(this.OrderDetailsList)
         }
       },
       // 提交编辑完成的数据
-      handleSubmitException() {
+      handleSubmitEdit() {
         this.$refs.handleFormEdit.validate(valid => {
           if (!valid) {
             return
@@ -1055,7 +1062,7 @@
           const { id, ...data } = this.formEdit
 
           console.log(data)
-          updateIntPurchaseOrderSubmit(id, data).then(
+          updateExceptionIPOCheck(id, data).then(
             () => {
               this.dialogVisibleEdit = false
               this.OrderDetailsList = []
@@ -1074,12 +1081,40 @@
         })
       },
       // 关闭修改界面
-      handleCancelException() {
+      handleCancelEdit() {
         this.dialogVisibleEdit = false
         this.$refs.handleFormEdit.resetFields()
         this.handleDeleteAllDetails()
       },
-
+      // 添加界面
+      add() {
+        this.dialogVisibleAdd = true
+      },
+      // 关闭添加界面
+      handleCancelAdd() {
+        this.dialogVisibleAdd = false
+        this.$refs.handleFormAdd.resetFields()
+      },
+      handleSubmitAdd() {
+        console.log(this.formAdd)
+        console.log(this.OrderDetailsList)
+        this.formAdd.goods_details = this.OrderDetailsList
+        createExceptionIPOCheck(this.formAdd).then(
+          () => {
+            this.fetchData()
+            this.handleCancelAdd()
+            this.OrderDetailsList = []
+          }
+        ).catch((error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 210,
+            duration: 0
+          })
+        })
+      },
       // 检索用户组选项
       unique(arr) {
         // 根据唯一标识no来对数组进行过滤
@@ -1101,7 +1136,7 @@
             'Content-Type': 'multipart/form-data'
           }
         }
-        excelImportIntPurchaseOrderCheck(importformData, config).then(
+        excelImportExceptionIPOCheck(importformData, config).then(
           res => {
             this.$notify({
               title: '导入结果',
@@ -1161,7 +1196,7 @@
             if (action === 'confirm') {
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
-              exportIntPurchaseOrderCheck(this.params).then(
+              exportExceptionIPOCheck(this.params).then(
                 res => {
                   res.data = res.data.map(item => {
                     return {
@@ -1240,14 +1275,14 @@
         console.log('我是全选的' + this.selectNum)
       },
       // 提交编辑完成的数据
-      selectSign(row) {
+      selectExpress(row) {
         console.log(row)
         const { id, ...details } = row
         const data = {
-          sign: details.sign.id
+          assign_express: details.assign_express.id
         }
         console.log(data, id)
-        updateIntPurchaseOrderCheck(id, data).then(
+        updateExceptionIPOCheck(id, data).then(
           () => {
             this.$notify({
               title: '修改成功',
@@ -1274,7 +1309,7 @@
       handleCheck() {
         this.tableLoading = true
         if (this.params.allSelectTag === 1) {
-          checkIntPurchaseOrderCheck(this.params).then(
+          checkExceptionIPOCheck(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1330,7 +1365,7 @@
           }
           const ids = this.multipleSelection.map(item => item.id)
           this.params.ids = ids
-          checkIntPurchaseOrderCheck(this.params).then(
+          checkExceptionIPOCheck(this.params).then(
             res => {
               if (res.data.successful !== 0) {
                 this.$notify({
@@ -1389,11 +1424,11 @@
         const h = this.$createElement
         let resultMessage, resultType
         this.$msgbox({
-          title: '驳回工单',
+          title: '取消工单',
           message: h('p', null, [
             h('h3', { style: 'color: teal' }, '特别注意：'),
             h('hr', null, ''),
-            h('span', null, '驳回单据到创建界面！'),
+            h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
             h('hr', null, '')
           ]),
           showCancelButton: true,
@@ -1405,12 +1440,12 @@
               instance.confirmButtonLoading = true
               instance.confirmButtonText = '执行中...'
               if (this.params.allSelectTag === 1) {
-                rejectIntPurchaseOrderCheck(this.params).then(
+                rejectExceptionIPOCheck(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '驳回成功',
-                        message: `驳回成功条数：${res.data.successful}`,
+                        title: '取消成功',
+                        message: `取消成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -1418,8 +1453,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '驳回失败',
-                        message: `驳回败条数：${res.data.false}`,
+                        title: '取消失败',
+                        message: `取消败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -1461,7 +1496,7 @@
                 if (typeof (this.multipleSelection) === 'undefined') {
                   this.$notify({
                     title: '错误详情',
-                    message: '未选择订单无法驳回',
+                    message: '未选择订单无法取消',
                     type: 'error',
                     offset: 70,
                     duration: 0
@@ -1472,12 +1507,12 @@
                 }
                 const ids = this.multipleSelection.map(item => item.id)
                 this.params.ids = ids
-                rejectIntPurchaseOrderCheck(this.params).then(
+                rejectExceptionIPOCheck(this.params).then(
                   res => {
                     if (res.data.successful !== 0) {
                       this.$notify({
-                        title: '驳回成功',
-                        message: `驳回成功条数：${res.data.successful}`,
+                        title: '取消成功',
+                        message: `取消成功条数：${res.data.successful}`,
                         type: 'success',
                         offset: 70,
                         duration: 3000
@@ -1485,8 +1520,8 @@
                     }
                     if (res.data.false !== 0) {
                       this.$notify({
-                        title: '驳回失败',
-                        message: `驳回败条数：${res.data.false}`,
+                        title: '取消失败',
+                        message: `取消败条数：${res.data.false}`,
                         type: 'error',
                         offset: 140,
                         duration: 0
@@ -1688,56 +1723,86 @@
       rowClassName({ row, rowIndex }) {
         row.xh = rowIndex + 1
       },
-
+      // 选中新建表单货品项
+      handleDetailSelectionChange(selection) {
+        if (selection.length > 1) {
+          this.$refs.tableAdd.clearSelection()
+          this.$refs.tableAdd.toggleRowSelection(selection.pop())
+        } else {
+          this.checkedDetail = selection
+        }
+      },
+      // 选中编辑表单货品项
+      handleDetailSelectionChangeEdit(selection) {
+        if (selection.length > 1) {
+          this.$refs.tableEdit.clearSelection()
+          this.$refs.tableEdit.toggleRowSelection(selection.pop())
+        } else {
+          this.checkedDetailEdit = selection
+        }
+      },
+      // 删除选中表单货品项
+      handleDeleteDetails() {
+        if (this.checkedDetail.length === 0) {
+          this.$alert('请先选择要删除的数据', '提示', {
+            confirmButtonText: '确定'
+          })
+        } else {
+          this.OrderDetailsList.splice(this.checkedDetail[0].xh - 1, 1)
+        }
+      },
+      // 删除选中编辑表单货品项
+      handleDeleteDetailsEdit() {
+        if (this.checkedDetailEdit.length === 0) {
+          this.$alert('请先选择要删除的数据', '提示', {
+            confirmButtonText: '确定'
+          })
+        } else {
+          this.OrderDetailsList.splice(this.checkedDetailEdit[0].xh - 1, 1)
+        }
+      },
+      // 删除全部表单货品项
+      handleDeleteAllDetails() {
+        this.OrderDetailsList = undefined
+      },
+      // 删除编辑全部表单货品项
+      handleDeleteAllDetailsEdit() {
+        this.OrderDetailsList = undefined
+      },
+      // 添加表单货品项
+      handleAddDetails() {
+        if (this.OrderDetailsList === undefined) {
+          this.OrderDetailsList = []
+        }
+        const obj = {
+          id: 'n'
+        }
+        this.OrderDetailsList.push(obj)
+      },
+      // 添加编辑表单货品项
+      handleAddDetailsEdit() {
+        if (this.OrderDetailsList === undefined) {
+          this.OrderDetailsList = []
+        }
+        const obj = {
+          id: 'n'
+        }
+        this.OrderDetailsList.push(obj)
+        console.log(this.OrderDetailsList)
+      },
       rowStyle({ row, rowIndex}) {
         let row_style = {}
         if (row.sign.id === 1) {
           row_style = {
-            backgroundColor: '#bbc8e6'
+            backgroundColor: '#db8449'
           }
         } else if (row.sign.id === 2) {
           row_style = {
-            backgroundColor: '#ffec47'
+            backgroundColor: '#e49e61'
           }
         } else if (row.sign.id === 3) {
           row_style = {
-            backgroundColor: '#e9bb1d'
-          }
-        } else if (row.sign.id === 4) {
-          row_style = {
-            backgroundColor: '#e17b34'
-          }
-        } else if (row.sign.id === 5) {
-          row_style = {
-            backgroundColor: '#40de5a'
-          }
-        } else if (row.sign.id === 6) {
-          row_style = {
-            backgroundColor: '#bbc8e6'
-          }
-        } else if (row.sign.id === 7) {
-          row_style = {
-            backgroundColor: '#ef7a82'
-          }
-        } else if (row.sign.id === 8) {
-          row_style = {
-            backgroundColor: '#f05654'
-          }
-        } else if (row.sign.id === 9) {
-          row_style = {
-            backgroundColor: '#bbc8e6'
-          }
-        } else if (row.sign.id === 10) {
-          row_style = {
-            backgroundColor: '#f05654'
-          }
-        } else if (row.sign.id === 11) {
-          row_style = {
-            backgroundColor: '#e17b34'
-          }
-        } else if (row.sign.id === 12) {
-          row_style = {
-            backgroundColor: '#40de5a'
+            backgroundColor: '#f39800'
           }
         }
         return row_style

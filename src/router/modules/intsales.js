@@ -163,6 +163,26 @@ const intSalesChannelRouter = {
           ]
         },
         {
+          path: 'exception',
+          component: () => import('@/views/int/purchase/exception'),
+          name: '异常单',
+          meta: { title: '异常单', roles: ['AllPrivileges']},
+          children: [
+            {
+              path: 'check',
+              component: () => import('@/views/int/purchase/exception/check'),
+              name: '异常单处理',
+              meta: { title: '异常单处理', roles: ['AllPrivileges']},
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/int/account/account'),
+              name: '异常单管理',
+              meta: { title: '异常单管理', roles: ['AllPrivileges']},
+            }
+          ]
+        },
+        {
           path: 'goods',
           component: () => import('@/views/int/account/account'),
           name: '采购货品明细',
