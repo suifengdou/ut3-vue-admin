@@ -739,11 +739,37 @@
         data['statements'] = this.OrderDetailsList
         console.log(data)
         createStatementReceiptExecute(data).then(
-          () => {
-            this.dialogVisibleEdit = false
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '创建成功',
+                message: `创建成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '创建失败',
+                message: `创建失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '失败错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
             this.fetchData()
+            this.handleCancelEdit()
           }).catch(
           (error) => {
+            console.log(error)
             this.$notify({
               title: '错误详情',
               message: error.data,

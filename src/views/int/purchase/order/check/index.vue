@@ -414,91 +414,78 @@
               </div>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="PI单号" prop="order_id">
-                  <el-input v-model="formEdit.order_id" placeholder="请输入PI单号" />
+                  <span>{{ formEdit.order_id }}</span>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="经销商" prop="distributor">
-                  <template>
-                    <el-select
-                      v-model="formEdit.distributor"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择经销商"
-                      :remote-method="remoteMethodDistributor"
-                    >
-                      <el-option
-                        v-for="item in optionsDistributor"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                  <template v-if="formEdit.distributor != undefined">
+                    <span>{{ formEdit.distributor.name }}</span>
                   </template>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
-                  <el-select v-model="formEdit.order_category" placeholder="请选择单据类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                  <template v-if="formEdit.order_category != undefined">
+                    <span>{{ formEdit.order_category.name }}</span>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="收款账户" prop="account">
+                  <template v-if="formEdit.account != undefined">
+                    <span>{{ formEdit.account.name }}</span>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="币种" prop="currency">
+                  <template v-if="formEdit.currency != undefined">
+                    <span>{{ formEdit.currency.name }}</span>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="贸易方式" prop="trade_mode">
+                  <template v-if="formEdit.trade_mode != undefined">
+                    <span>{{ formEdit.trade_mode.name }}</span>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="收款状态" prop="collection_status">
+                  <template v-if="formEdit.collection_status != undefined">
+                    <span>{{ formEdit.collection_status.name }}</span>
+                  </template>
                 </el-form-item></el-col>
               </el-row>
 
               <el-row :gutter="20">
                 <el-col :span="8"><el-form-item label="合同编号" prop="contract_id">
-                  <el-input v-model="formEdit.contract_id" placeholder="请输入合同编号" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="收款账户" prop="account">
-                  <template>
-                    <el-select
-                      v-model="formEdit.account"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择收款账户"
-                      :remote-method="remoteMethodAccount"
-                    >
-                      <el-option
-                        v-for="item in optionsAccount"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
-                  </template>
-                </el-form-item></el-col>
-              </el-row>
-
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="贸易方式" prop="trade_mode">
-                  <el-select v-model="formEdit.trade_mode" placeholder="请选择贸易方式">
-                    <el-option
-                      v-for="item in optionsMode"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                  <span>{{ formEdit.contract_id }}</span>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="定金" prop="deposit">
-                  <el-input v-model="formEdit.deposit" placeholder="请输入定金" />
+                  <span>{{ formEdit.deposit }}</span>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="采购单总金额" prop="amount">
+                  <span>{{ formEdit.amount }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="实收总金额" prop="actual_amount">
+                  <span>{{ formEdit.actual_amount }}</span>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="销减总金额" prop="virtual_amount">
+                  <span>{{ formEdit.virtual_amount }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="货品总数" prop="quantity">
+                  <span>{{ formEdit.quantity }}</span>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="地址" prop="address">
-                  <el-input v-model="formEdit.address" placeholder="请输入地址" />
+                  <span>{{ formEdit.address }}</span>
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="16"><el-form-item label="备注" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入备注" />
+                  <span>{{ formEdit.memo }}</span>
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -507,90 +494,35 @@
               <div slot="header" class="clearfix">
                 <span>货品相关信息</span>
               </div>
-              <el-row :gutter="20">
-                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsEdit">添加</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="success"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteDetailsEdit"
-                >删除</el-button></el-col>
-                <el-col :span="2"><el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  size="mini"
-                  @click="handleDeleteAllDetailsEdit"
-                >清空</el-button></el-col>
-                <el-col :span="10" />
-                <el-col :span="4" />
-                <el-col :span="4" />
-              </el-row>
               <el-table
                 ref="tableEdit"
                 border
                 :data="OrderDetailsList"
                 :row-class-name="rowClassName"
-                @selection-change="handleDetailSelectionChangeEdit"
               >
-                <el-table-column type="selection" width="30" align="center" />
                 <el-table-column label="序号" align="center" prop="xh" width="50">
                   <template slot-scope="scope">
                     <span>{{ OrderDetailsList[scope.row.xh-1].xh }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="名称" width="250" prop="goods_name">
-                  <template slot-scope="scope">
-                    <el-select
-                      v-model="OrderDetailsList[scope.row.xh-1].goods_name"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择货品"
-                      :remote-method="remoteMethodGoods"
-                    >
-                      <el-option
-                        v-for="item in optionsGoods"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                  <template slot-scope="scope" v-if="OrderDetailsList[scope.row.xh-1].goods_name != undefined">
+                    <span>{{ OrderDetailsList[scope.row.xh-1].goods_name.name }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="货品数量" width="250" prop="quantity">
                   <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
+                    <span>{{ OrderDetailsList[scope.row.xh-1].quantity }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="含税单价" width="250" prop="price">
                   <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="币种" width="250" prop="currency">
-                  <template slot-scope="scope">
-                    <el-select
-                      v-model="OrderDetailsList[scope.row.xh-1].currency"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请搜索并选择币种"
-                      :remote-method="remoteMethodCurrency"
-                    >
-                      <el-option
-                        v-for="item in optionsCurrency"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                    <span>{{ OrderDetailsList[scope.row.xh-1].price }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="货品备注" width="250" prop="memorandum">
                   <template slot-scope="scope">
-                    <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
+                   <span>{{ OrderDetailsList[scope.row.xh-1].memorandum }}</span>
                   </template>
                 </el-table-column>
               </el-table>
@@ -600,7 +532,6 @@
                 <el-col :span="8" :offset="16"><el-form-item size="large">
                   <div class="btn-warpper">
                     <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
                   </div>
                 </el-form-item></el-col>
               </el-row>
@@ -638,20 +569,15 @@
                 </el-form-item></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="单据状态" prop="order_status">
+                <el-col :span="8"><el-form-item label="经销商" prop="distributor">
                   <template v-if="formException.distributor != undefined">
                     <span>{{ formException.distributor.name }}</span>
                   </template>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="单据类型" prop="order_category">
-                  <el-select v-model="formException.order_category" placeholder="请选择单据类型">
-                    <el-option
-                      v-for="item in optionsCategory"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                  <template v-if="formException.distriorder_categorybutor != undefined">
+                    <span>{{ formException.order_category.name }}</span>
+                  </template>
                 </el-form-item></el-col>
               </el-row>
 
