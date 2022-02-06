@@ -2,21 +2,24 @@ import request from '@/utils/request'
 
 // 原始发票申请单（外埠）操作API
 // 获取列表
-export function getExceptionIPOManageList(params) {
+export function getIntPurchaseOrderAllManageList(params) {
   return request({
-    url: '/int/exceptionipo/manage/',
+    url: '/int/intpurchase/allmanage/',
     method: 'get',
     params
   })
 }
 
-
 // 导出工单
-export function exportExceptionIPOManage(data) {
+export function exportIntPurchaseOrderAllManage(data) {
   return request({
-    url: `/int/exceptionipo/manage/export/`,
+    url: `/int/intpurchase/allmanage/export/`,
     method: 'patch',
     data
   })
 }
+
+
+
+
 

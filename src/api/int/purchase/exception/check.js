@@ -66,5 +66,21 @@ export function rejectExceptionIPOCheck(data) {
   })
 }
 
+// 设置完成工单
+export function setEndExceptionIPOCheck(data) {
+  return request({
+    url: `/int/exceptionipo/check/set_end/`,
+    method: 'patch',
+    data
+  })
+}
 
+// 重置标记
+export function resetExceptionIPOCheck(data) {
+  return request({
+    url: `/int/exceptionipo/check/reset_tag/`,
+    method: 'patch',
+    data
+  })
+}
 
