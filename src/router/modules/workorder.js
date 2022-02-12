@@ -309,6 +309,18 @@ const workOrderRouter = {
               meta: { title: '待执行管理', icon: 'workorder', roles: ['satisfaction.view_handler_satisfactionworkorder', 'AllPrivileges'] }
             },
             {
+              path: 'check',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/check'),
+              name: '待审核管理',
+              meta: { title: '待审核管理', icon: 'workorder', roles: ['satisfaction.view_handler_satisfactionworkorder', 'AllPrivileges'] }
+            },
+            {
+              path: 'confirm',
+              component: () => import('@/views/workorder/satisfaction/satisfaction/confirm'),
+              name: '待确认管理',
+              meta: { title: '待确认管理', icon: 'workorder', roles: ['satisfaction.view_satisfactionworkorder', 'AllPrivileges'] }
+            },
+            {
               path: 'manage',
               component: () => import('@/views/workorder/satisfaction/satisfaction/manage'),
               name: '体验单管理',

@@ -182,16 +182,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="付款账户"
-          prop="payment_account"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.payment_account }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="付款账户ID"
           prop="payment_account_id"
           sortable="custom"

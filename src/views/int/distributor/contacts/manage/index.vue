@@ -331,7 +331,7 @@
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].content" type="text" />
               </template>
             </el-table-column>
-            <el-table-column label="货品备注" width="250" prop="memo">
+            <el-table-column label="备注" width="250" prop="memo">
               <template slot-scope="scope">
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
               </template>
@@ -473,7 +473,7 @@
                     <el-input v-model="OrderDetailsList[scope.row.xh-1].content" type="text" />
                   </template>
                 </el-table-column>
-                <el-table-column label="货品备注" width="250" prop="memo">
+                <el-table-column label="备注" width="250" prop="memo">
                   <template slot-scope="scope">
                     <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
                   </template>

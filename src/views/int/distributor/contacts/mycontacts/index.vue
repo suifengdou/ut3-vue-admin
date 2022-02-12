@@ -331,7 +331,7 @@
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].content" type="text" />
               </template>
             </el-table-column>
-            <el-table-column label="货品备注" width="250" prop="memo">
+            <el-table-column label="备注" width="250" prop="memo">
               <template slot-scope="scope">
                 <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
               </template>
@@ -473,7 +473,7 @@
                     <el-input v-model="OrderDetailsList[scope.row.xh-1].content" type="text" />
                   </template>
                 </el-table-column>
-                <el-table-column label="货品备注" width="250" prop="memo">
+                <el-table-column label="备注" width="250" prop="memo">
                   <template slot-scope="scope">
                     <el-input v-model="OrderDetailsList[scope.row.xh-1].memorandum" type="text" />
                   </template>
@@ -512,7 +512,7 @@
     exportMyContacts,
     excelImportMyContacts,
   } from '@/api/int/distributor/contacts/mycontacts'
-  import { getIntDistributorList } from '@/api/int/distributor/distributor/manage'
+  import { getMyDistributorList } from '@/api/int/distributor/distributor/mydistributor'
   import { getCompanyList } from '@/api/base/company'
   import { getGoodsList } from '@/api/base/goods'
   import { getNationalityList } from '@/api/utils/geography/nationality'
@@ -760,7 +760,7 @@
             // console.log("我是真正的开始检索啦")
             const paramsSearch = {}
             paramsSearch.name = query
-            getIntDistributorList(paramsSearch).then(
+            getMyDistributorList(paramsSearch).then(
               res => {
                 this.optionsDistributor = res.data.results.map(item => {
                   return { label: item.name, value: item.id }

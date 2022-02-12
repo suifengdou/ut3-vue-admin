@@ -157,6 +157,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
@@ -837,6 +838,23 @@ export default {
           }
         }
       }
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.cs_level.id === 1) {
+        row_style = {
+          backgroundColor: 'gold'
+        }
+      } else if (row.cs_level.id === 2) {
+        row_style = {
+          backgroundColor: 'yellowgreen'
+        }
+      } else if (row.cs_level.id === 3) {
+        row_style = {
+          backgroundColor: 'lightpink'
+        }
+      }
+      return row_style
     },
     resetParams() {
       this.params = {

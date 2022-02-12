@@ -67,7 +67,7 @@ const intSalesChannelRouter = {
       path: 'intaccount',
       component: () => import('@/views/int/account'), // Parent router-view
       name: '国际账户',
-      meta: { title: '国际账户', roles: ['AllPrivileges', 'intpurchase.view_handler_intpurchaseorder'] },
+      meta: { title: '国际账户', roles: ['AllPrivileges', 'intpurchase.view_handler_intpurchaseorder', 'intpurchase.view_user_intpurchaseorder'] },
       redirect: 'noRedirect',
       children: [
         {

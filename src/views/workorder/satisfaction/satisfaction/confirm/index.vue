@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCreateService">创建服务</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -187,7 +186,7 @@
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+              <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -203,6 +202,64 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="申诉理由"
+          prop="appeal"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.appeal }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="终审内容"
+          prop="judgment"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.judgment }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否解决"
+          prop="is_solved"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_solved"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否超预期"
+          prop="is_beaten"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_beaten"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否满意"
+          prop="is_satisfied"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_satisfied"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
           label="原始单标题"
           prop="title"
           sortable="custom"
@@ -210,26 +267,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -259,34 +296,10 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="进度"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.stage.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="下次预约时间"
-          prop="appointment"
-          sortable="custom"
-          width="108px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.appointment }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="进度查看"
         >
           <template slot-scope="scope">
             <el-button type="danger" size="mini" @click="handleProgressView(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="进度新增"
-        >
-          <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="addProgress(scope.row)">新增</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -314,7 +327,7 @@
               v-model="scope.row.is_friend"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              @change="handleEditBoolean(scope.row)"
+              disabled
             />
           </template>
 
@@ -426,261 +439,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增"
-      width="80%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAddView"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="workorder"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>工单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="6"><el-form-item label="工单标题" prop="title">
-              <span>{{workorder.title}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="用户ID" prop="stage">
-              <span>{{workorder.nickname}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="微信ID" prop="cs_wechat">
-              <span>{{workorder.cs_wechat}}</span>
-            </el-form-item></el-col>
-
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="6"><el-form-item label="诉求" prop="demand">
-              <span>{{workorder.demand}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="手机" prop="mobile">
-              <span>{{workorder.mobile}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="专属客服" prop="specialist">
-              <div v-if="workorder.specialist != undefined">
-                <span>{{workorder.specialist.name}}</span>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>进度相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="进度标题" prop="title">
-              <el-input v-model="formAdd.title" placeholder="请输入进度标题" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="进度标签" prop="stage">
-              <el-select v-model="formAdd.stage" placeholder="请选择进度标签">
-                <el-option
-                  v-for="item in optionsStage"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="动作" prop="action">
-              <el-input v-model="formAdd.action" placeholder="请输入动作" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="下次预约" prop="appointment">
-              <el-date-picker
-                v-model="formAdd.appointment"
-                type="datetime"
-                placeholder="选择日期时间"
-                default-time="9:00:00">
-              </el-date-picker>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="内容" prop="content">
-              <el-input type="textarea" :rows="7" v-model="formAdd.content" placeholder="请输入内容" />
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="16"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAddView"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="workorder"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>工单相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="6"><el-form-item label="工单标题" prop="title">
-              <span>{{workorder.title}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="用户ID" prop="stage">
-              <span>{{workorder.nickname}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="微信ID" prop="cs_wechat">
-              <span>{{workorder.cs_wechat}}</span>
-            </el-form-item></el-col>
-
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="6"><el-form-item label="诉求" prop="demand">
-              <span>{{workorder.demand}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="手机" prop="mobile">
-              <span>{{workorder.mobile}}</span>
-            </el-form-item></el-col>
-            <el-col :span="6"><el-form-item label="专属客服" prop="specialist">
-              <span>{{workorder.specialist}}</span>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rules"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>进度相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="进度标题" prop="title">
-                  <el-input v-model="formEdit.title" placeholder="请输入进度标题" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="进度标签" prop="stage">
-                  <el-select v-model="formEdit.stage" placeholder="请选择进度标签">
-                    <el-option
-                      v-for="item in optionsStage"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="动作" prop="action">
-                  <el-input v-model="formEdit.action" placeholder="请输入动作" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="下次预约" prop="appointment">
-                  <el-date-picker
-                    v-model="formEdit.appointment"
-                    type="datetime"
-                    placeholder="选择日期时间"
-                    default-time="9:00:00">
-                  </el-date-picker>
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="内容" prop="content">
-                  <el-input type="textarea" :rows="7" v-model="formEdit.content" placeholder="请输入内容" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="16"><el-form-item label="备注" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入备注" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
-    <!--导入图片模态窗-->
-    <el-dialog
-      title="导入"
-      :visible.sync="importVisible"
-      width="33%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form ref="importForm" label-width="10%" :data="importFiles">
-        <div>
-          <h3>特别注意</h3>
-          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
-        </div>
-        <hr>
-        <el-form-item label="文件">
-          <input ref="photofiles" type="file" multiple="multiple" @change="getFile($event)">
-        </el-form-item>
-        <hr>
-        <el-row :gutter="30">
-          <el-col :span="12" :offset="6">
-            <el-form-item>
-              <el-button id="importButton" type="primary" @click="importPhotoes">导入文件</el-button>
-              <el-button type="error" @click="closeImport">取消</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-      </el-form>
-
-    </el-dialog>
     <!--图片查看模态窗-->
     <el-dialog
       title="文档查看"
@@ -727,13 +485,6 @@
                 <el-link :href="scope.row.url" target="_blank">{{ scope.row.name }}</el-link>
               </div>
 
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-          >
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="handleDeleteFiles(scope.row)">删除</el-button>
             </template>
           </el-table-column>
 
@@ -846,24 +597,10 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="文档上传"
-          >
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="handlePhotoUpload(scope.row)">上传</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column
             label="文档查看"
           >
             <template slot-scope="scope">
               <el-button type="danger" size="mini" @click="handleFileView(scope.row)">查看</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-          >
-            <template slot-scope="scope">
-              <el-button type="danger" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
 
@@ -884,16 +621,16 @@
 
 <script>
 import {
-  getWorkOrderExecute,
-  createWorkOrderExecute,
-  updateWorkOrderExecute,
-  exportWorkOrderExecute,
-  excelImportWorkOrderExecute,
-  photoImportWorkOrderExecute,
-  checkWorkOrderExecute,
-  createServiceWorkOrderExecute,
-  rejectWorkOrderExecute,
-} from '@/api/wop/satisfaction/satisfaction/execute'
+  getWorkOrderConfirmList,
+  createWorkOrderConfirm,
+  updateWorkOrderConfirm,
+  exportWorkOrderConfirm,
+  excelImportWorkOrderConfirm,
+  photoImportWorkOrderConfirm,
+  checkWorkOrderConfirm,
+  createServiceWorkOrderConfirm,
+  rejectWorkOrderConfirm,
+} from '@/api/wop/satisfaction/satisfaction/confirm'
 import {
   createWorkOrderCreate,
   updateWorkOrderCreate
@@ -991,7 +728,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getWorkOrderExecute(this.params).then(
+      getWorkOrderConfirmList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -1013,169 +750,6 @@ export default {
       this.fetchData()
     },
 
-    // 跳出编辑对话框
-    handleEdit(row) {
-      this.workorder = row
-      this.formEdit = { ...row }
-      this.dialogVisibleEdit = true
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      this.$refs.handleFormEdit.validate(valid => {
-        if (!valid) {
-          return
-        }
-        const { id, ...data } = this.formEdit
-        updateWorkOrderExecute(id, data).then(
-          () => {
-            this.$notify({
-              title: '更新成功',
-              type: 'success',
-              offset: 70,
-              duration: 3000
-            })
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 70,
-              duration: 0
-            })
-            this.dialogVisibleEdit = false
-            this.fetchData()
-          }
-        )
-      })
-    },
-
-    // 关闭修改界面
-    handleCancelEdit() {
-      this.dialogVisibleEdit = false
-      this.$refs.handleFormEdit.resetFields()
-    },
-    // 添加界面
-    addProgress(row) {
-      this.dialogVisibleAdd = true
-      this.workorder = row
-      console.log(this.workorder)
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.workorder = ''
-      this.$refs.handleFormAdd.resetFields()
-      this.$refs.handleFormAddView.resetFields()
-    },
-    // 创建进程单
-    handleSubmitAdd() {
-      let id = this.workorder.id
-      const data = this.formAdd
-      data.order = id
-      console.log(this.formAdd)
-      createWorkOrderCreate(this.formAdd).then(
-        () => {
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        console.log(res)
-        this.$notify({
-          title: '错误详情',
-          message: res.data,
-          type: 'error',
-          offset: 70,
-          duration: 0
-        })
-      })
-    },
-    // 图片上传模块
-    handlePhotoUpload(userValue) {
-      this.photoData.id = userValue.id
-      this.importVisible = true
-
-    },
-    getFile(event) {
-      let fileSize = 0
-      for (var i = 0; i < event.target.files.length; i++) {
-        let file = event.target.files[i]
-        let suffix_name = file.name.substring(file.name.indexOf('.'))
-        console.log(suffix_name)
-        fileSize = file.size / 1048576
-        console.log(fileSize)
-        if (fileSize > this.$store.state.user.uploadSize) {
-          this.$notify({
-            title: '错误详情',
-            message: '文件最大20M',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.$refs.photofiles.type = 'text'
-          this.$refs.photofiles.value = ''
-          this.$refs.photofiles.type = 'file'
-          this.importFiles = []
-          return false
-        }
-        this.importFiles.push(file)
-      }
-    },
-    importPhotoes() {
-      let obj = document.getElementById('importButton')
-      obj.innerHTML = '正在导入......'
-      const importformData = new FormData()
-      for (let i = 0; i < this.importFiles.length; i++) {
-        importformData.append('files', this.importFiles[i])
-      }
-      importformData.append('id', this.photoData.id)
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      this.tableLoading = true
-      photoImportWorkOrderExecute(importformData, config).then(
-        res => {
-          this.$notify({
-            title: '导入结果',
-            message: res.data,
-            type: 'success',
-            duration: 0
-          })
-          this.$refs.photofiles.type = 'text'
-          this.$refs.photofiles.value = ''
-          this.$refs.photofiles.type = 'file'
-          this.fetchData()
-          this.importVisible = false
-          this.progressViewVisible = false
-          obj.innerHTML = '导入文件'
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '导入错误',
-            message: error.data,
-            type: 'error',
-            duration: 0
-          })
-          this.$refs.photofiles.type = 'text'
-          this.$refs.photofiles.value = ''
-          this.$refs.photofiles.type = 'file'
-          this.fetchData()
-          this.importVisible = false
-          this.progressViewVisible = false
-          obj.innerHTML = '导入文件'
-        }
-      )
-    },
-    closeImport() {
-      this.$refs.photofiles.type = 'text'
-      this.$refs.photofiles.value = ''
-      this.$refs.photofiles.type = 'file'
-      this.importVisible = false
-    },
     // 查看进度文档
     handleFileView(userValue) {
       console.log(userValue)
@@ -1187,70 +761,6 @@ export default {
       console.log(userValue)
       this.progressViewVisible = true
       this.progressDetails = userValue.progress_details
-    },
-    // 删除图片
-    handleDeleteFiles(row) {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '删除文档',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '删除文档无法找回！！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (instance.confirmButtonLoading = true) {
-              deleteSWOPFiles(row.id).then(
-                (res) => {
-                  this.$notify({
-                    title: '删除成功',
-                    type: 'success',
-                    offset: 70,
-                    duration: 3000
-                  })
-                  this.photoViewVisible = false
-                  done()
-                  this.fetchData()
-                }).catch(
-                (error) => {
-                  this.$notify({
-                    title: '错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 70,
-                    duration: 0
-                  })
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        (error) => {
-          this.$notify({
-            title: '异常错误详情',
-            message: error.data,
-            type: 'error',
-            offset: 210,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
     },
     // 导出
     exportExcel() {
@@ -1273,7 +783,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportWorkOrderExecute(this.params).then(
+            exportWorkOrderConfirm(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -1358,7 +868,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkWorkOrderExecute(this.params).then(
+        checkWorkOrderConfirm(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1413,7 +923,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkWorkOrderExecute(this.params).then(
+        checkWorkOrderConfirm(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1428,111 +938,6 @@ export default {
               this.$notify({
                 title: '审核失败',
                 message: `审核失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          }).catch(
-          (error) => {
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      }
-    },
-    handleCreateService() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        createServiceWorkOrderExecute(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '创建成功',
-                message: `创建成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '创建失败',
-                message: `创建失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          }).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        createServiceWorkOrderExecute(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '创建成功',
-                message: `创建成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '创建失败',
-                message: `创建失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1585,7 +990,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectWorkOrderExecute(this.params).then(
+              rejectWorkOrderConfirm(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1645,7 +1050,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectWorkOrderExecute(this.params).then(
+              rejectWorkOrderConfirm(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1780,46 +1185,17 @@ export default {
       }
     },
     // 编辑丢件返回信息
-    handleEditBoolean(row) {
-      let id = row.id
-      const data = {
-        is_friend: row.is_friend
-      }
-      updateWorkOrderExecute(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 70,
-            duration: 3000
-          })
-          this.fetchData()
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${error.data}`,
-            type: 'success',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
-    },
     handelDoubleClick(row, column, cell, event) {
-      if (column.property === 'cs_wechat') {
-        this.handleCSWechat(row)
-      } else if (column.property === 'feeling_index') {
-        this.handleFeelingIndex(row)
+      if (column.property === 'appeal') {
+        this.handleAppeal(row)
       }
     },
-    handleCSWechat(row) {
-      this.$prompt('请输入客户微信', '添加客户微信', {
+    handleAppeal(row) {
+      this.$prompt('请输入申诉理由', '添加申诉理由', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        inputValue: row.cs_wechat,
+        inputValue: row.appeal,
         inputErrorMessage: '输入不能为空',
         inputValidator: (value) => {
           if(!value) {
@@ -1830,11 +1206,12 @@ export default {
         ({ value }) => {
           let CurrentTimeStamp = new Date()
           let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
-            cs_wechat: value
+            appeal: value
           }
-          updateWorkOrderExecute(id, data).then(
+          updateWorkOrderConfirm(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
@@ -1867,122 +1244,20 @@ export default {
           this.fetchData()
         })
     },
-    handleFeelingIndex(row) {
-      this.$prompt('请输入体验指数', '体验指数', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        inputValue: row.feeling_index,
-        inputErrorMessage: '输入不能为空',
-        inputValidator: (value) => {
-          if(!value) {
-            return '输入不能为空';
-          }
-        }
-      }).then(
-        ({ value }) => {
-          let id = row.id
-          let data = {
-            feeling_index: value
-          }
-          updateWorkOrderExecute(id, data).then(
-            () => {
-              this.$notify({
-                title: '修改成功',
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-              this.fetchData()
-            }).catch(
-            (error) => {
-              console.log(error)
-              this.$notify({
-                title: '修改失败',
-                message: `修改失败：${JSON.stringify(error.data)}`,
-                type: 'error',
-                offset: 70,
-                duration: 0
-              })
-              this.fetchData()
-            }
-          )
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${JSON.stringify(error.data)}`,
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        })
-    },
-    // 提交编辑完成的数据
-    confirmProcess(row) {
-      console.log(row)
-      const { id, ...details } = row
-      const data = {
-        process_tag: details.process_tag.id
-      }
-      console.log(data, id)
-      updateWorkOrderExecute(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 3000
-          })
-          this.fetchData()
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改出错',
-            message: error.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
 
-    },
     rowStyle({ row, rowIndex}) {
       let row_style = {}
-      if (row.stage.id === 1) {
+      if (row.cs_level.id === 1) {
         row_style = {
-          backgroundColor: 'lightcyan'
+          backgroundColor: 'gold'
         }
-      } else if (row.stage.id === 2) {
+      } else if (row.cs_level.id === 2) {
         row_style = {
-          backgroundColor: 'lemonchiffon'
+          backgroundColor: 'yellowgreen'
         }
-      } else if (row.stage.id === 3) {
-        row_style = {
-          backgroundColor: 'thistle'
-        }
-      } else if (row.stage.id === 4) {
-        row_style = {
-          backgroundColor: 'lavender'
-        }
-      } else if (row.stage.id === 5) {
-        row_style = {
-          backgroundColor: 'darkorange'
-        }
-      } else if (row.stage.id === 6) {
-        row_style = {
-          backgroundColor: 'lightcoral'
-        }
-      } else if (row.stage.id === 7) {
+      } else if (row.cs_level.id === 3) {
         row_style = {
           backgroundColor: 'lightpink'
-        }
-      } else if (row.stage.id === 8) {
-        row_style = {
-          backgroundColor: 'palegreen'
         }
       }
       return row_style

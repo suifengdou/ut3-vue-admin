@@ -187,7 +187,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="PI单号"
+          label="异常单单号"
           prop="order_id"
           width="120px"
           sortable="custom"
