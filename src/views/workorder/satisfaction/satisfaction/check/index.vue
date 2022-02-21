@@ -10,7 +10,6 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -245,6 +244,22 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.demand }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="申诉理由"
+          prop="appeal"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.appeal }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="终审内容"
+          prop="judgment"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.judgment }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -618,11 +633,7 @@ import {
   createWorkOrderCheck,
   updateWorkOrderCheck,
   exportWorkOrderCheck,
-  excelImportWorkOrderCheck,
-  photoImportWorkOrderCheck,
   checkWorkOrderCheck,
-  createServiceWorkOrderCheck,
-  rejectWorkOrderCheck,
 } from '@/api/wop/satisfaction/satisfaction/check'
 import {
   createWorkOrderCreate,
@@ -1033,150 +1044,6 @@ export default {
         )
       }
     },
-    handleReject() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '驳回工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '驳回工单到原始体验工单！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectWorkOrderCheck(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }).catch(
-                (error) => {
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法取消',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectWorkOrderCheck(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 3000
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }).catch(
-                (error) => {
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        (error) => {
-          this.$notify({
-            title: '异常错误详情',
-            message: error.data,
-            type: 'error',
-            offset: 210,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
-    },
     // 货品搜索
     remoteMethodGoods(query) {
       if (query !== '') {
@@ -1333,18 +1200,16 @@ export default {
     },
 
     handelDoubleClick(row, column, cell, event) {
-      if (column.property === 'cs_wechat') {
-        this.handleCSWechat(row)
-      } else if (column.property === 'feeling_index') {
-        this.handleFeelingIndex(row)
+      if (column.property === 'judgment') {
+        this.handleJudgment(row)
       }
     },
-    handleCSWechat(row) {
-      this.$prompt('请输入客户微信', '添加客户微信', {
+    handleJudgment(row) {
+      this.$prompt('请输入终审内容', '添加终审内容', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        inputValue: row.cs_wechat,
+        inputValue: row.judgment,
         inputErrorMessage: '输入不能为空',
         inputValidator: (value) => {
           if(!value) {
@@ -1355,11 +1220,12 @@ export default {
         ({ value }) => {
           let CurrentTimeStamp = new Date()
           let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
-            cs_wechat: value
+            judgment: value
           }
-          updateWorkOrderMyself(id, data).then(
+          updateWorkOrderCheck(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',
@@ -1392,89 +1258,7 @@ export default {
           this.fetchData()
         })
     },
-    handleFeelingIndex(row) {
-      this.$prompt('请输入体验指数', '体验指数', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        inputValue: row.cs_wechat,
-        inputErrorMessage: '输入不能为空',
-        inputValidator: (value) => {
-          if(!value) {
-            return '输入不能为空';
-          }
-        }
-      }).then(
-        ({ value }) => {
-          let id = row.id
-          let data = {
-            feeling_index: value
-          }
-          updateWorkOrderMyself(id, data).then(
-            () => {
-              this.$notify({
-                title: '修改成功',
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-              this.fetchData()
-            }).catch(
-            (error) => {
-              console.log(error)
-              this.$notify({
-                title: '修改失败',
-                message: `修改失败：${JSON.stringify(error.data)}`,
-                type: 'error',
-                offset: 70,
-                duration: 0
-              })
-              this.fetchData()
-            }
-          )
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${JSON.stringify(error.data)}`,
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        })
-    },
     // 提交编辑完成的数据
-    confirmProcess(row) {
-      console.log(row)
-      const { id, ...details } = row
-      const data = {
-        process_tag: details.process_tag.id
-      }
-      console.log(data, id)
-      updateWorkOrderHandle(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 3000
-          })
-          this.fetchData()
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改出错',
-            message: error.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
-
-    },
     rowStyle({ row, rowIndex}) {
       let row_style = {}
       if (row.cs_level.id === 1) {

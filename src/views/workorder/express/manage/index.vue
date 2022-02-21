@@ -250,6 +250,20 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="是否正向"
+          prop="is_forward"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_forward"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
           label="事项类型"
           prop="category"
           sortable="custom"
@@ -417,20 +431,7 @@
             <span>{{ scope.row.handle_interval }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="是否正向"
-          prop="is_forward"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_forward"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
-          </template>
 
-        </el-table-column>
         <el-table-column
           label="处理状态"
           prop="handling_status"

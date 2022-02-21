@@ -39,24 +39,6 @@ export function exportWorkOrderCheck(data) {
   })
 }
 
-// 导入工单
-export function excelImportWorkOrderCheck(data) {
-  return request({
-    url: `/workorder/satisfaction/swocheck/excel_import/`,
-    method: 'patch',
-    data
-  })
-}
-
-// 导入工单
-export function photoImportWorkOrderCheck(data) {
-  return request({
-    url: `/workorder/satisfaction/swocheck/photo_import/`,
-    method: 'put',
-    data
-  })
-}
-
 // 审核工单
 export function checkWorkOrderCheck(data) {
   return request({
@@ -66,21 +48,3 @@ export function checkWorkOrderCheck(data) {
   })
 }
 
-
-// 修复工单
-export function createServiceWorkOrderCheck(data) {
-  return request({
-    url: `/workorder/satisfaction/swocheck/create_service/`,
-    method: 'patch',
-    data
-  })
-}
-
-// 取消工单
-export function rejectWorkOrderCheck(data) {
-  return request({
-    url: `/workorder/satisfaction/swocheck/reject/`,
-    method: 'patch',
-    data
-  })
-}
