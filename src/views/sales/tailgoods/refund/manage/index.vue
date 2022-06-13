@@ -657,7 +657,7 @@ export default {
                     收件区县: item.sent_district,
                     收件地址: item.sent_address,
                     货品总数: item.quantity,
-                    货品信息: JSON.stringify(item.goods_details),
+                    货品信息: JSON.stringify(item.goods_details.map(item => { return { 货品: `${item.name.name}` }})),
                     申请退款总额: item.amount,
                     源订单总额: item.ori_amount,
                     到货总数: item.receipted_quantity,

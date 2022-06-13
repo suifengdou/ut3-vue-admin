@@ -113,6 +113,15 @@ export function gettailorderSpecialList(params) {
   })
 }
 
+// 导入工单
+export function excelImportTailOrderSpecial(data) {
+  return request({
+    url: `/sales/tailgoods/tailorderspecial/excel_import/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 更新工单
 export function updatetailorderSpecial(id, data) {
   delete data.create_time

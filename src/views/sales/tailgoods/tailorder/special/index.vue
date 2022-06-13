@@ -556,6 +556,7 @@ import {
   exporttailorderSpecial,
   checktailorderSpecial,
   fixTailOrderSpecial,
+  excelImportTailOrderSpecial,
   rejecttailorderSpecial
 } from '@/api/sales/tailgoods/tailorder'
 

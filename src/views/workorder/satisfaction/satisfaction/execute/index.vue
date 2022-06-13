@@ -1148,6 +1148,7 @@ export default {
           this.$refs.photofiles.type = 'text'
           this.$refs.photofiles.value = ''
           this.$refs.photofiles.type = 'file'
+          this.importFiles = []
           this.fetchData()
           this.importVisible = false
           this.progressViewVisible = false
@@ -1163,6 +1164,7 @@ export default {
           this.$refs.photofiles.type = 'text'
           this.$refs.photofiles.value = ''
           this.$refs.photofiles.type = 'file'
+          this.importFiles = []
           this.fetchData()
           this.importVisible = false
           this.progressViewVisible = false
@@ -1174,6 +1176,7 @@ export default {
       this.$refs.photofiles.type = 'text'
       this.$refs.photofiles.value = ''
       this.$refs.photofiles.type = 'file'
+      this.importFiles = []
       this.importVisible = false
     },
     // 查看进度文档

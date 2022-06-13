@@ -515,20 +515,23 @@
                 res => {
                   res.data = res.data.map(item => {
                     return {
-                      店铺: item.shop.name,
+                      发货编号: item.erp_order_id,
+                      工单标题: item.title,
+                      客户账户: item.customer.name,
+                      工单状态: item.order_status.name,
                       网名: item.nickname,
                       收件人: item.receiver,
                       地址: item.address,
                       手机: item.mobile,
-                      订单号: item.order_id,
-                      单据类型: item.order_category.name,
-                      机器序列号: item.m_sn,
-                      故障部位: item.broken_part,
-                      故障描述: item.description,
-                      客服: item.servicer,
+                      服务金额: item.cost,
+                      货品总数: item.quantity,
+                      部门: item.department.name,
+                      货品信息: JSON.stringify(item.goods_details.map(item => {return { 货品信息: `${item.name.name}x${item.quantity}x${item.price}`}})),
+                      服务单号: item.order_id,
+                      诉求: item.demand,
+                      创建人: item.creator,
                       创建时间: item.create_time,
                       更新时间: item.update_time,
-                      创建者: item.creator,
                       处理标签: item.process_tag.name,
                       错误原因: item.mistake_tag.name
                     }

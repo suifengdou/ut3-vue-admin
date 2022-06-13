@@ -110,8 +110,39 @@
                           />
                         </el-select>
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
-                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="进度标签">
+                        <el-select v-model="params.stage" multiple clearable placeholder="进度标签">
+                          <el-option
+                            v-for="item in optionsStage"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="案例品级">
+                        <el-select v-model="params.cs_level" multiple clearable placeholder="案例品级">
+                          <el-option
+                            v-for="item in optionsLevel"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="微信ID" prop="cs_wechat">
@@ -123,7 +154,21 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="完成时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.completed_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -202,15 +247,16 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
+          label="案例品级"
+          prop="cs_level"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <span>{{ scope.row.cs_level.name }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="下次预约时间"
           prop="appointment"
@@ -354,6 +400,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.specialist.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="处理标签"
+          prop="process_tag"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.process_tag.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -611,15 +667,67 @@ export default {
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
-      optionsCategory: [
-        { value: 1, label: '截单退回' },
-        { value: 2, label: '无人收货' },
-        { value: 3, label: '客户拒签' },
-        { value: 4, label: '修改地址' },
-        { value: 5, label: '催件派送' },
-        { value: 6, label: '虚假签收' },
-        { value: 7, label: '丢件破损' },
-        { value: 8, label: '其他异常' }
+      optionsStatus: [
+        {
+          value: 0,
+          label: '已被取消'
+        },
+        {
+          value: 1,
+          label: '等待领取'
+        },
+        {
+          value: 2,
+          label: '等待处理'
+        },
+        {
+          value: 3,
+          label: '等待审核'
+        },
+        {
+          value: 4,
+          label: '等待确认'
+        },
+        {
+          value: 5,
+          label: '事务完结'
+        },
+      ],
+      optionsStage: [
+        {
+          value: 1,
+          label: '初始提交'
+        },
+        {
+          value: 2,
+          label: '处理初期'
+        },
+        {
+          value: 3,
+          label: '处理中期'
+        },
+        {
+          value: 4,
+          label: '处理后期'
+        },
+        {
+          value: 5,
+          label: '处理结束'
+        },
+      ],
+      optionsLevel: [
+        {
+          value: 1,
+          label: '优质'
+        },
+        {
+          value: 2,
+          label: '合格'
+        },
+        {
+          value: 3,
+          label: '缺陷'
+        }
       ],
       optionsJudgment: [
         {
@@ -647,6 +755,21 @@ export default {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
+      }
+      if (typeof (this.params.completed_time) !== 'undefined') {
+        if (this.params.completed_time.length === 2) {
+          this.params.completed_time_after = moment.parseZone(this.params.completed_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.completed_time_before = moment.parseZone(this.params.completed_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (typeof (this.params.order_status) !== 'undefined') {
+        this.params.order_status__in = this.params.order_status.toString()
+      }
+      if (typeof (this.params.stage) !== 'undefined') {
+        this.params.stage__in = this.params.stage.toString()
+      }
+      if (typeof (this.params.cs_level) !== 'undefined') {
+        this.params.cs_level__in = this.params.cs_level.toString()
       }
       getWorkOrderManage(this.params).then(
         res => {
@@ -710,6 +833,7 @@ export default {
                   return {
                     工单编号: item.order_id,
                     工单标题: item.title,
+                    案例品级: item.cs_level.name,
                     用户ID: item.nickname,
                     用户: item.customer.name,
                     购买时间: item.purchase_interval,

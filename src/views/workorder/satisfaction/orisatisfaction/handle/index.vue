@@ -422,7 +422,7 @@
             <el-col :span="8"><el-form-item label="接洽电话" prop="mobile">
               <el-input v-model="formAdd.mobile" placeholder="请输入原始工单标题" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="客户姓名" prop="name">
+            <el-col :span="8"><el-form-item label="客户姓名" prop="receiver">
               <el-input v-model="formAdd.receiver" placeholder="请输入原始工单标题" />
             </el-form-item></el-col>
           </el-row>
@@ -1059,6 +1059,7 @@ export default {
           this.$refs.photofiles.type = 'text'
           this.$refs.photofiles.value = ''
           this.$refs.photofiles.type = 'file'
+          this.importFiles = []
           this.importVisible = false
           this.fetchData()
         }).catch(
@@ -1077,6 +1078,7 @@ export default {
       this.$refs.photofiles.type = 'text'
       this.$refs.photofiles.value = ''
       this.$refs.photofiles.type = 'file'
+      this.importFiles = []
       this.importVisible = false
     },
     // 查看图片

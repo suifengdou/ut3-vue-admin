@@ -72,7 +72,25 @@
                       <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="6"><el-form-item label="差价类型" prop="batch_order">
+                        <template>
+                          <el-select
+                            v-model="params.batch_order__order_category"
+                            filterable
+                            default-first-option
+                            remote
+                            reserve-keyword
+                            placeholder="请选择类型"
+                          >
+                            <el-option
+                              v-for="item in optionsCategory"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -111,6 +129,21 @@
                         <div class="block">
                           <el-date-picker
                             v-model="params.create_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="处理时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.handle_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -457,6 +490,12 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (typeof (this.params.handle_time) !== 'undefined') {
+        if (this.params.handle_time.length === 2) {
+          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
       getBCDetailList(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -516,7 +555,11 @@ export default {
                     验算结果: item.checking,
                     货品: item.goods_name.name,
                     备注: item.memorandum,
-                    UT订单号: item.erp_order_id
+                    UT订单号: item.erp_order_id,
+                    创建人: item.creator,
+                    创建时间: item.create_time,
+                    处理人: item.handler,
+                    处理时间: item.handle_time,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
