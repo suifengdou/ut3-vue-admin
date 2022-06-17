@@ -332,7 +332,7 @@
               v-model="scope.row.is_losing"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
@@ -354,7 +354,7 @@
               v-model="scope.row.is_return"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
@@ -987,9 +987,42 @@ export default {
         this.options = []
       }
     },
+    // 编辑丢件返回信息
+    handleEditBoolean(row) {
+      let id = row.id
+      const data = {
+        is_return: row.is_return,
+        is_losing: row.is_losing
+      }
+      updateWorkOrderCheck(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
+    },
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'rejection') {
         this.handleRejection(row)
+      } else if (column.property === 'feedback') {
+        this.handleFeedback(row)
+      } else if (column.property === 'indemnification') {
+        this.handleIndemnification(row)
       }
     },
     handleRejection(row) {
@@ -1027,6 +1060,114 @@ export default {
               this.$notify({
                 title: '修改失败',
                 message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
+    },
+    handleFeedback(row) {
+      this.$prompt('请输入执行内容', '添加执行内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.feedback,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            feedback: value
+          }
+          updateWorkOrderCheck(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
+    },
+    handleIndemnification(row) {
+      this.$prompt('请输入理赔金额', '添加理赔金额', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.indemnification,
+        inputErrorMessage: '输入错误或者为空',
+        inputValidator: (value) => {
+          let re = /^[0-9]+.?[0-9]*/
+          if(!value) {
+            return '输入不能为空';
+          } else if (!re.test(value)) {
+            return '只能输入数字'
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let id = row.id
+          let data = {
+            indemnification: value
+          }
+          updateWorkOrderCheck(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${JSON.stringify(error.data)}`,
                 type: 'error',
                 offset: 70,
                 duration: 0

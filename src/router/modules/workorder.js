@@ -118,7 +118,7 @@ const workOrderRouter = {
           path: 'handle',
           component: () => import('@/views/workorder/express/handle/index'),
           name: '快递处理意见',
-          meta: { title: '快递处理意见', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'express.view_handler_expressworkorder', 'AllPrivileges'] }
+          meta: { title: '快递处理意见', icon: 'workorder', roles: ['express.view_user_expressworkorder', 'express.view_handler_expressworkorder', 'express.view_check_expressworkorder', 'AllPrivileges'] }
         },
         {
           path: 'execute',

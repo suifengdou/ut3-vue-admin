@@ -176,7 +176,7 @@
           label="网名"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sent_consignee }}</span>
+            <span>{{ scope.row.creator }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -448,7 +448,7 @@ export default {
                   return {
                     店铺名称: item.shop.name,
                     原始单号: item.order_id,
-                    网名: item.sent_consignee,
+                    网名: item.creator,
                     收件人: item.sent_consignee,
                     地址: item.sent_address,
                     手机: item.sent_smartphone,
