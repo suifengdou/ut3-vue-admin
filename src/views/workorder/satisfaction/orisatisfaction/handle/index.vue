@@ -95,8 +95,15 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="工单标题" prop="title">
-                        <el-input v-model="params.title" type="text" />
+                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
+                        <el-select v-model="params.category" placeholder="请选择事项类型">
+                          <el-option
+                            v-for="item in optionsCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -219,6 +226,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="原始单类型"
+          prop="category"
+          sortable="custom"
+          width="120px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -411,8 +428,15 @@
             <span>客户相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="原始标题" prop="title">
-              <el-input v-model="formAdd.title" placeholder="请输入原始工单标题" />
+            <el-col :span="8"><el-form-item label="事项类型" prop="category">
+              <el-select v-model="formAdd.category" placeholder="请选择事项类型">
+                <el-option
+                  v-for="item in optionsCategory"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
               <el-input v-model="formAdd.nickname" placeholder="请输入用户ID" />
@@ -446,7 +470,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请选择公司"
+                  placeholder="请选择货品"
                   :remote-method="remoteMethodGoods"
                 >
                   <el-option
@@ -555,8 +579,15 @@
                 <span>客户相关信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="原始标题" prop="title">
-                  <el-input v-model="formEdit.title" placeholder="请输入原始工单标题" />
+                <el-col :span="8"><el-form-item label="事项类型" prop="category">
+                  <el-select v-model="formEdit.category" placeholder="请选择事项类型">
+                    <el-option
+                      v-for="item in optionsCategory"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="用户ID" prop="nickname">
                   <el-input v-model="formEdit.nickname" placeholder="请输入用户ID" />
@@ -837,14 +868,11 @@ export default {
       optionsCity: [],
       optionsGoods: [],
       optionsCategory: [
-        { value: 1, label: '截单退回' },
-        { value: 2, label: '无人收货' },
-        { value: 3, label: '客户拒签' },
-        { value: 4, label: '修改地址' },
-        { value: 5, label: '催件派送' },
-        { value: 6, label: '虚假签收' },
-        { value: 7, label: '丢件破损' },
-        { value: 8, label: '其他异常' }
+        { value: 1, label: '超期退货' },
+        { value: 2, label: '超期换货' },
+        { value: 3, label: '过保维修' },
+        { value: 4, label: '升级投诉' },
+        { value: 5, label: '其他' }
       ],
       optionsJudgment: [
         {
@@ -938,6 +966,7 @@ export default {
 
       this.formEdit.mistake_tag = this.formEdit.mistake_tag.id
       this.formEdit.order_status = this.formEdit.order_status.id
+      this.formEdit.category = this.formEdit.category.id
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -1217,6 +1246,7 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     原始工单编号: item.order_id,
+                    原始工单类型: item.category.name,
                     原始工单标题: item.title,
                     用户ID: item.nickname,
                     接洽电话: item.mobile,

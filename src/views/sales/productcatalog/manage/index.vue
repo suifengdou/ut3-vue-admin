@@ -1,26 +1,18 @@
 <template>
-  <div class="satisfaction-create-container">
+  <div class="product-catalog-myself-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="3" class="titleBar">
-        <div class="grid-content bg-purple">
-          <el-tooltip class="item" effect="dark" content="点击显示我创建的工单" placement="top-start">
-            <el-button type="success" @click="myWorkOrder">我的工单</el-button>
-          </el-tooltip>
-        </div>
-
-      </el-col>
-        <el-col :span="4" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.mobile" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
+              <el-input v-model="params.goods__name" class="grid-content bg-purple" placeholder="请输入货品" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
 
         </el-col>
-        <el-col :span="4" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
@@ -45,10 +37,30 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="货品" prop="goods_name">
+                      <el-col :span="6"><el-form-item label="经销商" prop="company">
                         <template>
                           <el-select
-                            v-model="params.goods_name"
+                            v-model="params.company"
+                            filterable
+                            default-first-option
+                            remote
+                            reserve-keyword
+                            placeholder="请搜索并选择经销商"
+                            :remote-method="remoteMethodCompany"
+                          >
+                            <el-option
+                              v-for="item in optionsCompany"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="货品" prop="goods">
+                        <template>
+                          <el-select
+                            v-model="params.goods"
                             filterable
                             default-first-option
                             remote
@@ -65,72 +77,9 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
-                        <el-select v-model="params.category" placeholder="请选择事项类型">
-                          <el-option
-                            v-for="item in optionsCategory"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="原始编号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="用户ID" prop="nickname">
-                        <el-input v-model="params.nickname" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="客户姓名" prop="receiver">
-                        <el-input v-model="params.receiver" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="诉求" prop="demand">
-                        <el-input v-model="params.demand" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否微友">
-                        <el-select v-model="params.is_friend" placeholder="是否微友">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="微信ID" prop="cs_wechat">
-                        <el-input v-model="params.cs_wechat" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="专属客服" prop="specialist">
-                        <el-input v-model="params.specialist" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
 
+                      <el-col :span="6" />
+                    </el-row>
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -164,177 +113,58 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
       >
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="原始单编号"
-          prop="order_id"
-          sortable="custom"
-          width="120px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_id }}</span>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          label="原始单类型"
-          prop="category"
-          sortable="custom"
-          width="120px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="原始单标题"
-          prop="title"
-          sortable="custom"
-          width="120px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="订单状态"
-          prop="order_status"
+          label="经销商"
+          prop="company"
           sortable="custom"
           :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.company.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品"
+          prop="goods"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="单价"
+          prop="price"
+          width="100px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="上架状态"
+          prop="order_status"
+          width="80px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="用户ID"
-          prop="nickname"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.nickname }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="接洽电话"
-          prop="mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="数量"
-          prop="quantity"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="诉求"
-          prop="demand"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.demand }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="问题描述"
-          prop="information"
-          width="260px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.information }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="客户姓名"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.receiver }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="客户地址"
-          prop="address"
-          width="200px"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="机器SN"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.m_sn }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="购买时间"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.purchase_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="购买时长"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.purchase_interval }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否企微好友"
-          prop="is_friend"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_friend"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              disabled
-            />
-          </template>
-
-        </el-table-column>
-        <el-table-column
-          label="微信ID"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.cs_wechat }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="专属客服"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.specialist }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="文档查看"
-        >
-          <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="备注"
+          prop="memo"
+          width="230px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.memo }}</span>
@@ -367,61 +197,6 @@
 
       </el-table>
     </div>
-    <!--图片查看模态窗-->
-    <el-dialog
-      title="文档查看"
-      :visible.sync="photoViewVisible"
-      width="50%"
-      border
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <div style="margin: auto">
-        <el-table :data="fileDetails">
-          <el-table-column
-            label="文件名"
-            prop="name"
-            width="120px"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="文件类型"
-            prop="suffix"
-            width="120px"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.suffix }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="文件链接"
-            prop="suffix"
-            width="120px"
-          >
-            <template slot-scope="scope">
-              <div v-if="scope.row.is_pic">
-                <el-image
-                  style="width: 100px; height: 100px"
-                  :src="scope.row.url"
-                  :preview-src-list="scope.row.url_list">
-                </el-image>
-              </div>
-              <div v-else>
-                <el-link :href="scope.row.url" target="_blank">{{ scope.row.name }}</el-link>
-              </div>
-
-            </template>
-          </el-table-column>
-
-        </el-table>
-      </div>
-
-
-    </el-dialog>
-
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -430,21 +205,18 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
-  getWorkOrderManage,
-  exportWorkOrderManage,
-} from '@/api/wop/satisfaction/orisatisfaction/manage'
-import { deleteOSWOFiles } from '@/api/wop/satisfaction/oswofiles/manage'
+  getProductCatalogManageList,
+  exportProductCatalogManage
+} from '@/api/sales/productcatalog/manage'
+import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'OSWOWorkOrderManage',
-
+  name: 'TailorderSubmit',
   data() {
-
     return {
       DataList: [],
       tableLoading: false,
@@ -458,39 +230,11 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
-      dialogVisibleEdit: false,
-      importVisible: false,
-      photoViewVisible: false,
-      formAdd: {},
-      formEdit: {},
-      photoData: {},
-      fileDetails: [],
-      importFiles: [],
-      url: '',
-      optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
-      optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
-      optionsCategory: [
-        { value: 1, label: '超期退货' },
-        { value: 2, label: '超期换货' },
-        { value: 3, label: '过保维修' },
-        { value: 4, label: '升级投诉' },
-        { value: 5, label: '其他' }
-      ],
-      optionsJudgment: [
-        {
-          value: true,
-          label: '是'
-        },
-        {
-          value: false,
-          label: '否'
-        }
-      ],
+      rules: {},
     }
   },
   created() {
@@ -508,12 +252,16 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getWorkOrderManage(this.params).then(
+      getProductCatalogManageList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
+          // const ws = XLSX.utils.json_to_sheet(res.data.results)
+          // const wb = XLSX.utils.book_new()
+          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
+          // XLSX.writeFile(wb, '列表详情1.xlsx')
         }
       ).catch(
         () => {
@@ -521,21 +269,21 @@ export default {
         }
       )
     },
-    myWorkOrder() {
-      this.params.creator = this.$store.state.user.name
-      this.fetchData()
-    },
     handleCurrentChange(val) {
       this.params.page = val
       this.fetchData()
     },
-    // 查看图片
-    handlePhotoView(userValue) {
-      console.log(userValue)
-      this.photoViewVisible = true
-      this.fileDetails = userValue.file_details
+
+    // 检索用户组选项
+    unique(arr) {
+      // 根据唯一标识no来对数组进行过滤
+      // 定义常量 res,值为一个Map对象实例
+      const res = new Map()
+      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
+      // 如果res中没有某个键，就设置这个键的值为1
+      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    // 导出
+
     exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -556,33 +304,19 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportWorkOrderManage(this.params).then(
+            exportProductCatalogManage(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    原始工单编号: item.order_id,
-                    原始工单类型: item.category.name,
-                    原始工单标题: item.title,
-                    用户ID: item.nickname,
-                    接洽电话: item.mobile,
-                    购买时间: item.purchase_time,
-                    购买时长: item.purchase_interval,
-                    货品名称: item.goods_name.name,
-                    货品数量: item.quantity,
-                    机器SN: item.m_sn,
-                    客户姓名: item.receiver,
-                    客户地址: item.address,
-                    是否微友: item.is_friend,
-                    微信ID: item.cs_wechat,
-                    专属客服: item.specialist,
-                    诉求: item.demand,
-                    问题描述: item.information,
+                    货品: item.goods.name,
+                    部门: item.department.name,
+                    经销商: item.company.name,
+                    销售单价: item.price,
                     备注: item.memo,
-                    错误原因: item.mistake_tag.name,
-                    工单状态: item.order_status.name,
+                    状态: item.order_status.name,
                     创建时间: item.create_time,
                     更新时间: item.update_time,
-                    创建者: item.creator
+                    创建者: item.creator,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -618,6 +352,7 @@ export default {
         }
       )
     },
+
     // 货品搜索
     remoteMethodGoods(query) {
       if (query !== '') {
@@ -638,7 +373,7 @@ export default {
         this.optionsGoods = []
       }
     },
-    // 公司搜索
+    // 店铺搜索
     remoteMethodCompany(query) {
       if (query !== '') {
         // console.log("我准备开始检索啦")
@@ -646,7 +381,7 @@ export default {
           // console.log("我是真正的开始检索啦")
           const paramsSearch = {}
           paramsSearch.name = query
-          paramsSearch.category = 1
+          paramsSearch.category = 4
           getCompanyList(paramsSearch).then(
             res => {
               this.optionsCompany = res.data.results.map(item => {
@@ -688,7 +423,21 @@ export default {
         }
       }
     },
-
+    // 表格的行样式
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.order_status.id === false) {
+        row_style = {
+          backgroundColor: '#f39800'
+        }
+      } else if (row.order_status.id === true) {
+        row_style = {
+          backgroundColor: '#c1d8ac'
+        }
+      }
+      return row_style
+    },
+    // 重置筛选
     resetParams() {
       this.params = {
         page: 1

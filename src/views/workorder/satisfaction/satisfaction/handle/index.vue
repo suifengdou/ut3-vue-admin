@@ -85,13 +85,20 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="工单标题" prop="title">
-                        <el-input v-model="params.title" type="text" />
+                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
+                        <el-select v-model="params.category" placeholder="请选择事项类型">
+                          <el-option
+                            v-for="item in optionsCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="原始编号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="体验指数" prop="feeling_index">
+                        <el-input v-model="params.feeling_index" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="用户ID" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
@@ -193,7 +200,7 @@
         </el-table-column>
 
         <el-table-column
-          label="原始单编号"
+          label="工单编号"
           prop="order_id"
           sortable="custom"
           width="120px"
@@ -203,7 +210,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="原始单标题"
+          label="工单类型"
+          prop="category"
+          sortable="custom"
+          width="120px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="工单标题"
           prop="title"
           sortable="custom"
           width="120px"
@@ -629,15 +646,13 @@ export default {
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
+
       optionsCategory: [
-        { value: 1, label: '截单退回' },
-        { value: 2, label: '无人收货' },
-        { value: 3, label: '客户拒签' },
-        { value: 4, label: '修改地址' },
-        { value: 5, label: '催件派送' },
-        { value: 6, label: '虚假签收' },
-        { value: 7, label: '丢件破损' },
-        { value: 8, label: '其他异常' }
+        { value: 1, label: '超期退货' },
+        { value: 2, label: '超期换货' },
+        { value: 3, label: '过保维修' },
+        { value: 4, label: '升级投诉' },
+        { value: 5, label: '其他' }
       ],
       optionsJudgment: [
         {

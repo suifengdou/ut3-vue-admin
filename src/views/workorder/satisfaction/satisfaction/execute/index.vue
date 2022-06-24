@@ -84,13 +84,20 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="工单标题" prop="title">
-                        <el-input v-model="params.title" type="text" />
+                      <el-col :span="6"><el-form-item label="事项类型" prop="category">
+                        <el-select v-model="params.category" placeholder="请选择事项类型">
+                          <el-option
+                            v-for="item in optionsCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="原始编号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="体验指数" prop="feeling_index">
+                        <el-input v-model="params.feeling_index" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="用户ID" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
@@ -193,7 +200,7 @@
         </el-table-column>
 
         <el-table-column
-          label="原始单编号"
+          label="工单编号"
           prop="order_id"
           sortable="custom"
           width="120px"
@@ -203,7 +210,25 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="原始单标题"
+          label="工单类型"
+          prop="category"
+          sortable="custom"
+          width="120px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="体验指数"
+          prop="feeling_index"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.feeling_index }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="工单标题"
           prop="title"
           sortable="custom"
           width="120px"
@@ -297,14 +322,7 @@
             <span>{{ scope.row.cost }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="体验指数"
-          prop="feeling_index"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.feeling_index }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="是否企微好友"
           prop="is_friend"
@@ -939,6 +957,13 @@ export default {
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
+      optionsCategory: [
+        { value: 1, label: '超期退货' },
+        { value: 2, label: '超期换货' },
+        { value: 3, label: '过保维修' },
+        { value: 4, label: '升级投诉' },
+        { value: 5, label: '其他' }
+      ],
       optionsStage: [
         { value: 1, label: '初始提交' },
         { value: 2, label: '处理初期' },
@@ -957,19 +982,9 @@ export default {
         }
       ],
       rules: {
-        title: [
-          { required: true, message: '请输入标题', trigger: 'blur' }
-        ],
         stage: [
           { required: true, message: '请选择标签', trigger: 'blur', type: 'number' }
         ],
-        appointment: [
-          { required: true, message: '请输入下次预约', trigger: 'blur' }
-        ],
-        action: [
-          { required: true, message: '请输入动作', trigger: 'blur' }
-        ],
-
         content: [
           { required: true, message: '请输入内容', trigger: 'blur' }
         ]

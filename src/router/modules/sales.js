@@ -14,9 +14,30 @@ const salesChannelRouter = {
   },
   children: [
     {
+      path: 'productcatalog',
+      component: () => import('@/views/sales/productcatalog/index'), // Parent router-view
+      name: '货品销售预设',
+      meta: { title: '货品销售预设', roles: ['productcatalog.view_productcatalog', 'productcatalog.view_user_productcatalog', 'AllPrivileges'] },
+      redirect: 'noRedirect',
+      children: [
+        {
+          path: 'myself',
+          component: () => import('@/views/sales/productcatalog/myself'),
+          name: '我的货品销售',
+          meta: { title: '我的货品销售', roles: ['productcatalog.view_user_productcatalog', 'AllPrivileges'] }
+        },
+        {
+          path: 'manage',
+          component: () => import('@/views/sales/productcatalog/manage'),
+          name: '货品销售管理',
+          meta: { title: '货品销售管理', roles: ['productcatalog.view_productcatalog', 'AllPrivileges'] }
+        }
+      ]
+    },
+    {
       path: 'advance',
       component: () => import('@/views/sales/advance/index'), // Parent router-view
-      name: 'advance',
+      name: '预存系统',
       meta: { title: '预存系统', roles: ['advancepayment.view_statements', 'advancepayment.view_user_account', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
