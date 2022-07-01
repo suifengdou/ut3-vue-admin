@@ -65,3 +65,22 @@ export function rejectWorkOrderCheck(data) {
     data
   })
 }
+
+// 设置预约
+export function setAppointmentWorkOrderCheck(data) {
+  return request({
+    url: `/workorder/express/ewocheck/set_appointment/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 重置预约
+export function setRecoverWorkOrderCheck(data) {
+  return request({
+    url: `/workorder/express/ewocheck/set_recover/`,
+    method: 'patch',
+    data
+  })
+}
+

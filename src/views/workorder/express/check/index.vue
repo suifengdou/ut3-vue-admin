@@ -2,7 +2,7 @@
   <div class="ori-invoice-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
@@ -20,7 +20,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="2" class="titleBar">
+        <el-col :span="1" class="titleBar">
 
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="复制当前筛选条件下所有快递单号" placement="top-start">
@@ -30,16 +30,63 @@
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="筛选处理状态" placement="top-start">
+              <el-select v-model="params.handling_status" placeholder="处理状态" clearable @change="fetchData">
+                <el-option
+                  v-for="item in optionsHandling"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="筛选处理标签" placement="top-start">
+              <el-select v-model="params.process_tag" placeholder="标签" clearable @change="fetchData">
+                <el-option
+                  v-for="item in optionsProcess"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="筛选工单类型" placement="top-start">
+              <el-select v-model="params.category" placeholder="类型" clearable @change="fetchData">
+                <el-option
+                  v-for="item in optionsCategory"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-tooltip>
+          </div>
+        </el-col>
+
+        <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="支持多个快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
 
         </el-col>
+
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
@@ -241,6 +288,7 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
         @cell-dblclick="handelDoubleClick"
@@ -248,15 +296,28 @@
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
+          width="90px"
         >
           <template slot-scope="scope">
             <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
+          label="处理状态"
+          prop="handling_status"
+          sortable="custom"
+          width="90px"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handling_status.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="事项类型"
           prop="category"
           sortable="custom"
+          width="90px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
@@ -267,6 +328,7 @@
           label="快递公司"
           prop="company"
           sortable="custom"
+          width="90px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.company.name }}</span>
@@ -276,24 +338,18 @@
           label="快递单号"
           prop="express_id"
           sortable="custom"
+          width="90px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.track_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="错误原因"
-          prop="mistake_tag"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="处理标签"
           prop="process_tag"
           sortable="custom"
+          width="90px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.process_tag.name }}</span>
@@ -302,6 +358,7 @@
         <el-table-column
           label="驳回原因"
           prop="rejection"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.rejection }}</span>
@@ -310,6 +367,7 @@
         <el-table-column
           label="处理意见"
           prop="suggestion"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.suggestion }}</span>
@@ -318,6 +376,7 @@
         <el-table-column
           label="执行内容"
           prop="feedback"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
@@ -331,6 +390,26 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.information }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="备注"
+          prop="memo"
+          width="150px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          prop="reset_password"
+          width="230px"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handleAppointment(scope.row)">推1天</el-button>
+            <el-button type="danger" size="mini" @click="handleAppointmentdays(scope.row)">推3天</el-button>
+            <el-button type="danger" size="mini" @click="handleSetRecover(scope.row)">重置</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -398,10 +477,19 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="备注"
+          label="错误原因"
+          prop="mistake_tag"
+          sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="预约时间"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.check_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -471,7 +559,9 @@ import {
   exportWorkOrderCheck,
   excelImportWorkOrderCheck,
   checkWorkOrderCheck,
-  rejectWorkOrderCheck
+  rejectWorkOrderCheck,
+  setAppointmentWorkOrderCheck,
+  setRecoverWorkOrderCheck
 } from '@/api/wop/express/check'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -493,7 +583,9 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        track_id: '',
+        track_id__in: ''
       },
       photoViewVisible: false,
       url: '',
@@ -513,6 +605,21 @@ export default {
         { value: 6, label: '虚假签收' },
         { value: 7, label: '丢件破损' },
         { value: 8, label: '其他异常' }
+      ],
+      optionsProcess: [
+        { value: 0, label: '未分类' },
+        { value: 1, label: '待截单' },
+        { value: 2, label: '签复核' },
+        { value: 3, label: '改地址' },
+        { value: 4, label: '催派查' },
+        { value: 5, label: '丢件核' },
+        { value: 6, label: '纠纷中' },
+        { value: 7, label: '需理赔' },
+        { value: 8, label: '其他类' }
+      ],
+      optionsHandling: [
+        { value: 0, label: '未处理' },
+        { value: 1, label: '已处理' },
       ],
       optionsJudge: [
         {
@@ -561,6 +668,13 @@ export default {
           this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (this.params.track_id.length > 20) {
+        const track_ids = this.params.track_id.split(' ').toString()
+        if (track_ids.length > 1) {
+          this.params.track_id__in = track_ids
+          delete this.params.track_id
+        }
+      }
       getWorkOrderCheck(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -588,7 +702,124 @@ export default {
       this.srcList = userValue.photo_details.map(item => item.name)
       this.url = this.srcList[0]
     },
+    handleAppointment(row) {
+      let id = row.id
+      let data = {
+        id: id,
+        days: 1
+      }
+      setAppointmentWorkOrderCheck(data).then(
+        (res) => {
+          if (res.data.successful == 1) {
+            this.$notify({
+              title: '设置成功',
+              type: 'success',
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          } else {
+            this.$notify({
+              title: '设置失败',
+              message: `设置失败：${error.data}`,
+              type: 'success',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
 
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '设置失败',
+            message: `设置失败：${error.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
+    },
+    handleAppointmentdays(row) {
+      let id = row.id
+      let data = {
+        id: id,
+        days: 3
+      }
+      setAppointmentWorkOrderCheck(data).then(
+        (res) => {
+          if (res.data.successful == 1) {
+            this.$notify({
+              title: '设置成功',
+              type: 'success',
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          } else {
+            this.$notify({
+              title: '设置失败',
+              message: `设置失败：${error.data}`,
+              type: 'success',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
+
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '设置失败',
+            message: `设置失败：${error.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
+    },
+    handleSetRecover(row){
+      let data = {
+        id: row.id
+      }
+      setRecoverWorkOrderCheck(data).then(
+        (res) => {
+          if (res.data.successful == 1) {
+            this.$notify({
+              title: '设置成功',
+              type: 'success',
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          } else {
+            this.$notify({
+              title: '设置失败',
+              message: `设置失败：${error.data}`,
+              type: 'success',
+              offset: 70,
+              duration: 0
+            })
+            this.fetchData()
+          }
+
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '设置失败',
+            message: `设置失败：${error.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
+    },
     exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -1034,7 +1265,7 @@ export default {
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'rejection') {
         this.handleRejection(row)
-      } else if (column.property === 'feedback') {
+      } else if (column.property === 'memo') {
         this.handleFeedback(row)
       } else if (column.property === 'indemnification') {
         this.handleIndemnification(row)
@@ -1095,11 +1326,11 @@ export default {
         })
     },
     handleFeedback(row) {
-      this.$prompt('请输入执行内容', '添加执行内容', {
+      this.$prompt('请输入备注内容', '添加备注内容', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        inputValue: row.feedback,
+        inputValue: row.memo,
         inputErrorMessage: '输入不能为空',
         inputValidator: (value) => {
           if(!value) {
@@ -1113,7 +1344,7 @@ export default {
           value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
-            feedback: value
+            memo: value
           }
           updateWorkOrderCheck(id, data).then(
             () => {
@@ -1239,6 +1470,15 @@ export default {
       this.params = {
         page: 1
       }
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.handling_status.id === 1) {
+        row_style = {
+          backgroundColor: '#ccffcc'
+        }
+      }
+      return row_style
     }
   }
 }

@@ -5,7 +5,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="支持多个快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -539,7 +539,9 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        track_id: '',
+        track_id__in: ''
       },
       photoViewVisible: false,
       url: '',
@@ -620,6 +622,13 @@ export default {
         console.log(this.params.order_status)
         this.params.order_status__in = this.params.order_status.toString()
         console.log(this.params.order_status__in)
+      }
+      if (this.params.track_id.length > 20) {
+        const track_ids = this.params.track_id.split(' ').toString()
+        if (track_ids.length > 1) {
+          this.params.track_id__in = track_ids
+          delete this.params.track_id
+        }
       }
       console.log(this.params)
       getWorkOrderManage(this.params).then(

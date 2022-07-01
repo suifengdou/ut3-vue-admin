@@ -31,7 +31,7 @@
         <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="支持多个快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -605,25 +605,47 @@
     </el-dialog>
     <!--图片查看模态窗-->
     <el-dialog
-      title="图片查看"
+      title="文档查看"
       :visible.sync="photoViewVisible"
-      width="200px"
+      width="70%"
+      border
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <div class="demo-image__preview">
-        <div class="block">
-          <p class="demonstration">点击预览图，即可依次查看大图</p>
-          <div align="center">
-            <el-image
-              style="width: 100px; height: 100px;"
-              :src="url"
-              :preview-src-list="srcList">
-            </el-image>
-          </div>
+      <div style="margin: auto">
+        <el-table :data="fileDetails">
+          <el-table-column
+            label="文件链接"
+            prop="suffix"
+            width="400px"
+          >
+            <template slot-scope="scope">
+              <el-image
+                style="width: 300px; height: 500px"
+                :src="scope.row.name">
+              </el-image>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="文件下载"
+            prop="suffix"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <el-link :href="scope.row.name" target="_blank">{{ scope.row.id }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
 
-        </div>
+        </el-table>
       </div>
+
 
     </el-dialog>
     <!--页脚-->
@@ -666,7 +688,9 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        track_id: '',
+        track_id__in: ''
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
@@ -678,6 +702,7 @@ export default {
       importFiles: [],
       url: '',
       srcList: [],
+      fileDetails: [],
       optionsShop: [],
       optionsDepartment: [],
       optionsCompany: [],
@@ -733,6 +758,13 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (this.params.track_id.length > 20) {
+        const track_ids = this.params.track_id.split(' ').toString()
+        if (track_ids.length > 1) {
+          this.params.track_id__in = track_ids
+          delete this.params.track_id
         }
       }
       getWorkOrder(this.params).then(
@@ -939,9 +971,7 @@ export default {
     handlePhotoView(userValue) {
       console.log(userValue)
       this.photoViewVisible = true
-      this.srcList = userValue.photo_details.map(item => item.name)
-      this.url = this.srcList[0]
-      console.log(this.srcList)
+      this.fileDetails = userValue.photo_details
     },
 
     // 导入
