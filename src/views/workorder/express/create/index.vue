@@ -617,11 +617,11 @@
           <el-table-column
             label="文件链接"
             prop="suffix"
-            width="400px"
+            width="500px"
           >
             <template slot-scope="scope">
               <el-image
-                style="width: 300px; height: 500px"
+                style="width: 400px; height: 600px"
                 :src="scope.row.name">
               </el-image>
             </template>
@@ -668,6 +668,7 @@ import {
   checkWorkOrder,
   rejectWorkOrder
 } from '@/api/wop/express/create'
+import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
@@ -973,7 +974,45 @@ export default {
       this.photoViewVisible = true
       this.fileDetails = userValue.photo_details
     },
-
+    // 删除图片
+    handleDelete(row) {
+      const data = {
+        id: row.id
+      }
+      deleteEWOPhoto(data).then(
+        (res) => {
+          if (res.data.successful > 0){
+            this.$notify({
+              title: '删除成功',
+              type: 'success',
+              message: `删除成功条数：${res.data.successful}`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+          if (res.data.false > 0) {
+            this.$notify({
+              title: '删除失败',
+              type: 'error',
+              message: `删除失败错误：已删除或者无权限`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+        }
+      )
+    },
     // 导入
     importExcel() {
       const h = this.$createElement
@@ -1479,7 +1518,8 @@ export default {
       this.params = {
         page: 1
       }
-    }
+    },
+
   }
 }
 </script>

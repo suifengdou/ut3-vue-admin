@@ -432,25 +432,47 @@
     </el-dialog>
     <!--图片查看模态窗-->
     <el-dialog
-      title="图片查看"
+      title="文档查看"
       :visible.sync="photoViewVisible"
-      width="200px"
+      width="70%"
+      border
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
-      <div class="demo-image__preview">
-        <div class="block">
-          <p class="demonstration">点击预览图，即可依次查看大图</p>
-          <div align="center">
-            <el-image
-              style="width: 100px; height: 100px;"
-              :src="url"
-              :preview-src-list="srcList">
-            </el-image>
-          </div>
+      <div style="margin: auto">
+        <el-table :data="fileDetails">
+          <el-table-column
+            label="文件链接"
+            prop="suffix"
+            width="500px"
+          >
+            <template slot-scope="scope">
+              <el-image
+                style="width: 400px; height: 600px"
+                :src="scope.row.name">
+              </el-image>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="文件下载"
+            prop="suffix"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <el-link :href="scope.row.name" target="_blank">{{ scope.row.id }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
 
-        </div>
+        </el-table>
       </div>
+
 
     </el-dialog>
     <!--页脚-->
@@ -473,6 +495,7 @@ import {
   setLossingWorkOrderHandle,
   recoverWorkOrderHandle
 } from '@/api/wop/express/handle'
+import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
 import moment from 'moment'
@@ -489,6 +512,7 @@ export default {
       pageSize: 30,
       selectNum: 0,
       checkList: [],
+      fileDetails: [],
       all_track_id: '',
       tableData: {
       },
@@ -789,8 +813,46 @@ export default {
     handlePhotoView(userValue) {
       console.log(userValue)
       this.photoViewVisible = true
-      this.srcList = userValue.photo_details.map(item => item.name)
-      this.url = this.srcList[0]
+      this.fileDetails = userValue.photo_details
+    },
+    // 删除图片
+    handleDelete(row) {
+      const data = {
+        id: row.id
+      }
+      deleteEWOPhoto(data).then(
+        (res) => {
+          if (res.data.successful > 0){
+            this.$notify({
+              title: '删除成功',
+              type: 'success',
+              message: `删除成功条数：${res.data.successful}`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+          if (res.data.false > 0) {
+            this.$notify({
+              title: '删除失败',
+              type: 'error',
+              message: `删除失败错误：已删除或者无权限`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+        }
+      )
     },
     // 审核单据
     handleSetLossing() {

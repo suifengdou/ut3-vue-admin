@@ -324,7 +324,7 @@ const workOrderRouter = {
               path: 'manage',
               component: () => import('@/views/workorder/satisfaction/satisfaction/manage'),
               name: '体验单管理',
-              meta: { title: '体验单管理', icon: 'workorder', roles: ['satisfaction.view_satisfactionworkorder', 'AllPrivileges'] }
+              meta: { title: '体验单管理', icon: 'workorder', roles: ['satisfaction.view_satisfactionworkorder', 'satisfaction.view_user_serviceworkorder', 'AllPrivileges'] }
             },
           ]
         },
@@ -332,7 +332,7 @@ const workOrderRouter = {
           path: 'service',
           component: () => import('@/views/workorder/satisfaction/service'),
           name: '服务单',
-          meta: { title: '服务单', icon: 'workorder', roles: ['satisfaction.view_serviceworkorder', 'AllPrivileges'] },
+          meta: { title: '服务单', icon: 'workorder', roles: ['satisfaction.view_serviceworkorder', 'satisfaction.view_user_serviceworkorder', 'AllPrivileges'] },
           children: [
             {
               path: 'myself',
@@ -350,7 +350,7 @@ const workOrderRouter = {
               path: 'manage',
               component: () => import('@/views/workorder/satisfaction/service/manage'),
               name: '服务单管理',
-              meta: { title: '服务单管理', icon: 'workorder', roles: ['satisfaction.view_serviceworkorder', 'AllPrivileges'] }
+              meta: { title: '服务单管理', icon: 'workorder', roles: ['satisfaction.view_serviceworkorder', 'satisfaction.view_user_serviceworkorder', 'AllPrivileges'] }
             },
           ]
         },
