@@ -511,6 +511,14 @@
               <el-link :href="scope.row.name" target="_blank">{{ scope.row.id }}</el-link>
             </template>
           </el-table-column>
+          <el-table-column
+            label="创建者"
+            prop="creator"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.creator }}</span>
+            </template>
+          </el-table-column>
 
         </el-table>
       </div>
@@ -1246,9 +1254,10 @@ export default {
 
     resetParams() {
       this.params = {
-        page: 1
+        page: 1,
+        track_id: ''
       }
-    }
+    },
   }
 }
 </script>

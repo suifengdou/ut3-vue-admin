@@ -24,10 +24,12 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.sent_smartphone" class="grid-content bg-purple" placeholder="请输入收件人手机" @keyup.enter.native="fetchData">
+              <el-input v-model="params.refund_order__track_no" class="grid-content bg-purple" placeholder="搜索快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
+
             </el-tooltip>
+
           </div>
 
         </el-col>
@@ -461,7 +463,7 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
       },
       dialogVisibleEdit: false,
       formEdit: {
@@ -513,6 +515,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      console.log(this.params)
       getROGoodsReceivalList(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -1244,7 +1247,7 @@ export default {
     // 重置筛选
     resetParams() {
       this.params = {
-        page: 1
+        page: 1,
       }
     },
     // 显示行的颜色变化

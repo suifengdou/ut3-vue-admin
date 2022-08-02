@@ -83,3 +83,30 @@ export function recoverWorkOrderHandle(data) {
     data
   })
 }
+
+// 设置重置
+export function setSuggestionWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/set_suggestion/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置重置
+export function setReturnWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/set_return/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置重置
+export function setReturnTrackIDWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/set_return_trackid/`,
+    method: 'patch',
+    data
+  })
+}

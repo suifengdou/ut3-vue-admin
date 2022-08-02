@@ -121,7 +121,9 @@
                       <el-col :span="4" />
                     </el-row>
                     <el-row :gutter="20">
-
+                      <el-col :span="6"><el-form-item label="备注" prop="memo">
+                        <el-input v-model="params.memo" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>

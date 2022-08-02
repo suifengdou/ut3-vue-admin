@@ -12,6 +12,13 @@
           </div>
 
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
+              <el-button type="success" @click="exportExcel">导出</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
       </el-row>
       <el-row :gutter="10">
         <el-col :span="21" class="titleBar">
@@ -50,7 +57,26 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6" />
+                      <el-col :span="6"><el-form-item label="部门" prop="shop">
+                        <template>
+                          <el-select
+                            v-model="params.shop"
+                            filterable
+                            default-first-option
+                            remote
+                            reserve-keyword
+                            placeholder="请搜索并选择店铺"
+                            :remote-method="remoteMethodShop"
+                          >
+                            <el-option
+                              v-for="item in optionsShop"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="订单号" prop="order_id">
@@ -89,7 +115,11 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="备注" prop="buyer_remark">
+                        <el-input v-model="params.buyer_remark" type="text" />
+                      </el-form-item></el-col>
+                    </el-row>
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -256,6 +286,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="部门"
+          prop="department"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.department.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建时间"
         >
           <template slot-scope="scope">
@@ -382,7 +422,6 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    // 导入
     exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -424,6 +463,7 @@ export default {
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
+                    部门: item.department.name,
                     处理标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name
                   }

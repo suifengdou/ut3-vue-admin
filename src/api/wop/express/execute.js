@@ -56,3 +56,29 @@ export function rejectWorkOrderExecute(data) {
     data
   })
 }
+
+// 设置执行内容
+export function setFeedbackWorkOrderExecute(data) {
+  return request({
+    url: `/workorder/express/ewoexecute/set_feedback/`,
+    method: 'patch',
+    data
+  })
+}
+// 设置执行内容
+export function setReturnWorkOrderExecute(data) {
+  return request({
+    url: `/workorder/express/ewoexecute/set_return/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置执行内容
+export function setReturnTrackIDWorkOrderExecute(data) {
+  return request({
+    url: `/workorder/express/ewoexecute/set_return_trackid/`,
+    method: 'patch',
+    data
+  })
+}

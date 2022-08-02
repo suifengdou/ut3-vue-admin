@@ -35,10 +35,12 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.sent_smartphone" class="grid-content bg-purple" placeholder="请输入收件人手机" @keyup.enter.native="fetchData">
+              <el-input v-model="params.track_no" class="grid-content bg-purple" placeholder="支持多个快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
+
             </el-tooltip>
+
           </div>
 
         </el-col>
@@ -506,7 +508,8 @@ export default {
       },
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        track_no: ''
       },
       dialogVisibleEdit: false,
       formEdit: {
@@ -556,6 +559,13 @@ export default {
         if (this.params.create_time.length === 2) {
           this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
+      if (this.params.track_no.length > 20) {
+        const track_ids = this.params.track_no.split(' ').toString()
+        if (track_ids.length > 1) {
+          this.params.track_no__in = track_ids
+          delete this.params.track_no
         }
       }
       getRefundOrderCheckList(this.params).then(
@@ -1400,7 +1410,8 @@ export default {
     // 重置筛选
     resetParams() {
       this.params = {
-        page: 1
+        page: 1,
+        track_no: ''
       }
     },
     // 显示行的颜色变化

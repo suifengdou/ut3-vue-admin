@@ -24,7 +24,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.title" class="grid-content bg-purple" placeholder="请输入完整发票抬头" @keyup.enter.native="fetchData">
+              <el-input v-model="params.mobile" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -90,13 +90,13 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="源单号" prop="order_id">
+                      <el-col :span="6"><el-form-item label="订单号" prop="order_id">
                         <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="UT单号" prop="erp_order_id">
                         <el-input v-model="params.erp_order_id" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="客户昵称" prop="nickname">
+                      <el-col :span="6"><el-form-item label="网名" prop="nickname">
                         <el-input v-model="params.nickname" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
@@ -112,6 +112,11 @@
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="4" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="备注" prop="buyer_remark">
+                        <el-input v-model="params.buyer_remark" type="text" />
+                      </el-form-item></el-col>
                     </el-row>
 
                     <el-row :gutter="20">
@@ -283,6 +288,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.creator }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="部门"
+          prop="department"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.department.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -575,7 +590,7 @@ import {
   rejectOriginDataSubmit
 } from '@/api/dfc/batchtable/origindata'
 import { getShopList } from '@/api/base/shop'
-import { getCompanyList } from '@/api/base/company'
+import { getDepartmentList } from '@/api/base/department'
 import { getGoodsList } from '@/api/base/goods'
 import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
@@ -611,7 +626,6 @@ export default {
       formEdit: {},
       optionsShop: [],
       optionsDepartment: [],
-      optionsCompany: [],
       optionsPlatform: [],
       optionsCity: [],
       optionsGoods: [],
@@ -715,6 +729,8 @@ export default {
       // console.log(currentShop)
       this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
       this.formEdit.shop = this.formEdit.shop.id
+
+      this.formEdit.department = this.formEdit.department.id
       // console.log(this.optionsShop)
       // console.log(this.formEdit.shop)
 
@@ -908,6 +924,7 @@ export default {
                     创建时间: item.create_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
+                    部门: item.department.name,
                     处理标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name
                   }
@@ -1350,7 +1367,7 @@ export default {
       }
     },
     // 公司搜索
-    remoteMethodCompany(query) {
+    remoteMethodDepartment(query) {
       if (query !== '') {
         // console.log("我准备开始检索啦")
         setTimeout(() => {
@@ -1358,16 +1375,16 @@ export default {
           const paramsSearch = {}
           paramsSearch.name = query
           paramsSearch.category = 5
-          getCompanyList(paramsSearch).then(
+          getDepartmentList(paramsSearch).then(
             res => {
-              this.optionsCompany = res.data.results.map(item => {
+              this.optionsDepartment = res.data.results.map(item => {
                 return { label: item.name, value: item.id }
               })
             }
           )
         }, 200)
       } else {
-        this.options = []
+        this.optionsDepartment = []
       }
     },
     // 城市搜索

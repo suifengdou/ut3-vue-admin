@@ -9,6 +9,9 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetSuggestion">设置处理意见</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturn">设置返回</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturnTrackID">返单号置为发单号</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetLossing">设置丢失</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-off" size="mini" round @click="handleSetRecover">设置重置</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
@@ -463,6 +466,14 @@
             </template>
           </el-table-column>
           <el-table-column
+            label="创建者"
+            prop="creator"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.creator }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             label="操作"
           >
             <template slot-scope="scope">
@@ -493,7 +504,10 @@ import {
   rejectWorkOrderHandle,
   photoImportWorkOrderHandle,
   setLossingWorkOrderHandle,
-  recoverWorkOrderHandle
+  recoverWorkOrderHandle,
+  setSuggestionWorkOrderHandle,
+  setReturnWorkOrderHandle,
+  setReturnTrackIDWorkOrderHandle
 } from '@/api/wop/express/handle'
 import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
@@ -807,6 +821,7 @@ export default {
       this.$refs.photofiles.type = 'text'
       this.$refs.photofiles.value = ''
       this.$refs.photofiles.type = 'file'
+      this.importFiles = []
       this.importVisible = false
     },
     // 查看图片
@@ -854,7 +869,321 @@ export default {
         }
       )
     },
+    // 设置返回单号为发出
+    handleSetReturnTrackID() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setReturnTrackIDWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setReturnTrackIDWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
+    // 设置返回标记
+    handleSetReturn() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setReturnWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setReturnWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
     // 审核单据
+    handleSetSuggestion() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setSuggestionWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setSuggestionWorkOrderHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '设置成功',
+                message: `设置成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '设置失败',
+                message: `设置失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
     handleSetLossing() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
@@ -1635,7 +1964,9 @@ export default {
     },
     resetParams() {
       this.params = {
-        page: 1
+        page: 1,
+        track_id: ''
+
       }
     },
     // 提交编辑完成的数据

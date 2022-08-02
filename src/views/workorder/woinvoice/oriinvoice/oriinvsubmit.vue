@@ -1322,6 +1322,9 @@ export default {
     // 导入
     getFile(event) {
       this.importFile.file = event.target.files[0]
+      console.log('#############')
+      console.log('文件我获取到了')
+      console.log('#############')
     },
     importExcel() {
       const importformData = new FormData()
@@ -1331,6 +1334,9 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }
+      console.log('#############')
+      console.log('我是发票导入测试')
+      console.log('#############')
       excelImportOriInvoiceSubmit(importformData, config).then(
         res => {
           this.$notify({

@@ -636,6 +636,14 @@
             </template>
           </el-table-column>
           <el-table-column
+            label="创建者"
+            prop="creator"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.creator }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             label="操作"
           >
             <template slot-scope="scope">
@@ -966,6 +974,7 @@ export default {
       this.$refs.photofiles.type = 'text'
       this.$refs.photofiles.value = ''
       this.$refs.photofiles.type = 'file'
+      this.importFiles = []
       this.importVisible = false
     },
     // 查看图片
@@ -1516,7 +1525,8 @@ export default {
 
     resetParams() {
       this.params = {
-        page: 1
+        page: 1,
+        track_id: ''
       }
     },
 
