@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.dialog" class="grid-content bg-purple" placeholder="请输入客户网名" @keyup.enter.native="fetchData">
+              <el-input v-model="params.dialog__name" class="grid-content bg-purple" placeholder="请输入客户网名" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>

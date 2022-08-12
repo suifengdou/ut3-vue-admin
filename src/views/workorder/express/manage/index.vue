@@ -433,14 +433,6 @@
         </el-table-column>
 
         <el-table-column
-          label="处理状态"
-          prop="handling_status"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handling_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="驳回原因"
           prop="rejection"
         >
