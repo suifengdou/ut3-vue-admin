@@ -91,7 +91,7 @@ const crmChannelRouter = {
         {
           path: 'manage',
           component: () => import('@/views/crm/customers/manage'),
-          name: 'manage',
+          name: '档案管理',
           meta: { title: '档案管理', roles: ['customers.view_customer', 'AllPrivileges'] }
         },
         {
@@ -123,7 +123,7 @@ const crmChannelRouter = {
         {
           path: 'manage',
           component: () => import('@/views/crm/vipwechat/manage'),
-          name: 'manage',
+          name: '客户管理',
           meta: { title: '客户管理', roles: ['vipwechat.view_vipwechat', 'AllPrivileges'] }
         }
       ]
@@ -261,7 +261,7 @@ const crmChannelRouter = {
           path: 'oricalllogcheck',
           component: () => import('@/views/crm/callcenter/oricalllogcheck'),
           name: 'oricalllogcheck',
-          meta: { title: '原始记录-递交', roles: ['callcenter.view_oricalllog', 'AllPrivileges'] }
+          meta: { title: '原始记录-递交', roles: ['callcenter.view_handler_calllogcheck', 'AllPrivileges'] }
         },
         {
           path: 'oricalllog',
@@ -270,10 +270,28 @@ const crmChannelRouter = {
           meta: { title: '原始记录-管理', roles: ['callcenter.view_oricalllog', 'AllPrivileges'] }
         },
         {
+          path: 'callloghandle',
+          component: () => import('@/views/crm/callcenter/callloghandle'),
+          name: 'callloghandle',
+          meta: { title: '通话检查-处理', roles: ['callcenter.view_handler_calllogcheck', 'AllPrivileges'] }
+        },
+        {
+          path: 'calllogexecute',
+          component: () => import('@/views/crm/callcenter/calllogexecute'),
+          name: 'calllogexecute',
+          meta: { title: '通话检查-执行', roles: ['callcenter.view_user_calllogcheck', 'AllPrivileges'] }
+        },
+        {
+          path: 'calllogcheck',
+          component: () => import('@/views/crm/callcenter/calllogcheck'),
+          name: 'calllogcheck',
+          meta: { title: '通话检查-审核', roles: ['callcenter.view_handler_calllogcheck', 'AllPrivileges'] }
+        },
+        {
           path: 'calllog',
           component: () => import('@/views/crm/callcenter/calllog'),
           name: 'calllog',
-          meta: { title: '通话记录', roles: ['callcenter.view_calllog', 'AllPrivileges'] }
+          meta: { title: '通话检查-管理', roles: ['callcenter.view_calllog', 'AllPrivileges'] }
         }
       ]
     },

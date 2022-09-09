@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getOriCallLogCheckList(params) {
+export function getOriCallLogCheck(params) {
   return request({
     url: '/crm/callcenter/oricalllogcheck/',
     method: 'get',
@@ -52,6 +52,24 @@ export function excelImportOriCallLogCheck(data) {
 export function fixOriCallLogCheck(data) {
   return request({
     url: `/crm/callcenter/oricalllogcheck/fix/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 审核工单
+export function signOriCallLogCheck(data) {
+  return request({
+    url: `/crm/callcenter/oricalllogcheck/sign/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 审核工单
+export function setallOriCallLogCheck(data) {
+  return request({
+    url: `/crm/callcenter/oricalllogcheck/setall/`,
     method: 'patch',
     data
   })

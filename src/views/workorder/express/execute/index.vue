@@ -23,6 +23,16 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="2" class="titleBar">
+
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="复制当前筛选条件下所有快递单号" placement="top-start">
+              <el-button type="success" class="btn" @click="copytracks(all_track_id, $event)">
+                单号
+              </el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击显示我创建的工单" placement="top-start">
@@ -451,6 +461,7 @@ import {
 import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
+import handleClipboard from '@/utils/clipboard'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -464,6 +475,7 @@ export default {
       selectNum: 0,
       checkList: [],
       fileDetails: [],
+      all_track_id: '',
       tableData: {
       },
       params: {
@@ -531,17 +543,22 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.track_id.length > 20) {
-        const track_ids = this.params.track_id.split(' ').toString()
-        if (track_ids.length > 1) {
-          this.params.track_id__in = track_ids
-          delete this.params.track_id
+      if (this.params.track_id !== undefined) {
+        if (this.params.track_id.length > 20) {
+          const track_ids = this.params.track_id.split(' ').toString()
+          if (track_ids.length > 1) {
+            this.params.track_id__in = track_ids
+
+            delete this.params.track_id
+          }
         }
       }
       getWorkOrderExecute(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
+          const data = res.data.results.map(item => item.track_id)
+          this.all_track_id = data
           this.tableLoading = false
           console.log(res.data.results)
         }
@@ -1643,6 +1660,9 @@ export default {
         }
       )
 
+    },
+    copytracks(data, event) {
+      handleClipboard(data, event)
     },
     rowStyle({ row, rowIndex}) {
       let row_style = {}

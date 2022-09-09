@@ -1,7 +1,25 @@
 <template>
-  <div class="calllog-manage-container">
+  <div class="ori-order-container">
     <div class="tableTitle">
       <el-row :gutter="20">
+        <el-col :span="7" class="titleBar">
+          <div class="grid-content bg-purple">
+            <div id="operationBoard">
+              <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
+                <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
+                  选中所有的{{ selectNum }}项
+                  <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="点击选中所有筛选出的订单" placement="top-start">
+                <el-button @click="checkAllOption">全选{{ totalNum }}项</el-button>
+              </el-tooltip>
+            </div>
+          </div>
+        </el-col>
         <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
@@ -136,14 +154,18 @@
         :data="DataList"
         border
         style="width: 100%"
+        :row-style="rowStyle"
         @sort-change="onSortChange"
+        @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
+        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -202,7 +224,7 @@
               v-model="scope.row.is_subjectivity"
               active-color="#13ce66"
               inactive-color="#ff4949"
-              disabled
+              @change="handleEditBoolean(scope.row)"
             />
           </template>
 
@@ -226,7 +248,14 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
+            <el-select v-model="scope.row.question_tag.id" placeholder="标签" @change="confirmProcess(scope.row)">
+              <el-option
+                v-for="item in optionsQuestion"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -238,17 +267,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.suggestion }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="执行结果"
-          prop="feedback"
-          sortable="custom"
-          width="300px"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.feedback }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -376,14 +394,18 @@
 
 <script>
 import {
-  getCallLog,
-  exportCallLog,
-} from '@/api/crm/callcenter/calllog'
+  getCallLogHandle,
+  createCallLogHandle,
+  updateCallLogHandle,
+  exportCallLogHandle,
+  checkCallLogHandle,
+  rejectCallLogHandle
+} from '@/api/crm/callcenter/callloghandle'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'calllogCheck',
+  name: 'submitExpressWorkOrder',
   data() {
     return {
       DataList: [],
@@ -468,7 +490,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getCallLog(this.params).then(
+      getCallLogHandle(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -493,7 +515,82 @@ export default {
       this.params.page = val
       this.fetchData()
     },
+    // 跳出编辑对话框
+    handleEdit(values) {
+      console.log(values)
+      this.formEdit = { ...values }
+      this.dialogVisibleEdit = true
+    },
+    // 提交编辑完成的数据
+    handleSubmitEdit() {
+      const { id, ...data } = this.formEdit
+      let attrStr
+      const transFieldStr = ['mistake_tag', 'order_status', 'process_tag']
+      for (attrStr in transFieldStr) {
+        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
+      }
+      updateCallLogHandle(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 0
+          })
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 0
+          })
+        }
+      )
 
+    },
+
+    // 关闭修改界面
+    handleCancelEdit() {
+      this.dialogVisibleEdit = false
+      this.$refs.handleFormEdit.resetFields()
+      this.handleDeleteAllDetails()
+    },
+    // 添加界面
+    add() {
+      this.dialogVisibleAdd = true
+    },
+    // 关闭添加界面
+    handleCancelAdd() {
+      this.dialogVisibleAdd = false
+      this.$refs.handleFormAdd.resetFields()
+    },
+    handleSubmitAdd() {
+      console.log(this.formAdd)
+      createCallLogHandle(this.formAdd).then(
+        () => {
+          this.$notify({
+            title: '创建成功',
+            type: 'success',
+            offset: 0,
+            duration: 0
+          })
+          this.fetchData()
+          this.handleCancelAdd()
+        }
+      ).catch((res) => {
+        this.$notify({
+          title: '创建出错',
+          message: res.data,
+          type: 'success',
+          offset: 0,
+          duration: 0
+        })
+      })
+    },
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -503,7 +600,83 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
+    // 导入
+    importExcel() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+            name: 'importfile',
+            type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportCallLogHandle(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        done(false)
+      }).catch(
+        (error) => {
+          console.log(error)
+          done(false)
+        }
 
+      )
+    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -525,7 +698,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportCallLog(this.params).then(
+            exportCallLogHandle(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -616,6 +789,272 @@ export default {
       console.log('我是全选的' + this.selectNum)
     },
     // 审核单据
+
+    handleCheck() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        checkCallLogHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        checkCallLogHandle(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 0
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 0
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 0
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          },
+          error => {
+            console.log('我是单选错误返回')
+            console.log(this)
+            console.log(error.response)
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 0
+            })
+            this.fetchData()
+          }
+        ).catch(
+          (error) => {
+            console.log('######')
+            console.log(error)
+          }
+        )
+      }
+    },
+    handleReject() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '取消工单',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('hr', null, ''),
+          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次导入，请慎重选择！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            this.tableLoading = true
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            if (this.params.allSelectTag === 1) {
+              rejectCallLogHandle(this.params).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 0
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 0
+                    })
+                    this.$notify({
+                      title: '失败错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  delete this.params.allSelectTag
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                },
+                error => {
+                  console.log('我是全选错误返回')
+                  this.$notify({
+                    title: '异常错误详情',
+                    message: error.response.data,
+                    type: 'error',
+                    offset: 210,
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              ).catch(
+                () => {
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              )
+            } else {
+              if (typeof (this.multipleSelection) === 'undefined') {
+                this.$notify({
+                  title: '错误详情',
+                  message: '未选择订单无法取消',
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                done()
+                this.fetchData()
+              }
+              const ids = this.multipleSelection.map(item => item.id)
+              this.params.ids = ids
+              rejectCallLogHandle(this.params).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 0
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 0
+                    })
+                    this.$notify({
+                      title: '失败错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  delete this.params.allSelectTag
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                },
+                error => {
+                  console.log('我是全选错误返回')
+                  this.$notify({
+                    title: '异常错误详情',
+                    message: error.response.data,
+                    type: 'error',
+                    offset: 210,
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              ).catch(
+                () => {
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              )
+            }
+          } else {
+            done()
+            this.fetchData()
+          }
+        }
+      }).then().catch(
+        () => {
+          this.fetchData()
+        }
+      )
+    },
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -645,7 +1084,187 @@ export default {
         }
       }
     },
+    // 编辑是否主观
+    handleEditBoolean(row) {
+      let id = row.id
+      const data = {
+        is_subjectivity: row.is_subjectivity
+      }
+      updateCallLogHandle(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'success',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
+    },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'suggestion') {
+        this.handleSuggestion(row)
+      }
+    },
+    handleSuggestion(row) {
+      this.$prompt('请输入处理意见', '添加处理意见', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.suggestion,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            suggestion: value
+          }
+          updateCallLogHandle(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
+    },
+    handleRejection(row) {
+      this.$prompt('请输入驳回原因', '添加驳回原因', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.rejection,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            rejection: value
+          }
+          updateCallLogHandle(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.fetchData()
+        })
+    },
+    // 提交编辑完成的数据
+    confirmProcess(row) {
+      console.log(row)
+      const { id, ...details } = row
+      const data = {
+        question_tag: details.question_tag.id
+      }
+      console.log(data, id)
+      updateCallLogHandle(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 3000
+          })
+          this.fetchData()
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改出错',
+            message: error.data,
+            type: 'error',
+            offset: 0,
+            duration: 0
+          })
+          this.fetchData()
+        }
+      )
 
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.is_subjectivity === true) {
+        row_style = {
+          backgroundColor: 'darkorange'
+        }
+      }
+      return row_style
+    },
     resetParams() {
       this.params = {
         page: 1

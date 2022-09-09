@@ -700,11 +700,13 @@ export default {
           this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.track_id.length > 20) {
-        const track_ids = this.params.track_id.split(' ').toString()
-        if (track_ids.length > 1) {
-          this.params.track_id__in = track_ids
-          delete this.params.track_id
+      if (this.params.track_id !== undefined) {
+        if (this.params.track_id.length > 20) {
+          const track_ids = this.params.track_id.split(' ').toString()
+          if (track_ids.length > 1) {
+            this.params.track_id__in = track_ids
+            delete this.params.track_id
+          }
         }
       }
       getWorkOrderCheck(this.params).then(

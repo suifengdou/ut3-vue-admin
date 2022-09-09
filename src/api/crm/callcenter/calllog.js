@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getCallLogList(params) {
+export function getCallLog(params) {
   return request({
     url: '/crm/callcenter/calllog/',
     method: 'get',
