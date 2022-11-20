@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-tailorder-submit-container">
+  <div class="ori-tailorder-check-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -165,6 +165,7 @@
         style="width: 100%"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -184,6 +185,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.shop.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="源单号"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -208,6 +219,7 @@
         </el-table-column>
         <el-table-column
           label="工单反馈"
+          prop="feedback"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
@@ -1622,6 +1634,66 @@ export default {
       this.oriInvoiceGoodsListEdit.push(obj)
       console.log(this.oriInvoiceGoodsListEdit)
     },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'feedback') {
+        this.handleFeedback(row)
+      } 
+    },
+    handleFeedback(row) {
+      this.$prompt('请输入工单反馈', '添加工单反馈', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.feedback,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+        if(!value) {
+          return '输入不能为空';
+        }
+      }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            feedback: value
+          }
+          updateOritailorderCheck(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 0
+              })
+              this.fetchData()
+            }
+          )
+      }).catch(
+        (error) => {
+        this.$notify({
+          title: '修改失败',
+          message: `修改失败：${error.data}`,
+          type: 'error',
+          offset: 70,
+          duration: 0
+        })
+        this.fetchData()
+      })
+    },
+
     // 重置筛选
     resetParams() {
       this.params = {

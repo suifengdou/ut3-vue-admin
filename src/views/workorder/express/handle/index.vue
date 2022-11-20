@@ -41,9 +41,7 @@
               <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="支持多个快递单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
-
             </el-tooltip>
-
           </div>
 
         </el-col>

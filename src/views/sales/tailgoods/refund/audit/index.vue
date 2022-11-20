@@ -1,5 +1,5 @@
 <template>
-  <div class="tailorder-submit-container">
+  <div class="tailorderrefund-audit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -235,6 +235,16 @@
             <div v-for="(item, index) in scope.row.goods_details">
               <el-tag type="danger" size="mini">{{ item.name.name }}</el-tag>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="退换单号"
+          prop="order_id"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -541,11 +551,13 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.track_no.length > 20) {
-        const track_ids = this.params.track_no.split(' ').toString()
-        if (track_ids.length > 1) {
-          this.params.track_no__in = track_ids
-          delete this.params.track_no
+      if (this.params.track_no !== 'undefined') {
+        if (this.params.track_no.length > 20) {
+          const track_ids = this.params.track_no.split(' ').toString()
+          if (track_ids.length > 1) {
+            this.params.track_no__in = track_ids
+            delete this.params.track_no
+          }
         }
       }
       getRefundOrderAuditList(this.params).then(

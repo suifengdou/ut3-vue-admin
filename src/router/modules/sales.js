@@ -115,7 +115,7 @@ const salesChannelRouter = {
           path: 'expendlist',
           component: () => import('@/views/sales/advance/expendlist/index'),
           name: '支出冲销管理',
-          meta: { title: '支出冲销管理', roles: ['advancepayment.view_handler_prestore', 'AllPrivileges'] }
+          meta: { title: '支出冲销管理', roles: ['advancepayment.view_prestore', 'AllPrivileges'] }
         }
       ]
     },

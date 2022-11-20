@@ -561,13 +561,16 @@ export default {
           this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.track_no.length > 20) {
-        const track_ids = this.params.track_no.split(' ').toString()
-        if (track_ids.length > 1) {
-          this.params.track_no__in = track_ids
-          delete this.params.track_no
+      if (this.params.track_no !== 'undefined') {
+        if (this.params.track_no.length > 20) {
+          const track_ids = this.params.track_no.split(' ').toString()
+          if (track_ids.length > 1) {
+            this.params.track_no__in = track_ids
+            delete this.params.track_no
+          }
         }
       }
+
       getRefundOrderManageList(this.params).then(
         res => {
           this.DataList = res.data.results

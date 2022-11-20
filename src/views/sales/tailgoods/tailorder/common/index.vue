@@ -31,6 +31,16 @@
           </div>
 
         </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索单号" placement="top-start">
+              <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入单号，支持多单号" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+
+        </el-col>
 
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -700,6 +710,15 @@ export default {
         console.log(this.params.order_status)
         this.params.order_status__in = this.params.order_status.toString()
         console.log(this.params.order_status__in)
+      }
+      if (this.params.order_id !== undefined) {
+        if (this.params.order_id.length > 30) {
+          const order_ids = this.params.order_id.split(' ').toString()
+          if (order_ids.length > 1) {
+            this.params.order_id__in = order_ids
+            delete this.params.order_id
+          }
+        }
       }
       gettailorderCommonList(this.params).then(
         res => {

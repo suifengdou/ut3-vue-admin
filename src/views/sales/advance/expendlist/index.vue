@@ -5,7 +5,16 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入平台名称" @keyup.enter.native="fetchData">
+              <el-input v-model="params.prestore__order_id" class="grid-content bg-purple" placeholder="请输入关联预存单号" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+              <el-input v-model="params.statements__order_id" class="grid-content bg-purple" placeholder="请输入关联流水单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -28,16 +37,6 @@
                 </template>
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="账户名称" prop="name">
-                        <el-input v-model="params.name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="类型" prop="category">
-                        <el-input v-model="params.shop_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
