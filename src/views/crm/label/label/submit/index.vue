@@ -9,7 +9,6 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">校正</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
@@ -187,7 +186,7 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop_name }}</span>
+            <span>{{ scope.row.shop_name.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -322,7 +321,7 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name }}</span>
+            <span>{{ scope.row.goods_name.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -340,7 +339,7 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warehouse_name }}</span>
+            <span>{{ scope.row.warehouse_name.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -677,15 +676,14 @@
 
 <script>
 import {
-  getOriOrderList,
-  createOriOrder,
-  updateOriOrder,
-  exportOriOrder,
-  excelImportOriOrder,
-  fixOriOrder,
-  checkOriOrder,
-  rejectOriOrder
-} from '@/api/crm/order/oriorder'
+  getOrderList,
+  createOrder,
+  updateOrder,
+  exportOrder,
+  excelImportOrder,
+  checkOrder,
+  rejectOrder
+} from '@/api/crm/order/order'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -790,7 +788,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriOrderList(this.params).then(
+      getOrderList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -829,7 +827,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateOriOrder(id, data).then(
+      updateOrder(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -870,7 +868,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createOriOrder(this.formAdd).then(
+      createOrder(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -931,7 +929,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOriOrder(importformData, config).then(
+            excelImportOrder(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -995,38 +993,38 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriOrder(this.params).then(
+            exportOrder(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    客户网名: item.buyer_nick,
-                    订单编号: item.trade_no,
-                    子单原始单号: item.src_tids,
-                    收件人: item.receiver,
-                    收货地址: item.address,
-                    收件人手机: item.mobile,
-                    付款时间: item.pay_time,
-                    收货地区: item.area,
-                    物流单号: item.logistics_no,
-                    物流公司: item.logistics_name,
-                    买家留言: item.buyer_message,
-                    收件人姓名: item.cs_remark,
-                    客服备注: item.sent_smartphone,
-                    打印备注: item.print_remark,
-                    下单数量: item.num,
-                    实发数量: item.quantity,
-                    成交价: item.price,
-                    成交总价: item.amount,
-                    预估重量: item.weight,
-                    实际重量: item.actual_weight,
-                    货品名称: item.goods_name,
-                    商家编码: item.spec_code,
-                    店铺: item.shop_name,
-                    仓库名称: item.warehouse_name,
-                    订单类型: item.order_category,
-                    erp订单状态: item.erp_order_status,
-                    发货时间: item.deliver_time,
-                    erp订单标记: item.sign,
+                    店铺: item.shop.name,
+                    收款开票公司: item.company.name,
+                    源单号: item.order_id,
+                    发票类型: item.order_category.name,
+                    发票抬头: item.title,
+                    纳税人识别号: item.tax_id,
+                    联系电话: item.phone,
+                    银行名称: item.bank,
+                    银行账号: item.account,
+                    地址: item.address,
+                    发票备注: item.remark,
+                    收件人姓名: item.sent_consignee,
+                    收件人手机: item.sent_smartphone,
+                    收件城市: item.sent_city.name,
+                    收件区县: item.sent_district,
+                    收件地址: item.sent_address,
+                    申请税前开票总额: item.amount,
+                    是否发顺丰: item.is_deliver,
+                    申请提交时间: item.submit_time,
+                    开票处理时间: item.handle_time,
+                    开票处理间隔: item.handle_interval,
+                    工单留言: item.message,
+                    工单反馈: item.memorandum,
+                    创建公司: item.sign_company.name,
+                    创建部门: item.sign_department.name,
+                    客户昵称: item.nickname,
+                    创建时间: item.create_time,
+                    更新时间: item.update_time,
                     创建者: item.creator,
                     处理标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name
@@ -1085,7 +1083,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixOriOrder(this.params).then(
+        fixOrder(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1141,7 +1139,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixOriOrder(this.params).then(
+        fixOrder(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1198,7 +1196,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkOriOrder(this.params).then(
+        checkOrder(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1254,7 +1252,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkOriOrder(this.params).then(
+        checkOrder(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1329,7 +1327,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectOriOrder(this.params).then(
+              rejectOrder(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1396,7 +1394,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectOriOrder(this.params).then(
+              rejectOrder(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
