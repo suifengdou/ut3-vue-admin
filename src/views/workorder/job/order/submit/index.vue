@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="job-order-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -30,7 +30,7 @@
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <!-- <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
               <el-button type="success" @click="importExcel">导入</el-button>
@@ -39,7 +39,7 @@
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
+        </el-col> -->
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
@@ -136,6 +136,7 @@
         v-loading="tableLoading"
         :data="DataList"
         border
+        :row-style="rowStyle"
         style="width: 100%"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
@@ -151,7 +152,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签名称"
+          label="任务名"
           prop="name"
           sortable="custom"
         >
@@ -160,7 +161,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签编码"
+          label="任务码"
           prop="code"
           sortable="custom"
         >
@@ -169,36 +170,74 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="类型"
-          prop="category"
+          label="标签名"
+          prop="label"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
+            <span>{{ scope.row.label.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="中心"
-          prop="center"
+          label="任务说明"
+          prop="info"
+          sortable="custom"
+          width="360px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.info }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="任务关键字"
+          prop="keywords"
+          sortable="custom"
+          width="200px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.keywords }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="数量"
+          prop="quantity"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.center.name }}</span>
+            <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="是否停用"
-          prop="is_cancel"
+          label="完成数"
+          prop="complete_number"
+          sortable="custom"
         >
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_cancel"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              @change="handleEditBoolean(scope.row)"
-            />
+            <span>{{ scope.row.complete_number }}</span>
           </template>
-
+        </el-table-column>
+        <el-table-column
+          label="结束数"
+          prop="over_number"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.over_number }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="文档上传"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handleFileUpload(scope.row)">上传</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="文档查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
+          </template>
         </el-table-column>
         <el-table-column
           label="备注"
@@ -260,13 +299,10 @@
       >
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>客户相关信息</span>
+            <span>任务相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
+            <el-col :span="8"><el-form-item label="任务类别" prop="category">
               <template>
                 <el-select
                   v-model="formAdd.category"
@@ -274,11 +310,31 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
+                  placeholder="请搜索并选中任务类别"
+                  :remote-method="remoteMethodJobCategory"
                 >
                   <el-option
-                    v-for="item in optionsLabelCategory"
+                    v-for="item in optionsJobCategory"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="标签" prop="label">
+              <template>
+                <el-select
+                  v-model="formAdd.label"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选中标签"
+                  :remote-method="remoteMethodLabel"
+                >
+                  <el-option
+                    v-for="item in optionsLabel"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -288,8 +344,23 @@
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
+            <el-col :span="18"><el-form-item label="任务说明" prop="info">
+              <el-input
+                type="textarea"
+                :rows="5"
+                placeholder="请输入任务说明"
+                v-model="formAdd.info">
+              </el-input>
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="18"><el-form-item label="关键字" prop="keywords">
+              <el-input v-model="formAdd.keywords" placeholder="请输入关键字" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
             <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入收货地址" />
+              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -329,10 +400,7 @@
             <span>标签类别信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客户网名" prop="name">
-              <el-input v-model="formEdit.name" placeholder="请输入类型名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
+            <el-col :span="8"><el-form-item label="任务类别" prop="category">
               <template>
                 <el-select
                   v-model="formEdit.category"
@@ -340,17 +408,52 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
+                  placeholder="请搜索并选中任务类别"
+                  :remote-method="remoteMethodJobCategory"
                 >
                   <el-option
-                    v-for="item in optionsLabelCategory"
+                    v-for="item in optionsJobCategory"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
                   />
                 </el-select>
               </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="标签" prop="label">
+              <template>
+                <el-select
+                  v-model="formEdit.label"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选中标签"
+                  :remote-method="remoteMethodLabel"
+                >
+                  <el-option
+                    v-for="item in optionsLabel"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="18"><el-form-item label="任务说明" prop="info">
+              <el-input
+                type="textarea"
+                :rows="5"
+                placeholder="请输入任务说明"
+                v-model="formEdit.info">
+              </el-input>
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="18"><el-form-item label="关键字" prop="keywords">
+              <el-input v-model="formEdit.keywords" placeholder="请输入关键字" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
@@ -372,6 +475,116 @@
           </el-form>
         </div>
       </template>
+    </el-dialog>
+    <!--导入图片模态窗-->
+    <el-dialog
+      title="导入"
+      :visible.sync="importVisible"
+      width="33%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form ref="importForm" label-width="10%" :data="importFiles">
+        <div>
+          <h3>特别注意</h3>
+          <p>针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员</p>
+        </div>
+        <hr>
+        <el-form-item label="文件">
+          <input ref="files" type="file" multiple="multiple" @change="getFile($event)">
+        </el-form-item>
+        <hr>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="6">
+            <el-form-item>
+              <el-button type="primary" @click="importPhotoes">导入文件</el-button>
+              <el-button type="error" @click="closeImport">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+
+    </el-dialog>
+    <!--图片查看模态窗-->
+    <el-dialog
+      title="文档查看"
+      :visible.sync="filesViewVisible"
+      width="55%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="fileDetails">
+          <el-table-column
+            label="文件名"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="文件类型"
+            prop="suffix"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.suffix }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="文件链接"
+            prop="suffix"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.is_pic">
+                <el-image
+                  style="width: 100px; height: 100px"
+                  :src="scope.row.url"
+                  :preview-src-list="scope.row.url_list">
+                </el-image>
+              </div>
+              <div v-else>
+                <el-link :href="scope.row.url" target="_blank">{{ scope.row.name }}</el-link>
+              </div>
+
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="创建者"
+            prop="creator"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.creator }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="创建时间"
+            prop="created_time"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="操作"
+          >
+            <template slot-scope="scope">
+              <el-button type="danger" size="mini" @click="handleDeleteFile(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+
+        </el-table>
+      </div>
+
+
     </el-dialog>
     <!--日志查看模态窗-->
     <el-dialog
@@ -425,20 +638,25 @@
 </template>
 
 <script>
-import {
-  getLabelCenter,
-  createLabelCenter,
-  updateLabelCenter,
-  exportLabelCenter,
-  excelImportLabelCenter,
-} from '@/api/crm/labels/label/labelcenter'
-import { getLogLabel } from '@/api/crm/labels/label/label'
+import { 
+  getJobOrderSubmit,
+  createJobOrderSubmit,
+  updateJobOrderSubmit,
+  exportJobOrderSubmit,
+  excelImportJobOrderSubmit,
+  checkJobOrderSubmit,
+  rejectJobOrderSubmit,
+  fileImportJobOrderSubmit
+ } from '@/api/wop/job/order/submit' 
+import {  getLabel } from '@/api/crm/labels/label/label'
+import { getJobCategory } from '@/api/wop/job/base/category'
 import { getCompanyList } from '@/api/base/company'
-import { getLabelCategory } from '@/api/crm/labels/label/labelcategory'
+import { getLogJobOrder, getFilesJobOrder } from '@/api/wop/job/order/manage' 
+import { deleteJobFile } from '@/api/wop/job/order/jofiles'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkLabeCenter',
+  name: 'submitJobOrder',
   data() {
     return {
       DataList: [],
@@ -447,6 +665,9 @@ export default {
       pageSize: 30,
       selectNum: 0,
       checkList: [],
+      fileData: {},
+      importFiles: [],
+      fileDetails: [],
       tableData: {},
       params: {
         page: 1,
@@ -455,10 +676,13 @@ export default {
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       logViewVisible: false,
+      filesViewVisible: false,
+      importVisible: false,
       logDetails: [],
       formAdd: {},
       formEdit: {},
-      optionsLabelCategory: [],
+      optionsLabel: [],
+      optionsJobCategory: [],
       optionsJudgment: [
         {
           value: true,
@@ -470,9 +694,18 @@ export default {
         }
       ],
       rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
+        label: [
+          { required: true, message: '请选择客户网名', trigger: 'blur' }
         ],
+        category: [
+          { required: true, message: '请选择任务类别', trigger: 'blur' }
+        ],
+        info: [
+          { required: true, message: '请选择任务类别', trigger: 'blur' }
+        ],
+        keywords: [
+          { required: true, message: '请选择任务类别', trigger: 'blur' }
+        ]
       },
       checkedDetail: [],
       checkedDetailEdit: []
@@ -493,7 +726,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getLabelCenter(this.params).then(
+      getJobOrderSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -522,12 +755,21 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
+      this.optionsLabel = [{ label: this.formEdit.label.name, value: this.formEdit.label.id }]
+      this.formEdit.label = this.formEdit.label.id
+      this.optionsJobCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
+      this.formEdit.category = this.formEdit.category.id
+      let attrStr
+      const transFieldStr = ['mistake_tag', 'process_tag', 'department', 'order_status', 'center']
+        for (attrStr in transFieldStr) {
+          this.formEdit[transFieldStr[attrStr]] = this.formEdit[transFieldStr[attrStr]].id
+        }
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
-      updateLabelCenter(id, data).then(
+      updateJobOrderSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -555,7 +797,6 @@ export default {
     handleCancelEdit() {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetails()
     },
     // 添加界面
     add() {
@@ -568,7 +809,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createLabelCenter(this.formAdd).then(
+      createJobOrderSubmit(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -629,7 +870,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportLabelCenter(importformData, config).then(
+            excelImportJobOrderSubmit(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -693,7 +934,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportLabelCenter(this.params).then(
+            exportJobOrderSubmit(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -783,7 +1024,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixLabelCenter(this.params).then(
+        fixLabel(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -839,7 +1080,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixLabelCenter(this.params).then(
+        fixLabel(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -896,7 +1137,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkLabelCenter(this.params).then(
+        checkJobOrderSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -952,7 +1193,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkLabelCenter(this.params).then(
+        checkJobOrderSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1027,7 +1268,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectLabelCenter(this.params).then(
+              rejectJobOrderSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1094,7 +1335,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectLabelCenter(this.params).then(
+              rejectJobOrderSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1193,7 +1434,7 @@ export default {
       const data = {
         is_cancel: row.is_cancel
       }
-      updateLabelCenter(id, data).then(
+      updateJobOrderSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1216,26 +1457,207 @@ export default {
       )
     },
     // 类型搜索
-    remoteMethodLabelCategory(query) {
+    remoteMethodLabel(query) {
       if (query !== '') {
         // console.log("我准备开始检索啦")
         setTimeout(() => {
           // console.log("我是真正的开始检索啦")
           const paramsSearch = {}
           paramsSearch.name = query
-          paramsSearch.category = 1
-          getLabelCategory(paramsSearch).then(
+          getLabel(paramsSearch).then(
             res => {
-              this.optionsLabelCategory = res.data.results.map(item => {
+              this.optionsLabel = res.data.results.map(item => {
                 return { label: item.name, value: item.id }
               })
             }
           )
         }, 200)
       } else {
-        this.optionsLabelCategory = []
+        this.optionsLabel = []
       }
     },
+    // 类型搜索
+    remoteMethodJobCategory(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getJobCategory(paramsSearch).then(
+            res => {
+              this.optionsJobCategory = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsJobCategory = []
+      }
+    },
+    // 图片上传模块  getJobCategory
+    handleFileUpload(userValue) {
+      this.fileData.id = userValue.id
+      this.importVisible = true
+
+    },
+    getFile(event) {
+      // const filetypes =[".jpg",".png"]
+      let filemaxsize = 1024*2
+      let fileSize = 0
+      for (var i = 0; i < event.target.files.length; i++) {
+        let file = event.target.files[i]
+        let verify_type = false
+        let suffix_name = file.name.substring(file.name.indexOf('.'))
+        console.log(suffix_name)
+        fileSize = file.size / 1048576
+        console.log(fileSize)
+        if (fileSize > this.$store.state.user.uploadSize) {
+          this.$notify({
+            title: '错误详情',
+            message: '文件最大4M',
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+          this.$refs.files.type = 'text'
+          this.$refs.files.value = ''
+          this.$refs.files.type = 'file'
+          this.importFiles = []
+          return false
+        }
+        // for (let i = 0; i < filetypes.length; i++) {
+        //   if (filetypes[i] == suffix_name) {
+        //     verify_type = true
+        //     break
+        //   }
+        // }
+        // if (!verify_type) {
+        //   this.$notify({
+        //     title: '错误详情',
+        //     message: '文件只支持png,jpg',
+        //     type: 'error',
+        //     offset: 70,
+        //     duration: 0
+        //   })
+        //   this.$refs.files.type = 'text'
+        //   this.$refs.files.value = ''
+        //   this.$refs.files.type = 'file'
+        //   this.importFiles = []
+        //   return false
+        // }
+        this.importFiles.push(file)
+      }
+    },
+    importPhotoes() {
+      const importformData = new FormData()
+      for (let i = 0; i < this.importFiles.length; i++) {
+        importformData.append('files', this.importFiles[i])
+      }
+      importformData.append('id', this.fileData.id)
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      this.tableLoading = true
+      fileImportJobOrderSubmit(importformData, config).then(
+        res => {
+          this.$notify({
+            title: '导入结果',
+            message: res.data,
+            type: 'success',
+            duration: 0
+          })
+          this.fetchData()
+          this.closeImport()
+        }).catch(
+        (error) => {
+          console.log('1')
+          this.$notify({
+            title: '导入错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+        }
+      )
+    },
+    closeImport() {
+      this.$refs.files.type = 'text'
+      this.$refs.files.value = ''
+      this.$refs.files.type = 'file'
+      this.importFiles = []
+      this.importVisible = false
+    },
+    // 查看文档
+    handlePhotoView(userValue) {
+      this.fileDetails = []
+      this.filesViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getFilesJobOrder(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.fileDetails = res.data
+        }).catch(
+        (error) => {
+          console.log('1')
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+        }
+      )
+    },
+    // 删除文档
+    handleDeleteFile(row) {
+      const data = {
+        id: row.id
+      }
+      deleteJobFile(data).then(
+        (res) => {
+          if (res.data.successful > 0){
+            this.$notify({
+              title: '删除成功',
+              type: 'success',
+              message: `删除成功条数：${res.data.successful}`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+          if (res.data.false > 0) {
+            this.$notify({
+              title: '删除失败',
+              type: 'error',
+              message: `删除失败错误：已删除或者无权限`,
+              offset: 70,
+              duration: 3000
+            })
+            this.fetchData()
+          }
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+        }
+      )
+    },
+    // 表格样式
     // 查看日志
     logView(userValue) {
       this.logDetails = []
@@ -1243,7 +1665,7 @@ export default {
       const data = {
         id: userValue.id
       }
-      getLogLabel(data).then(
+      getLogJobOrder(data).then(
         res => {
           this.$notify({
             title: '查询成功',
@@ -1261,6 +1683,15 @@ export default {
           })
         }
       )
+    },
+    rowStyle({ row, rowIndex}) {
+      let row_style = {}
+      if (row.process_tag.id === 1) {
+        row_style = {
+          backgroundColor: 'lightcyan'
+        }
+      } 
+      return row_style
     },
     resetParams() {
       this.params = {

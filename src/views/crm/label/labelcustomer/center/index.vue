@@ -22,7 +22,7 @@
         </el-col>
         <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="客户手机" placement="top-start">
               <el-input v-model="params.customer__name" class="grid-content bg-purple" placeholder="请输入手机号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
@@ -32,7 +32,7 @@
         </el-col>
         <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="标签名称" placement="top-start">
               <el-input v-model="params.label__name" class="grid-content bg-purple" placeholder="请输入标签" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>

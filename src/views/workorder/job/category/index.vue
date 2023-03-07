@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="job-category-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -151,7 +151,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签名称"
+          label="类型名称"
           prop="name"
           sortable="custom"
         >
@@ -160,45 +160,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签编码"
+          label="类型编码"
           prop="code"
           sortable="custom"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.code }}</span>
           </template>
-        </el-table-column>
-        <el-table-column
-          label="类型"
-          prop="category"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="中心"
-          prop="center"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.center.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否停用"
-          prop="is_cancel"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_cancel"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              @change="handleEditBoolean(scope.row)"
-            />
-          </template>
-
         </el-table-column>
         <el-table-column
           label="备注"
@@ -263,28 +231,11 @@
             <span>客户相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="类型名称" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入类型名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <template>
-                <el-select
-                  v-model="formAdd.category"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
-                >
-                  <el-option
-                    v-for="item in optionsLabelCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
+            <el-col :span="8"><el-form-item label="类型编码" prop="code">
+              <el-input v-model="formAdd.code" placeholder="请输入类型编码" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
@@ -332,25 +283,8 @@
             <el-col :span="8"><el-form-item label="客户网名" prop="name">
               <el-input v-model="formEdit.name" placeholder="请输入类型名称" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <template>
-                <el-select
-                  v-model="formEdit.category"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
-                >
-                  <el-option
-                    v-for="item in optionsLabelCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
+            <el-col :span="8"><el-form-item label="类型编码" prop="code">
+              <el-input v-model="formEdit.code" placeholder="请输入类型编码" />
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
@@ -426,19 +360,18 @@
 
 <script>
 import {
-  getLabelCenter,
-  createLabelCenter,
-  updateLabelCenter,
-  exportLabelCenter,
-  excelImportLabelCenter,
-} from '@/api/crm/labels/label/labelcenter'
-import { getLogLabel } from '@/api/crm/labels/label/label'
+  getJobCategory,
+  createJobCategory,
+  updateJobCategory,
+  exportJobCategory,
+  excelImportJobCategory,
+  getLogJobCategory
+} from '@/api/wop/job/base/category'
 import { getCompanyList } from '@/api/base/company'
-import { getLabelCategory } from '@/api/crm/labels/label/labelcategory'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkLabeCenter',
+  name: 'JobCategory',
   data() {
     return {
       DataList: [],
@@ -458,7 +391,6 @@ export default {
       logDetails: [],
       formAdd: {},
       formEdit: {},
-      optionsLabelCategory: [],
       optionsJudgment: [
         {
           value: true,
@@ -471,7 +403,10 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
+          { required: true, message: '请选择客户网名', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入订单编号', trigger: 'blur' }
         ],
       },
       checkedDetail: [],
@@ -493,7 +428,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getLabelCenter(this.params).then(
+      getJobCategory(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -527,7 +462,7 @@ export default {
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
-      updateLabelCenter(id, data).then(
+      updateJobCategory(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -568,7 +503,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createLabelCenter(this.formAdd).then(
+      createJobCategory(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -629,7 +564,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportLabelCenter(importformData, config).then(
+            excelImportJobCategory(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -693,7 +628,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportLabelCenter(this.params).then(
+            exportJobCategory(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -783,7 +718,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixLabelCenter(this.params).then(
+        fixJobCategory(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -839,7 +774,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixLabelCenter(this.params).then(
+        fixJobCategory(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -896,7 +831,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkLabelCenter(this.params).then(
+        checkJobCategory(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -952,7 +887,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkLabelCenter(this.params).then(
+        checkJobCategory(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1027,7 +962,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectLabelCenter(this.params).then(
+              rejectJobCategory(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1094,7 +1029,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectLabelCenter(this.params).then(
+              rejectJobCategory(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1187,63 +1122,13 @@ export default {
         }
       }
     },
-    // 编辑丢件返回信息
-    handleEditBoolean(row) {
-      let id = row.id
-      const data = {
-        is_cancel: row.is_cancel
-      }
-      updateLabelCenter(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 70,
-            duration: 3000
-          })
-          this.fetchData()
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${error.data}`,
-            type: 'success',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
-    },
-    // 类型搜索
-    remoteMethodLabelCategory(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          paramsSearch.category = 1
-          getLabelCategory(paramsSearch).then(
-            res => {
-              this.optionsLabelCategory = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.optionsLabelCategory = []
-      }
-    },
-    // 查看日志
     logView(userValue) {
       this.logDetails = []
       this.logViewVisible = true
       const data = {
         id: userValue.id
       }
-      getLogLabel(data).then(
+      getLogJobCategory(data).then(
         res => {
           this.$notify({
             title: '查询成功',

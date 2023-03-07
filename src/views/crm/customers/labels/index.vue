@@ -1,16 +1,15 @@
 <template>
-  <div class="ori-order-container">
+  <div class="customers-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCreateJob">创建任务</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -20,15 +19,23 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+            <el-tooltip class="item" effect="dark" content="客户手机" placement="top-start">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="支持多个客户电话搜索" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
-
+        </el-col>
+        <el-col :span="3" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="标签名称" placement="top-start">
+              <el-input v-model="params.labelcustomer__label__name" class="grid-content bg-purple" placeholder="支持简单逻辑非" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -38,9 +45,10 @@
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
+            <el-button type="success" @click="test">测试</el-button>
           </div>
         </el-col>
-        <el-col :span="7" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
               <el-button type="primary" @click="add">新增</el-button>
@@ -151,62 +159,35 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签名称"
+          label="用户名"
           prop="name"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="标签编码"
-          prop="code"
+          label="标签名称"
+          prop="labels"
           sortable="custom"
+          width="300px"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.code }}</span>
+            <div v-for="(item, i) in scope.row.labels">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
-          label="类型"
-          prop="category"
+          label="客服备注"
+          prop="cs_remark"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="中心"
-          prop="center"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.center.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否停用"
-          prop="is_cancel"
-        >
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.is_cancel"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              @change="handleEditBoolean(scope.row)"
-            />
-          </template>
-
-        </el-table-column>
-        <el-table-column
-          label="备注"
-          prop="memo"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.memorandum }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -216,30 +197,8 @@
             <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
-        <el-table-column
-          label="创建者"
-          prop="creator"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.creator }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建时间"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="更新时间"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
-          </template>
-        </el-table-column>
+
+
 
       </el-table>
     </div>
@@ -263,36 +222,15 @@
             <span>客户相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入名称" />
+            <el-col :span="8"><el-form-item label="会员名" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入客户手机" />
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <template>
-                <el-select
-                  v-model="formAdd.category"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
-                >
-                  <el-option
-                    v-for="item in optionsLabelCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入收货地址" />
+            <el-col :span="8"><el-form-item label="备注" prop="memorandum">
+              <el-input v-model="formAdd.memorandum" placeholder="请输入备注" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
+
         <el-card class="box-card">
           <el-row :gutter="20">
             <el-col :span="16" :offset="8"><el-form-item size="large">
@@ -324,41 +262,55 @@
             :model="formEdit"
             :rules="rules"
           >
-          <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>标签类别信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客户网名" prop="name">
-              <el-input v-model="formEdit.name" placeholder="请输入类型名称" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="类型" prop="category">
-              <template>
-                <el-select
-                  v-model="formEdit.category"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选中类型"
-                  :remote-method="remoteMethodLabelCategory"
-                >
-                  <el-option
-                    v-for="item in optionsLabelCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formEdit.memo" placeholder="请输入收货地址" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>客户相关信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="会员名" prop="name">
+                  <span>{{ formEdit.name }}</span>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="备注" prop="memorandum">
+                  <span>{{ formEdit.memorandum }}</span>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>标签信息</span>
+                <p>标签无法删除，标签一旦添加则永久添加。手工添加需要谨慎，添加错误无法修改！！！</p>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="现有标签" prop="labels">
+                  <template>
+                    <div v-for="(item, i) in formEdit.labels">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="新加标签" prop="label_add">
+                  <template>
+                    <el-select
+                      v-model="formEdit.label_add"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请选择标签"
+                      :remote-method="remoteMethodLabel"
+                    >
+                      <el-option
+                        v-for="item in optionsLabel"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+            
             <el-card class="box-card">
               <el-row :gutter="20">
                 <el-col :span="16" :offset="8"><el-form-item size="large">
@@ -426,19 +378,21 @@
 
 <script>
 import {
-  getLabelCenter,
-  createLabelCenter,
-  updateLabelCenter,
-  exportLabelCenter,
-  excelImportLabelCenter,
-} from '@/api/crm/labels/label/labelcenter'
-import { getLogLabel } from '@/api/crm/labels/label/label'
+  getCustomerLabel,
+  createCustomerLabel,
+  updateCustomerLabel,
+  exportCustomerLabel,
+  excelImportCustomerLabel,
+  createJobCustomerLabel,
+  rejectCustomerLabel,
+  getLogCustomerLabel
+} from '@/api/crm/customers/cslabels'
 import { getCompanyList } from '@/api/base/company'
-import { getLabelCategory } from '@/api/crm/labels/label/labelcategory'
+import { getLabel } from '@/api/crm/labels/label/label'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkLabeCenter',
+  name: 'submitExpressWorkOrder',
   data() {
     return {
       DataList: [],
@@ -450,7 +404,9 @@ export default {
       tableData: {},
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        name: '', 
+        name__in: ''
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
@@ -458,7 +414,7 @@ export default {
       logDetails: [],
       formAdd: {},
       formEdit: {},
-      optionsLabelCategory: [],
+      optionsLabel: [],
       optionsJudgment: [
         {
           value: true,
@@ -471,8 +427,8 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
+          { required: true, message: '请选择用户名', trigger: 'blur' }
+        ]
       },
       checkedDetail: [],
       checkedDetailEdit: []
@@ -487,13 +443,16 @@ export default {
       console.log(this.params)
       this.tableLoading = true
       // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (this.params.name !== undefined) {
+        if (this.params.name.length > 20) {
+          const names = this.params.name.split(' ').toString()
+          if (names.length > 1) {
+            this.params.name__in = names
+            delete this.params.name
+          }
         }
       }
-      getLabelCenter(this.params).then(
+      getCustomerLabel(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -522,12 +481,16 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
+      this.optionsLabel = this.formEdit.labels.map(item => {
+        return { label: item.name, value: item.id }
+      })
+      this.formEdit.label = this.formEdit.labels.map(item => item.id)
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
-      updateLabelCenter(id, data).then(
+      updateCustomerLabel(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -568,7 +531,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createLabelCenter(this.formAdd).then(
+      createCustomerLabel(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -629,7 +592,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportLabelCenter(importformData, config).then(
+            excelImportCustomerLabel(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -666,10 +629,89 @@ export default {
         }
       }).then(action => {
         console.log(action)
+        done(false)
       }).catch(
         (error) => {
           console.log(error)
+          done(false)
         }
+
+      )
+    },
+    test() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+            name: 'importfile',
+            type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportCustomerLabel(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        done(false)
+      }).catch(
+        (error) => {
+          console.log(error)
+          done(false)
+        }
+
       )
     },
     // 导出
@@ -693,7 +735,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportLabelCenter(this.params).then(
+            exportCustomerLabel(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -779,129 +821,17 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 校正
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixLabelCenter(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法校正',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixLabelCenter(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
     // 审核单据
-    handleCheck() {
+
+    handleCreateJob() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkLabelCenter(this.params).then(
+        createJobCustomerLabel(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '创建成功',
+                message: `创建成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -909,8 +839,8 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '创建失败',
+                message: `创建失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -952,12 +882,12 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkLabelCenter(this.params).then(
+        createJobCustomerLabel(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '创建成功',
+                message: `创建成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -965,8 +895,8 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '创建失败',
+                message: `创建失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 0
@@ -1007,157 +937,7 @@ export default {
         )
       }
     },
-    handleReject() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '取消工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectLabelCenter(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法取消',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectLabelCenter(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        () => {
-          this.fetchData()
-        }
-      )
-    },
+
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -1187,55 +967,6 @@ export default {
         }
       }
     },
-    // 编辑丢件返回信息
-    handleEditBoolean(row) {
-      let id = row.id
-      const data = {
-        is_cancel: row.is_cancel
-      }
-      updateLabelCenter(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 70,
-            duration: 3000
-          })
-          this.fetchData()
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${error.data}`,
-            type: 'success',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-      )
-    },
-    // 类型搜索
-    remoteMethodLabelCategory(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          paramsSearch.category = 1
-          getLabelCategory(paramsSearch).then(
-            res => {
-              this.optionsLabelCategory = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.optionsLabelCategory = []
-      }
-    },
     // 查看日志
     logView(userValue) {
       this.logDetails = []
@@ -1243,7 +974,7 @@ export default {
       const data = {
         id: userValue.id
       }
-      getLogLabel(data).then(
+      getLogCustomerLabel(data).then(
         res => {
           this.$notify({
             title: '查询成功',
@@ -1261,6 +992,26 @@ export default {
           })
         }
       )
+    },
+    // 标签搜索
+    remoteMethodLabel(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getLabel(paramsSearch).then(
+            res => {
+              this.optionsLabel = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsLabel = []
+      }
     },
     resetParams() {
       this.params = {

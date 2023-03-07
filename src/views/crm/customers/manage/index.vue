@@ -280,7 +280,7 @@ import {
   excelImportCustomer,
   checkCustomer,
   rejectCustomer
-} from '@/api/crm/customers/customers'
+} from '@/api/crm/customers/csmanage'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'

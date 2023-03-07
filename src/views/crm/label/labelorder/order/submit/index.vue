@@ -30,7 +30,7 @@
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <!-- <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
               <el-button type="success" @click="importExcel">导入</el-button>
@@ -39,7 +39,7 @@
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col>
+        </el-col> -->
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">

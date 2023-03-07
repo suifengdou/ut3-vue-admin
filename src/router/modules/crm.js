@@ -109,6 +109,12 @@ const crmChannelRouter = {
           meta: { title: '档案管理', roles: ['customers.view_customer', 'AllPrivileges'] }
         },
         {
+          path: 'cslabel',
+          component: () => import('@/views/crm/customers/labels'),
+          name: '标签档案',
+          meta: { title: '标签档案', roles: ['customers.view_customer', 'AllPrivileges'] }
+        },
+        {
           path: 'blacklist',
           component: () => import('@/views/crm/customers/manage'),
           name: '黑名单',
@@ -215,7 +221,7 @@ const crmChannelRouter = {
             },
             {
               path: 'labelcustomermanage',
-              component: () => import('@/views/crm/order/oriorder/sockout'),
+              component: () => import('@/views/crm/label/labelcustomer/manage'),
               name: 'labelcustomermanage',
               meta: { title: '客户标签-管理', roles: ['AllPrivileges'] },
               

@@ -1,8 +1,8 @@
 <template>
-  <div class="ori-order-container">
+  <div class="label-customer-manage-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
@@ -20,17 +20,27 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+            <el-tooltip class="item" effect="dark" content="客户手机" placement="top-start">
+              <el-input v-model="params.customer__name" class="grid-content bg-purple" placeholder="请输入手机号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
 
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="标签名称" placement="top-start">
+              <el-input v-model="params.label__name1" class="grid-content bg-purple" placeholder="请输入标签" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+
+        </el-col>
+        <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
               <el-button type="success" @click="importExcel">导入</el-button>
@@ -40,7 +50,7 @@
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="7" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
               <el-button type="primary" @click="add">新增</el-button>
@@ -151,25 +161,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签关联单名称"
-          prop="name"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="标签关联单编码"
-          prop="code"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.code }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="标签名"
+          label="标签名称"
           prop="label"
           sortable="custom"
         >
@@ -178,12 +170,21 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="明细数量"
-          prop="quantity"
+          label="客户"
+          prop="customer"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
+            <span>{{ scope.row.customer.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="中心"
+          prop="center"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.center.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -406,21 +407,21 @@
 
 <script>
 import { 
-  getLabelCustomerOrderSubmit,
-  createLabelCustomerOrderSubmit,
-  updateLabelCustomerOrderSubmit,
-  exportLabelCustomerOrderSubmit,
-  excelImportLabelCustomerOrderSubmit,
-  checkLabelCustomerOrderSubmit,
-  rejectLabelCustomerOrderSubmit
- } from '@/api/crm/labels/labelorder/order/submit' 
+  getLabelCustomer,
+  createLabelCustomer,
+  updateLabelCustomer,
+  exportLabelCustomer,
+  excelImportLabelCustomer,
+  checkLabelCustomer,
+  rejectLabelCustomer
+ } from '@/api/crm/labels/labelcustomer/manage' 
 import {  getLabel } from '@/api/crm/labels/label/label'
 import { getCompanyList } from '@/api/base/company'
-import { getLogLabelCustomerOrder } from '@/api/crm/labels/labelorder/order/manage' 
+import { getLogLabelCustomer } from '@/api/crm/labels/labelcustomer/manage' 
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkLabel',
+  name: 'labelCustomerManage',
   data() {
     return {
       DataList: [],
@@ -475,7 +476,7 @@ export default {
           this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getLabelCustomerOrderSubmit(this.params).then(
+      getLabelCustomer(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -509,7 +510,7 @@ export default {
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
-      updateLabelCustomerOrderSubmit(id, data).then(
+      updateLabelCustomer(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -550,7 +551,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createLabelCustomerOrderSubmit(this.formAdd).then(
+      createLabelCustomer(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -611,7 +612,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportLabelCustomerOrderSubmit(importformData, config).then(
+            excelImportLabelCustomer(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -675,7 +676,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportLabelCustomerOrderSubmit(this.params).then(
+            exportLabelCustomer(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -878,7 +879,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkLabelCustomerOrderSubmit(this.params).then(
+        checkLabelCustomer(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -934,7 +935,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkLabelCustomerOrderSubmit(this.params).then(
+        checkLabelCustomer(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1009,7 +1010,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectLabelCustomerOrderSubmit(this.params).then(
+              rejectLabelCustomer(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1076,7 +1077,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectLabelCustomerOrderSubmit(this.params).then(
+              rejectLabelCustomer(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1175,7 +1176,7 @@ export default {
       const data = {
         is_cancel: row.is_cancel
       }
-      updateLabelCustomerOrderSubmit(id, data).then(
+      updateLabelCustomer(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1224,7 +1225,7 @@ export default {
       const data = {
         id: userValue.id
       }
-      getLogLabelCustomerOrder(data).then(
+      getLogLabelCustomer(data).then(
         res => {
           this.$notify({
             title: '查询成功',

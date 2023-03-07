@@ -263,8 +263,8 @@
             <span>客户相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="类型名称" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入类型名称" />
+            <el-col :span="8"><el-form-item label="名称" prop="name">
+              <el-input v-model="formAdd.name" placeholder="请输入名称" />
             </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="类型" prop="category">
               <template>
@@ -471,10 +471,7 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请选择客户网名', trigger: 'blur' }
-        ],
-        code: [
-          { required: true, message: '请输入订单编号', trigger: 'blur' }
+          { required: true, message: '请收入名称', trigger: 'blur' }
         ],
       },
       checkedDetail: [],

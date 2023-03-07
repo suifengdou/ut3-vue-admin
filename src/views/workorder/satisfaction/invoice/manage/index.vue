@@ -300,7 +300,7 @@
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
   import { getGoodsList } from '@/api/base/goods'
-  import { getCustomerList } from '@/api/crm/customers/customers'
+  import { getCustomerList } from '@/api/crm/customers/csmanage'
   import { getCityList } from '@/api/utils/geography/city'
   import { getDistrictList } from '@/api/utils/geography/district'
   import moment from 'moment'

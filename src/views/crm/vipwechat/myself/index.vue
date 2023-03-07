@@ -403,7 +403,7 @@ import {
   checkVIPWechatMyself,
   rejectVIPWechatMyself
 } from '@/api/crm/vipwechat/myself'
-import { getCustomerList } from "@/api/crm/customers/customers"
+import { getCustomerList } from "@/api/crm/customers/csmanage"
 import { getSpecialistList } from "@/api/crm/vipwechat/specialist"
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
