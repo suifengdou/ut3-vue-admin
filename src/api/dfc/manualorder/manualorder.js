@@ -93,10 +93,18 @@ export function getManualOrderManageList(params) {
   })
 }
 
-
 export function exportManualOrderManage(data) {
   return request({
     url: '/dfc/manualorder/momanage/export/',
+    method: 'patch',
+    data
+  })
+}
+
+// 查询日志
+export function getLogManualOrderManage(data) {
+  return request({
+    url: `/dfc/manualorder/momanage/get_log_details/`,
     method: 'patch',
     data
   })

@@ -75,6 +75,15 @@ export function checkJobOrderDetailsAccept(data) {
   })
 }
 
+// 锁定工单
+export function signJobOrderDetailsAccept(data) {
+  return request({
+    url: `/workorder/job/joborderdetailsaccept/sign/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 取消工单
 export function rejectJobOrderDetailsAccept(data) {
   return request({

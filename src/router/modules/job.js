@@ -67,7 +67,7 @@ const jobRouter = {
         },
         {
           path: 'jodeperform',
-          component: () => import('@/views/dfc/manualorder/manage'),
+          component: () => import('@/views/workorder/job/details/perform'),
           name: 'jodeperform',
           meta: { title: '任务执行', roles: ['AllPrivileges'] }
         },
@@ -79,7 +79,7 @@ const jobRouter = {
         },
         {
           path: 'jodmanage',
-          component: () => import('@/views/dfc/manualorder/modetail'),
+          component: () => import('@/views/workorder/job/details/manage'),
           name: 'jodmanage',
           meta: { title: '任务管理', roles: ['AllPrivileges'] }
         },

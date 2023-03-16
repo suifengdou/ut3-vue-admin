@@ -82,18 +82,38 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="添加标签" prop="add_label">
+                        <el-input v-model="params.add_label" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="删除标签" prop="del_label">
+                        <el-input v-model="params.del_label" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
+                      <el-col :span="6"><el-form-item label="操作内容" prop="content">
+                        <el-input v-model="params.content" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="审核人" prop="checker">
+                        <el-input v-model="params.checker" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="领取人" prop="handler">
+                        <el-input v-model="params.handler" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="完成人" prop="completer">
+                        <el-input v-model="params.completer" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="是否完成">
+                        <el-select v-model="params.is_complete" placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -102,8 +122,8 @@
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
+                      <el-col :span="6"><el-form-item label="是否结束">
+                        <el-select v-model="params.is_over" placeholder="是否返回">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -116,7 +136,36 @@
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="是否重置">
+                        <el-select v-model="params.is_reset" placeholder="是否理赔">
+                          <el-option
+                            v-for="item in optionsJudgment"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
 
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="完成时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.completed_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -634,7 +683,7 @@
 </template>
 
 <script>
-import { 
+import {
   getJobOrderDetailsSubmit,
   createJobOrderDetailsSubmit,
   updateJobOrderDetailsSubmit,
@@ -643,11 +692,11 @@ import {
   checkJobOrderDetailsSubmit,
   rejectJobOrderDetailsSubmit,
   fileImportJobOrderDetailsSubmit
- } from '@/api/wop/job/details/submit' 
+ } from '@/api/wop/job/details/submit'
 import {  getLabel } from '@/api/crm/labels/label/label'
 import { getJobCategory } from '@/api/wop/job/base/category'
 import { getCompanyList } from '@/api/base/company'
-import { getLogJobOrderDetails, getFilesJobOrderDetails } from '@/api/wop/job/details/manage' 
+import { getLogJobOrderDetails, getFilesJobOrderDetails } from '@/api/wop/job/details/manage'
 import { deleteJobDetailsFile } from '@/api/wop/job/details/jodfiles'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -949,7 +998,8 @@ export default {
                     标签名: item.order.label,
                     任务说明: item.order.info,
                     任务关键字: item.order.keywords,
-                    任务执行关键字: item.keywords,
+                    添加标签: item.add_label,
+                    删除标签: item.del_label,
                     是否完成: item.is_complete,
                     是否结束: item.is_over,
                     是否重置: item.is_reset,
@@ -1727,7 +1777,7 @@ export default {
         row_style = {
           backgroundColor: 'lightcyan'
         }
-      } 
+      }
       return row_style
     },
     resetParams() {

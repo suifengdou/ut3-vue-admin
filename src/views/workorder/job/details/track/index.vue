@@ -1,5 +1,5 @@
 <template>
-  <div class="job-order-details-accept-container">
+  <div class="job-order-details-perform-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
@@ -9,9 +9,10 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSign">锁定</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">领取</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">清除</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchAddLabel">批量加标签</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchContent">批量加操作</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">完结执行单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">清除添加标签</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -189,13 +190,16 @@
         style="width: 100%"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
+            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column
@@ -264,6 +268,7 @@
             <span>{{ scope.row.order.info }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           label="任务关键字提示"
           prop="order"
@@ -274,11 +279,80 @@
             <span>{{ scope.row.order.keywords }}</span>
           </template>
         </el-table-column>
+
+
+        <el-table-column
+          label="添加标签"
+          prop="add_label"
+          sortable="custom"
+          width="200px"
+        >
+          <template slot-scope="scope">
+            <el-input
+              v-model="scope.row.add_label"
+              class="grid-content bg-purple"
+              placeholder="请输入关键字"
+              @change="handleEditAddLabel(scope.row)"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否完成"
+          prop="is_complete"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_complete"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="handleEditBoolean(scope.row)"
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否结束"
+          prop="is_over"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_over"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="handleEditBoolean(scope.row)"
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="操作内容"
+          prop="content"
+          sortable="custom"
+          width="200px"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.content }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="任务指数"
+          prop="job_index"
+          sortable="custom"
+          width="110px"
+        >
+          <template slot-scope="scope">
+            <el-input
+              v-model="scope.row.job_index"
+              maxlength="10"
+              minlength="0"
+              type="number"
+              @change="handleEditjobindex(scope.row)"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column
           label="文档上传"
         >
           <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click=" (scope.row)">上传</el-button>
+            <el-button type="danger" size="mini" @click="handleFileUpload(scope.row)">上传</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -331,6 +405,158 @@
 
       </el-table>
     </div>
+    <!--修改信息模态窗-->
+    <el-dialog
+      title="编辑"
+      width="80%"
+      ref="editdata"
+      :visible.sync="dialogVisibleEdit"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <template>
+        <div class="handleFormEdit">
+          <el-form
+            ref="handleFormEdit"
+            label-width="80px"
+            size="mini"
+            :model="formEdit"
+            :rules="rules"
+          >
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>相关信息</span>
+              </div>
+              <el-collapse v-model="activeNames">
+                <el-collapse-item is-active title="客户信息" name="1">
+                  <div class="block">
+                    <el-form ref="customerForm" :model="customer_info" label-width="80px">
+                      <el-row :gutter="20">
+                        <el-col :span="6" />
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="6"><el-form-item label="客户名字" prop="creator">
+                          {{ customer_info.name}}
+                        </el-form-item></el-col>
+                        <el-col :span="6"><el-form-item label="客户日志" prop="creator">
+                          <el-button type="danger" size="mini" @click="logViewCustomer(customer_info)">查看</el-button>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="18"><el-form-item label="已有标签">
+                          <template slot-scope="scope">
+                            <el-tag
+                              v-for="item in  customer_info.labels"
+                              :key="item.name"
+                              effect="dark"
+                              hit>
+                              {{ item.name }}
+                            </el-tag>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                    </el-form>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item is-active title="任务信息" name="2">
+                  <div class="block">
+                    <el-form ref="customerForm" :model="formEdit.order" label-width="80px">
+                      <el-row :gutter="20">
+                        <el-col :span="8"><el-form-item label="任务类别" prop="order">
+                          <template v-if="formEdit.order != undefined">
+                            <span>{{ formEdit.order.category }}</span>
+                          </template>
+                        </el-form-item></el-col>
+                        <el-col :span="8"><el-form-item label="标签" prop="order">
+                          <template v-if="formEdit.order != undefined">
+                            <span>{{ formEdit.order.label }}</span>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="16"><el-form-item label="任务说明" prop="order">
+                          <template v-if="formEdit.order != undefined">
+                            <span>{{ formEdit.order.info }}</span>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="16"><el-form-item label="关键提示" prop="order">
+                          <template v-if="formEdit.order != undefined">
+                            <span>{{ formEdit.order.keywords }}</span>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                    </el-form>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>任务执行单信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="6"><el-form-item label="是否完成" prop="is_complete">
+                  <template slot-scope="scope">
+                    <el-switch
+                      v-model="formEdit.is_complete"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                    />
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="6"><el-form-item label="是否结束" prop="is_over">
+                  <template slot-scope="scope">
+                    <el-switch
+                      v-model="formEdit.is_over"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                    />
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="添加标签" prop="add_label">
+                  <el-input v-model="formEdit.add_label" placeholder="请输入标签" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="删除标签" prop="del_label">
+                  <el-input v-model="formEdit.del_label" placeholder="请输入标签" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="任务说明" prop="content">
+                  <el-input
+                    type="textarea"
+                    :rows="5"
+                    placeholder="请输入任务说明"
+                    v-model="formEdit.content">
+                  </el-input>
+                </el-form-item></el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="备注" prop="memo">
+                  <el-input v-model="formEdit.memo" placeholder="请输入收货地址" />
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+            <el-card class="box-card">
+              <el-row :gutter="20">
+                <el-col :span="16" :offset="8"><el-form-item size="large">
+                  <div class="btn-warpper">
+                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
+                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
+                  </div>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+          </el-form>
+        </div>
+      </template>
+    </el-dialog>
     <!--导入图片模态窗-->
     <el-dialog
       title="导入"
@@ -494,17 +720,19 @@
 
 <script>
 import {
-  getJobOrderDetailsAccept,
-  createJobOrderDetailsAccept,
-  updateJobOrderDetailsAccept,
-  exportJobOrderDetailsAccept,
-  excelImportJobOrderDetailsAccept,
-  checkJobOrderDetailsAccept,
-  rejectJobOrderDetailsAccept,
-  signJobOrderDetailsAccept,
-  fileImportJobOrderDetailsAccept
- } from '@/api/wop/job/details/accept'
-import {  getLabel } from '@/api/crm/labels/label/label'
+  getJobOrderDetailsPerform,
+  createJobOrderDetailsPerform,
+  updateJobOrderDetailsPerform,
+  exportJobOrderDetailsPerform,
+  excelImportJobOrderDetailsPerform,
+  checkJobOrderDetailsPerform,
+  rejectJobOrderDetailsPerform,
+  signJobOrderDetailsPerform,
+  batchTextJobOrderDetailsPerform,
+  fileImportJobOrderDetailsPerform
+ } from '@/api/wop/job/details/perform'
+import { getLabel } from '@/api/crm/labels/label/label'
+import { getCustomerLabel, getLogCustomerLabel } from '@/api/crm/customers/cslabels'
 import { getJobCategory } from '@/api/wop/job/base/category'
 import { getCompanyList } from '@/api/base/company'
 import { getLogJobOrderDetails, getFilesJobOrderDetails } from '@/api/wop/job/details/manage'
@@ -512,7 +740,7 @@ import { deleteJobDetailsFile } from '@/api/wop/job/details/jodfiles'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'acceptJobOrderDetails',
+  name: 'performJobOrderDetails',
   data() {
     return {
       DataList: [],
@@ -524,7 +752,11 @@ export default {
       fileData: {},
       importFiles: [],
       fileDetails: [],
+      activeNames: ['1', '2'],
       tableData: {},
+      customer_info: {},
+      customer_params: {},
+      updatetext: '',
       params: {
         page: 1,
         allSelectTag: 0
@@ -549,20 +781,7 @@ export default {
           label: '否'
         }
       ],
-      rules: {
-        label: [
-          { required: true, message: '请选择客户网名', trigger: 'blur' }
-        ],
-        category: [
-          { required: true, message: '请选择任务类别', trigger: 'blur' }
-        ],
-        info: [
-          { required: true, message: '请选择任务类别', trigger: 'blur' }
-        ],
-        keywords: [
-          { required: true, message: '请选择任务类别', trigger: 'blur' }
-        ]
-      },
+      rules: {},
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -591,7 +810,7 @@ export default {
           }
         }
       }
-      getJobOrderDetailsAccept(this.params).then(
+      getJobOrderDetailsPerform(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -607,7 +826,7 @@ export default {
             message: error.data,
             type: 'error',
             offset: 210,
-            duration: 0
+            duration: 5000
           })
         }
       )
@@ -620,12 +839,38 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
-      this.optionsLabel = [{ label: this.formEdit.label.name, value: this.formEdit.label.id }]
-      this.formEdit.label = this.formEdit.label.id
-      this.optionsJobCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
-      this.formEdit.category = this.formEdit.category.id
+      this.customer_params = {
+        name: values.customer.name
+      }
+      getCustomerLabel(this.customer_params).then(
+        res => {
+          this.customer_info = res.data.results[0]
+          this.$notify({
+            title: '客户信息取值成功',
+            message: '完成客户标签取值',
+            type: 'successful',
+            offset: 0,
+            duration: 3000
+          })
+        }
+      ).catch(
+        (error) => {
+          this.$notify({
+            title: '客户标签取值失败',
+            message: error.data,
+            type: 'error',
+            offset: 0,
+            duration: 5000
+          })
+        }
+      )
+
+      // this.optionsLabel = [{ label: this.formEdit.label.name, value: this.formEdit.label.id }]
+      // this.formEdit.label = this.formEdit.label.id
+      // this.optionsJobCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
+      // this.formEdit.category = this.formEdit.category.id
       let attrStr
-      const transFieldStr = ['mistake_tag', 'process_tag', 'department', 'order_status', 'center']
+      const transFieldStr = ['mistake_tag', 'process_tag', 'order_status']
         for (attrStr in transFieldStr) {
           this.formEdit[transFieldStr[attrStr]] = this.formEdit[transFieldStr[attrStr]].id
         }
@@ -634,7 +879,9 @@ export default {
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
-      updateJobOrderDetailsAccept(id, data).then(
+      delete data.order
+      delete data.customer
+      updateJobOrderDetailsPerform(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -663,37 +910,62 @@ export default {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
     },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      createJobOrderDetailsAccept(this.formAdd).then(
+
+    // 提交编辑完成的数据
+    handleEditAddLabel(value) {
+      let id = value.id
+      const data = {
+        add_label: value.add_label
+      }
+      updateJobOrderDetailsPerform(id, data).then(
         () => {
           this.$notify({
-            title: '创建成功',
+            title: '修改成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.fetchData()
-          this.handleCancelAdd()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 5000
+          })
         }
-      ).catch((res) => {
-        this.$notify({
-          title: '创建出错',
-          message: res.data,
-          type: 'success',
-          offset: 0,
-          duration: 0
-        })
-      })
+      )
+
+    },
+    // 提交编辑完成的数据
+    handleEditjobindex(value) {
+      let id = value.id
+      const data = {
+        job_index: value.job_index
+      }
+      updateJobOrderDetailsPerform(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 3000
+          })
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 5000
+          })
+        }
+      )
+
     },
     // 检索用户组选项
     unique(arr) {
@@ -704,7 +976,6 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -726,7 +997,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportJobOrderDetailsAccept(this.params).then(
+            exportJobOrderDetailsPerform(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -796,7 +1067,6 @@ export default {
         }
       )
     },
-
     // 选择器，单选和多选（主表的）
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -825,7 +1095,7 @@ export default {
                 message: `校正成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -834,14 +1104,14 @@ export default {
                 message: `校正失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
@@ -854,7 +1124,7 @@ export default {
               message: error.response.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -881,7 +1151,7 @@ export default {
                 message: `校正成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 5000
               })
             }
             if (res.data.false !== 0) {
@@ -890,14 +1160,14 @@ export default {
                 message: `校正失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -914,7 +1184,7 @@ export default {
               message: error.response.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -930,7 +1200,7 @@ export default {
     handleSign() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        signJobOrderDetailsAccept(this.params).then(
+        signJobOrderDetailsPerform(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -947,14 +1217,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
@@ -966,7 +1236,7 @@ export default {
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -979,13 +1249,13 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        signJobOrderDetailsAccept(this.params).then(
+        signJobOrderDetailsPerform(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1002,14 +1272,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1025,18 +1295,286 @@ export default {
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
         )
       }
     },
+    // 批量添加操作内容
+    handleBatchAddLabel() {
+      this.$prompt('请输入操作内容', '批量添加操作内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          this.params.data = {
+            add_label: value
+          }
+          if (this.params.allSelectTag === 1) {
+            batchTextJobOrderDetailsPerform(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '审核成功',
+                    message: `审核成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '审核失败',
+                    message: `审核失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                delete this.params.allSelectTag
+                this.fetchData()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
+          } else {
+            console.log(this.multipleSelection)
+            if (typeof (this.multipleSelection) === 'undefined') {
+              this.$notify({
+                title: '错误详情',
+                message: '未选择订单无法审核',
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+              this.fetchData()
+            }
+            const ids = this.multipleSelection.map(item => item.id)
+            this.params.ids = ids
+            batchTextJobOrderDetailsPerform(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '审核成功',
+                    message: `审核成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '审核失败',
+                    message: `审核失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                console.log(this.params)
+                console.log(this.params.ids)
+
+                delete this.params.ids
+                this.fetchData()
+              }).catch(
+              (error) => {
+                delete this.params.ids
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
+          }
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        })
+    },
+    // 批量添加操作内容
+    handleBatchContent() {
+      this.$prompt('请输入操作内容', '批量添加操作内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: this.updatetext,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          console.log(value)
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          this.params.data = {
+            content: value
+          }
+          console.log(this.params)
+          if (this.params.allSelectTag === 1) {
+            batchTextJobOrderDetailsPerform(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '审核成功',
+                    message: `审核成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '审核失败',
+                    message: `审核失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                delete this.params.allSelectTag
+                this.fetchData()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
+          } else {
+            console.log(this.multipleSelection)
+            if (typeof (this.multipleSelection) === 'undefined') {
+              this.$notify({
+                title: '错误详情',
+                message: '未选择订单无法审核',
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+              this.fetchData()
+            }
+            const ids = this.multipleSelection.map(item => item.id)
+            this.params.ids = ids
+            batchTextJobOrderDetailsPerform(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '审核成功',
+                    message: `审核成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '审核失败',
+                    message: `审核失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                console.log(this.params)
+                console.log(this.params.ids)
+
+                delete this.params.ids
+                this.fetchData()
+              }).catch(
+              (error) => {
+                delete this.params.ids
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
+          }
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        })
+    },
     // 审核单据
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkJobOrderDetailsAccept(this.params).then(
+        checkJobOrderDetailsPerform(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1053,14 +1591,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
@@ -1072,7 +1610,7 @@ export default {
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -1085,13 +1623,13 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkJobOrderDetailsAccept(this.params).then(
+        checkJobOrderDetailsPerform(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1108,14 +1646,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1131,7 +1669,7 @@ export default {
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -1159,7 +1697,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectJobOrderDetailsAccept(this.params).then(
+              rejectJobOrderDetailsPerform(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1176,14 +1714,14 @@ export default {
                       message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
                       message: res.data.error,
                       type: 'error',
                       offset: 210,
-                      duration: 0
+                      duration: 5000
                     })
                   }
                   delete this.params.allSelectTag
@@ -1197,7 +1735,7 @@ export default {
                     message: error.data,
                     type: 'error',
                     offset: 210,
-                    duration: 0
+                    duration: 5000
                   })
                   instance.confirmButtonLoading = false
                   done()
@@ -1211,7 +1749,7 @@ export default {
                   message: '未选择订单无法取消',
                   type: 'error',
                   offset: 70,
-                  duration: 0
+                  duration: 5000
                 })
                 instance.confirmButtonLoading = false
                 done()
@@ -1219,7 +1757,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectJobOrderDetailsAccept(this.params).then(
+              rejectJobOrderDetailsPerform(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1236,14 +1774,14 @@ export default {
                       message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
                       message: res.data.error,
                       type: 'error',
                       offset: 210,
-                      duration: 0
+                      duration: 5000
                     })
                   }
                   delete this.params.allSelectTag
@@ -1257,7 +1795,7 @@ export default {
                     message: error.data,
                     type: 'error',
                     offset: 210,
-                    duration: 0
+                    duration: 5000
                   })
                   instance.confirmButtonLoading = false
                   done()
@@ -1277,7 +1815,7 @@ export default {
             message: error.data,
             type: 'error',
             offset: 210,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
@@ -1316,9 +1854,10 @@ export default {
     handleEditBoolean(row) {
       let id = row.id
       const data = {
-        is_cancel: row.is_cancel
+        is_over: row.is_over,
+        is_complete: row.is_complete,
       }
-      updateJobOrderDetailsAccept(id, data).then(
+      updateJobOrderDetailsPerform(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1334,7 +1873,7 @@ export default {
             message: `修改失败：${error.data}`,
             type: 'success',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
@@ -1403,7 +1942,7 @@ export default {
             message: '文件最大4M',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.$refs.files.type = 'text'
           this.$refs.files.value = ''
@@ -1446,7 +1985,7 @@ export default {
         }
       }
       this.tableLoading = true
-      fileImportJobOrderDetailsAccept(importformData, config).then(
+      fileImportJobOrderDetailsPerform(importformData, config).then(
         res => {
           this.$notify({
             title: '导入结果',
@@ -1497,7 +2036,7 @@ export default {
             title: '查询错误',
             message: error.data,
             type: 'error',
-            duration: 0
+            duration: 5000
           })
         }
       )
@@ -1525,7 +2064,7 @@ export default {
               type: 'error',
               message: `删除失败错误：已删除或者无权限`,
               offset: 70,
-              duration: 3000
+              duration: 5000
             })
             this.fetchData()
           }
@@ -1536,7 +2075,7 @@ export default {
             message: error.data,
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
         }
       )
@@ -1562,14 +2101,162 @@ export default {
             title: '查询错误',
             message: error.data,
             type: 'error',
-            duration: 0
+            duration: 5000
           })
         }
       )
     },
+    // 查看客户日志
+    logViewCustomer(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      console.log('-----------------------------------------')
+      console.log(userValue)
+      console.log('-----------------------------------------')
+      const data = {
+        id: userValue.id
+      }
+      getLogCustomerLabel(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'content') {
+        this.handleContent(row)
+      } else if (column.property === 'memo') {
+        this.handleMemo(row)
+      }
+    },
+    handleContent(row) {
+      this.$prompt('请输入操作内容', '添加操作内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.content,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            content: value
+          }
+          updateJobOrderDetailsPerform(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        })
+    },
+    handleMemo(row) {
+      this.$prompt('请输入操作内容', '添加操作内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.memo,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          let CurrentTimeStamp = new Date()
+          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            memo: value
+          }
+          updateJobOrderDetailsPerform(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            }).catch(
+            (error) => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${error.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+              this.fetchData()
+            }
+          )
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
+            type: 'error',
+            offset: 70,
+            duration: 3000
+          })
+          this.fetchData()
+        })
+    },
     rowStyle({ row, rowIndex}) {
       let row_style = {}
-      if (row.process_tag.id === 1) {
+      if (row.is_complete === true) {
+        row_style = {
+          backgroundColor: 'PaleGreen'
+        }
+      } else if (row.is_over === true) {
         row_style = {
           backgroundColor: 'lightcyan'
         }

@@ -342,6 +342,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
           sortable="custom"
@@ -857,6 +864,46 @@
       </el-form>
 
     </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -877,7 +924,8 @@
     checkManualOrderSubmit,
     rejectManualOrderSubmit,
     setSpecialManualOrderSubmit,
-    resetTagManualOrderSubmit
+    resetTagManualOrderSubmit,
+    getLogManualOrderManage
   } from '@/api/dfc/manualorder/manualorder'
   import { getShopList } from '@/api/base/shop'
   import { getCompanyList } from '@/api/base/company'
@@ -893,7 +941,7 @@
       const validateTicket = (rule, value, callback) => {
         console.log(this.formAdd.order_category)
         if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-          callback(new Error('专票必填！'))
+          callback(new Error('必填！'))
         } else {
           callback()
         }
@@ -918,6 +966,8 @@
         formAdd: {},
         formEdit: {},
         importFile: {},
+        logViewVisible: false,
+        logDetails: [],
         optionsShop: [],
         optionsDepartment: [],
         optionsCompany: [],
@@ -2003,6 +2053,32 @@
         }
         this.oriInvoiceGoodsListEdit.push(obj)
         console.log(this.oriInvoiceGoodsListEdit)
+      },
+      // 查看日志
+      logView(userValue) {
+        this.logDetails = []
+        this.logViewVisible = true
+        const data = {
+          id: userValue.id
+        }
+        getLogManualOrderManage(data).then(
+          res => {
+            this.$notify({
+              title: '查询成功',
+              type: 'success',
+              duration: 1000
+            })
+            this.logDetails = res.data
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '查询错误',
+              message: error.data,
+              type: 'error',
+              duration: 5000
+            })
+          }
+        )
       },
       rowStyle({ row, rowIndex}) {
         let row_style = {}

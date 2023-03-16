@@ -66,10 +66,27 @@ export function fixJobOrderDetailsPerform(data) {
   })
 }
 
+// 锁定工单
+export function batchTextJobOrderDetailsPerform(data) {
+  return request({
+    url: `/workorder/job/joborderdetailsperform/batchtext/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 审核工单
 export function checkJobOrderDetailsPerform(data) {
   return request({
     url: `/workorder/job/joborderdetailsperform/check/`,
+    method: 'patch',
+    data
+  })
+}
+// 锁定工单
+export function signJobOrderDetailsPerform(data) {
+  return request({
+    url: `/workorder/job/joborderdetailsperform/sign/`,
     method: 'patch',
     data
   })
