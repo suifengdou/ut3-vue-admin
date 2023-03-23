@@ -49,9 +49,9 @@ export function excelImportLabelCustomerOrderDetailsSubmit(data) {
 }
 
 // 校正
-export function fixLabelCustomerOrderDetailsSubmit(data) {
+export function signLabelCustomerOrderDetailsSubmit(data) {
   return request({
-    url: `/crm/label/labelcustomerorderdetailssubmit/fix/`,
+    url: `/crm/label/labelcustomerorderdetailssubmit/sign/`,
     method: 'patch',
     data
   })
@@ -69,7 +69,7 @@ export function checkLabelCustomerOrderDetailsSubmit(data) {
 // 取消工单
 export function rejectLabelCustomerOrderDetailsSubmit(data) {
   return request({
-    url: `/crm/label/labelcustomerordersubmit/reject/`,
+    url: `/crm/label/labelcustomerorderdetailssubmit/reject/`,
     method: 'patch',
     data
   })

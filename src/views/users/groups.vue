@@ -285,11 +285,11 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      // console.log(this.params.created_time)
+      if (typeof (this.params.created_time) !== 'undefined') {
+        if (this.params.created_time.length === 2) {
+          this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getGroupsList(this.params).then(

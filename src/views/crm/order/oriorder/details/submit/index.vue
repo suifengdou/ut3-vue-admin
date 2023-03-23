@@ -124,7 +124,7 @@
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -413,7 +413,7 @@
           label="创建时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
+            <span>{{ scope.row.created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -762,11 +762,11 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      // console.log(this.params.created_time)
+      if (typeof (this.params.created_time) !== 'undefined') {
+        if (this.params.created_time.length === 2) {
+          this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       if (this.params.trade_no !== undefined) {
@@ -813,7 +813,7 @@ export default {
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
       let attrStr
-      const transFieldStr = ['trade_no', 'sub_src_tids', 'erp_order_status', 'deliver_time', 'pay_time', 'area', 
+      const transFieldStr = ['trade_no', 'sub_src_tids', 'erp_order_status', 'deliver_time', 'pay_time', 'area',
                             'logistics_no', 'buyer_message', 'cs_remark', 'sign', 'customer', 'goods', 'warehouse',
                             'src_tids', 'quantity', 'price', 'goods_name', 'spec_code', 'order_category', 'weight',
                             'shop_name', 'logistics_name', 'warehouse_name', 'print_remark', 'actual_weight',
@@ -1463,7 +1463,7 @@ export default {
         (error) => {
           console.log(error)
       })
-      
+
     },
     // 查看日志
     logView(userValue) {

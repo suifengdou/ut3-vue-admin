@@ -140,7 +140,7 @@
                       <el-col :span="12"><el-form-item label="原单创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.ori_create_time"
+                            v-model="params.ori_created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -164,7 +164,7 @@
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -351,12 +351,12 @@
         </el-table-column>
         <el-table-column
           label="创建时间"
-          prop="create_time"
+          prop="created_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
+            <span>{{ scope.row.created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -468,11 +468,11 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      // console.log(this.params.created_time)
+      if (typeof (this.params.created_time) !== 'undefined') {
+        if (this.params.created_time.length === 2) {
+          this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       if (typeof (this.params.purchase_time) !== 'undefined') {
@@ -487,10 +487,10 @@ export default {
           this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.ori_create_time) !== 'undefined') {
-        if (this.params.ori_create_time.length === 2) {
-          this.params.ori_create_time_time_after = moment.parseZone(this.params.ori_create_time_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.ori_create_time_time_before = moment.parseZone(this.params.ori_create_time_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (typeof (this.params.ori_created_time) !== 'undefined') {
+        if (this.params.ori_created_time.length === 2) {
+          this.params.ori_created_time_time_after = moment.parseZone(this.params.ori_created_time_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.ori_created_time_time_before = moment.parseZone(this.params.ori_created_time_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       if (typeof (this.params.finish_time) !== 'undefined') {
@@ -649,7 +649,7 @@ export default {
                     保修结束语: item.appraisal,
                     关联店铺: item.shop,
                     购买时间: item.purchase_time,
-                    创建时间: item.ori_create_time,
+                    创建时间: item.ori_created_time,
                     创建人: item.ori_creator,
                     审核时间: item.handle_time,
                     审核人: item.handler_name,

@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入标签名称 @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -69,18 +69,55 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="分组" prop="group">
+                        <<el-select
+                        v-model="params.group"
+                        default-first-option
+                        clearable
+                        placeholder="请选择分组"
+                      >
+                        <el-option
+                          v-for="item in optionsLabelGroup"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                        />
+                      </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="类型" prop="category">
+                        <el-select
+                          v-model="params.category"
+                          filterable
+                          default-first-option
+                          remote
+                          reserve-keyword
+                          placeholder="请搜索并选中类型"
+                          :remote-method="remoteMethodLabelCategory"
+                        >
+                          <el-option
+                            v-for="item in optionsLabelCategory"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="备注" prop="information">
+                        <el-input v-model="params.memo" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="是否停用">
+                        <el-select v-model="params.is_cancel" placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -89,17 +126,6 @@
                           />
                         </el-select>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
@@ -108,7 +134,7 @@
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -178,12 +204,12 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="中心"
-          prop="center"
+          label="分组"
+          prop="group"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.center.name }}</span>
+            <span>{{ scope.row.group.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -230,7 +256,7 @@
           label="创建时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
+            <span>{{ scope.row.created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -288,8 +314,27 @@
             </el-form-item></el-col>
           </el-row>
           <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="分组" prop="group">
+              <template>
+                <el-select
+                  v-model="formAdd.group"
+                  default-first-option
+                  clearable
+                  placeholder="请选择分组"
+                >
+                  <el-option
+                    v-for="item in optionsLabelGroup"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
             <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入收货地址" />
+              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -353,9 +398,30 @@
               </template>
             </el-form-item></el-col>
           </el-row>
+            <el-row :gutter="20">
+              <el-col :span="8"><el-form-item label="分组" prop="group">
+                <template>
+                  <el-select
+                    v-model="formEdit.group"
+                    filterable
+                    default-first-option
+                    remote
+                    reserve-keyword
+                    placeholder="请选择分组"
+                  >
+                    <el-option
+                      v-for="item in optionsLabelGroup"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
+              </el-form-item></el-col>
+            </el-row>
           <el-row :gutter="20">
             <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formEdit.memo" placeholder="请输入收货地址" />
+              <el-input v-model="formEdit.memo" placeholder="请输入备注" />
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -458,7 +524,42 @@ export default {
       logDetails: [],
       formAdd: {},
       formEdit: {},
-      optionsLabellCategory: [],
+      optionsLabelCategory: [],
+      optionsLabelGroup: [
+        {
+          value: 'PPL',
+          label: '基础'
+        },
+        {
+          value: 'FAM',
+          label: '拓展'
+        },
+        {
+          value: 'PROD',
+          label: '产品'
+        },
+        {
+          value: 'ORD',
+          label: '交易'
+        },
+        {
+          value: 'SVC',
+          label: '售后'
+        },
+        {
+          value: 'SAT',
+          label: '体验'
+        },
+        {
+          value: 'REFD',
+          label: '退换'
+        },
+        {
+          value: 'OTHS',
+          label: '其他'
+        },
+
+      ],
       optionsJudgment: [
         {
           value: true,
@@ -486,11 +587,11 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      // console.log(this.params.created_time)
+      if (typeof (this.params.created_time) !== 'undefined') {
+        if (this.params.created_time.length === 2) {
+          this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getLabel(this.params).then(
@@ -523,6 +624,11 @@ export default {
       console.log(values)
       this.formEdit = { ...values }
       this.dialogVisibleEdit = true
+      this.optionsLabelCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
+      this.formEdit.category = this.formEdit.category.id
+      this.formEdit.group = this.formEdit.group.id
+      // this.optionsJobCategory = [{ label: this.formEdit.category.name, value: this.formEdit.category.id }]
+      // this.formEdit.category = this.formEdit.category.id
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -723,7 +829,7 @@ export default {
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
                     客户昵称: item.nickname,
-                    创建时间: item.create_time,
+                    创建时间: item.created_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
                     处理标签: item.process_tag.name,

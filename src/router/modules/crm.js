@@ -140,21 +140,14 @@ const crmChannelRouter = {
               component: () => import('@/views/crm/label/labelcategory'),
               name: 'labelcategory',
               meta: { title: '标签类别', roles: ['AllPrivileges'] },
-              
-            },
-            {
-              path: 'labelcenter',
-              component: () => import('@/views/crm/label/label/center'),
-              name: 'labelcenter',
-              meta: { title: '标签-中心', roles: ['AllPrivileges'] },
-              
+
             },
             {
               path: 'labelmanage',
               component: () => import('@/views/crm/label/label/manage'),
               name: 'labelmanage',
               meta: { title: '标签管理', roles: ['AllPrivileges'] },
-              
+
             },
           ]
         },
@@ -178,7 +171,7 @@ const crmChannelRouter = {
                 },
                 {
                   path: 'manage',
-                  component: () => import('@/views/crm/order/oriorder/sockout/check'),
+                  component: () => import('@/views/crm/label/labelorder/order/manage'),
                   name: 'labelordermanage',
                   meta: { title: '标签单管理', roles: ['AllPrivileges'] }
                 }
@@ -217,14 +210,14 @@ const crmChannelRouter = {
               component: () => import('@/views/crm/label/labelcustomer/center'),
               name: 'labelcustomercenter',
               meta: { title: '客户标签-中心', roles: ['AllPrivileges'] },
-              
+
             },
             {
               path: 'labelcustomermanage',
               component: () => import('@/views/crm/label/labelcustomer/manage'),
               name: 'labelcustomermanage',
               meta: { title: '客户标签-管理', roles: ['AllPrivileges'] },
-              
+
             },
           ]
         },

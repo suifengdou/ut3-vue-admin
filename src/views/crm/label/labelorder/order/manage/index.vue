@@ -1,11 +1,11 @@
 <template>
-  <div class="modetail-manage-container">
+  <div class="label-order-manage-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.manual_order__mobile" class="grid-content bg-purple" placeholder="请输入手机" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入标签单名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -37,63 +37,35 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="货品" prop="goods_name">
-                        <template>
-                          <el-select
-                            v-model="params.goods_name"
-                            filterable
-                            default-first-option
-                            remote
-                            reserve-keyword
-                            placeholder="请搜索并选择货品"
-                            :remote-method="remoteMethodGoods"
-                          >
-                            <el-option
-                              v-for="item in optionsGoods"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="手机" prop="manual_order">
-                        <el-input v-model="params.manual_order__mobile" type="text" />
+                      <el-col :span="6"><el-form-item label="关联单编码" prop="creator">
+                        <el-input v-model="params.code" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="UT单号" prop="manual_order">
-                        <el-input v-model="params.manual_order__erp_order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="部门名称" prop="manual_order">
-                        <el-input v-model="params.manual_order__department__name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="整机SN" prop="manual_order">
-                        <el-input v-model="params.manual_order__m_sn" type="text" />
+                      <el-col :span="6"><el-form-item label="标签名称" prop="information">
+                        <el-input v-model="params.label__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="店铺名称" prop="manual_order">
-                        <el-input v-model="params.manual_order__shop__name" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="用户昵称" prop="manual_order">
-                        <el-input v-model="params.manual_order__nickname" type="text" />
-                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
@@ -137,157 +109,73 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="店铺"
-          prop="manual_order"
+          label="标签关联单名称"
+          prop="name"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.shop }}</span>
+            <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="ERP单号"
-          prop="manual_order"
+          label="标签关联单编码"
+          prop="code"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.erp_order_id }}</span>
+            <span>{{ scope.row.code }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="单据状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
+          prop="code"
+          sortable="order_status"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="收件人"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.receiver }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="手机"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="网名"
-          prop="manual_order"
+          label="标签名"
+          prop="label"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.address }}</span>
+            <span>{{ scope.row.label.name }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="单据类型"
-          prop="manual_order"
+          label="明细数量"
+          prop="quantity"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.order_category }}</span>
-          </template>
-        </el-table-column>
-
-
-        <el-table-column
-          label="货品编码"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="货品名称"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="数量"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="快递公司"
-          prop="logistics_name"
+          label="完成数量"
+          prop="completed_quantity"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.logistics_name }}</span>
+            <span>{{ scope.row.completed_quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="快递单号"
-          prop="logistics_no"
+          label="备注"
+          prop="memo"
           sortable="custom"
-          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.logistics_no }}</span>
+            <span>{{ scope.row.memo }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="SN"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
+          label="日志查看"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.m_sn }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="故障部位"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.broken_part }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="故障描述"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.description }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建部门"
-          prop="manual_order"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.manual_order.department }}</span>
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -317,6 +205,48 @@
 
       </el-table>
     </div>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -327,25 +257,18 @@
 </template>
 
 <script>
-import { getMODetailList, exportMODetail } from '@/api/dfc/manualorder/modetail'
-import { getShopList } from '@/api/base/shop'
+import {
+  getLabelCustomerOrder,
+  exportLabelCustomerOrder,
+  getLogLabelCustomerOrder,
+ } from '@/api/crm/labels/labelorder/order/manage'
+import {  getLabel } from '@/api/crm/labels/label/label'
 import { getCompanyList } from '@/api/base/company'
-import { getGoodsList } from '@/api/base/goods'
-import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'manageLabelOrder',
   data() {
-    const validateTicket = (rule, value, callback) => {
-      console.log(this.formAdd.order_category)
-      if ((this.formAdd.order_category === 1 || this.formEdit.order_category === 1) && (value === '' || typeof (value) === 'undefined')) {
-        callback(new Error('专票必填！'))
-      } else {
-        callback()
-      }
-    }
-
     return {
       DataList: [],
       tableLoading: false,
@@ -353,24 +276,39 @@ export default {
       pageSize: 30,
       selectNum: 0,
       checkList: [],
-      tableData: {
-      },
+      tableData: {},
       params: {
         page: 1,
         allSelectTag: 0
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
+      logViewVisible: false,
+      logDetails: [],
       formAdd: {},
       formEdit: {},
-      optionsShop: [],
-      optionsDepartment: [],
-      optionsCompany: [],
-      optionsPlatform: [],
-      optionsCity: [],
-      optionsGoods: [],
-      OrderDetailsList: [],
-      oriInvoiceGoodsListEdit: [],
+      optionsLabel: [],
+      optionsStatus: [
+        { value: 0, label: '已取消' },
+        { value: 1, label: '未处理' },
+        { value: 2, label: '未递交' },
+        { value: 3, label: '已完成' },
+      ],
+      optionsJudgment: [
+        {
+          value: true,
+          label: '是'
+        },
+        {
+          value: false,
+          label: '否'
+        }
+      ],
+      rules: {
+        label: [
+          { required: true, message: '请选择客户网名', trigger: 'blur' }
+        ]
+      },
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -390,20 +328,29 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getMODetailList(this.params).then(
+      if (typeof (this.params.order_status) !== 'undefined') {
+        console.log(this.params.order_status)
+        this.params.order_status__in = this.params.order_status.toString()
+        console.log(this.params.order_status__in)
+      }
+      getLabelCustomerOrder(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
           this.tableLoading = false
           console.log(res.data.results)
-          // const ws = XLSX.utils.json_to_sheet(res.data.results)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, ws, '数据详情')
-          // XLSX.writeFile(wb, '列表详情1.xlsx')
+
         }
       ).catch(
-        () => {
+        (error) => {
           this.tableLoading = false
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 210,
+            duration: 0
+          })
         }
       )
     },
@@ -411,6 +358,30 @@ export default {
       this.params.page = val
       this.fetchData()
     },
+    // 跳出编辑对话框
+    handleEdit(values) {
+      console.log(values)
+      this.formEdit = { ...values }
+      this.dialogVisibleEdit = true
+    },
+
+    // 关闭修改界面
+    handleCancelEdit() {
+      this.dialogVisibleEdit = false
+      this.$refs.handleFormEdit.resetFields()
+      this.handleDeleteAllDetails()
+    },
+    // 检索用户组选项
+    unique(arr) {
+      // 根据唯一标识no来对数组进行过滤
+      // 定义常量 res,值为一个Map对象实例
+      const res = new Map()
+      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
+      // 如果res中没有某个键，就设置这个键的值为1
+      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
+    },
+
+    // 导出
     exportExcel() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -431,31 +402,21 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportMODetail(this.params).then(
+            exportLabelCustomerOrder(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    UT单号: item.manual_order.erp_order_id,
-                    店铺: item.manual_order.shop,
-                    网名: item.manual_order.nickname,
-                    收货人: item.manual_order.receiver,
-                    地址: item.manual_order.address,
-                    手机: item.manual_order.mobile,
-                    单据类型: item.manual_order.order_category,
-                    机器序列号: item.manual_order.m_sn,
-                    损坏部位: item.manual_order.broken_part,
-                    故障描述: item.manual_order.description,
-                    货品名称: item.goods_name.name,
-                    货品编码: item.goods_id,
-                    单价: item.price,
-                    货品数量: item.quantity,
+                    标签关联单名称: item.name,
+                    标签关联单编码: item.code,
+                    标签: item.label.name,
+                    数量: item.quantity,
                     单据状态: item.order_status.name,
-                    物流公司: item.logistics_name,
-                    物流单号: item.logistics_no,
-                    创建部门: item.manual_order.department,
+                    错误标签: item.mistake_tag.name,
+                    处理标签: item.process_tag.name,
+                    备注: item.memo,
                     创建时间: item.created_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator
+                    更新时间: item.updated_time,
+                    创建者: item.creator,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -491,87 +452,6 @@ export default {
         }
       )
     },
-    // 货品搜索
-    remoteMethodGoods(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getGoodsList(paramsSearch).then(
-            res => {
-              this.optionsGoods = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
-    // 店铺搜索
-    remoteMethodShop(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getShopList(paramsSearch).then(
-            res => {
-              this.optionsShop = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
-    // 公司搜索
-    remoteMethodCompany(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          paramsSearch.category = 5
-          getCompanyList(paramsSearch).then(
-            res => {
-              this.optionsCompany = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
-    // 城市搜索
-    remoteMethodCity(query) {
-      if (query !== '') {
-        // console.log("我准备开始检索啦")
-        setTimeout(() => {
-          // console.log("我是真正的开始检索啦")
-          const paramsSearch = {}
-          paramsSearch.name = query
-          getCityList(paramsSearch).then(
-            res => {
-              this.optionsCity = res.data.results.map(item => {
-                return { label: item.name, value: item.id }
-              })
-            }
-          )
-        }, 200)
-      } else {
-        this.options = []
-      }
-    },
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -601,11 +481,52 @@ export default {
         }
       }
     },
-    // 货品列表顺序
-    rowClassName({ row, rowIndex }) {
-      row.xh = rowIndex + 1
+    // 类型搜索
+    remoteMethodLabel(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getLabel(paramsSearch).then(
+            res => {
+              this.optionsLabel = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsLabel = []
+      }
     },
-    // 重置筛选
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogLabelCustomerOrder(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 0
+          })
+        }
+      )
+    },
     resetParams() {
       this.params = {
         page: 1

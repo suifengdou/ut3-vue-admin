@@ -116,7 +116,7 @@
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -310,7 +310,7 @@
                 </el-form-item></el-col>
               </el-row>
             </el-card>
-            
+
             <el-card class="box-card">
               <el-row :gutter="20">
                 <el-col :span="16" :offset="8"><el-form-item size="large">
@@ -405,7 +405,7 @@ export default {
       params: {
         page: 1,
         allSelectTag: 0,
-        name: '', 
+        name: '',
         name__in: ''
       },
       dialogVisibleAdd: false,
@@ -442,7 +442,7 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
+      // console.log(this.params.created_time)
       if (this.params.name !== undefined) {
         if (this.params.name.length > 20) {
           const names = this.params.name.split(' ').toString()
@@ -765,7 +765,7 @@ export default {
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
                     客户昵称: item.nickname,
-                    创建时间: item.create_time,
+                    创建时间: item.created_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
                     处理标签: item.process_tag.name,

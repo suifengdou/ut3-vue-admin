@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="label-order-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -23,23 +23,23 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入关联单名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
 
         </el-col>
-        <!-- <el-col :span="5" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
+            <!--<el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">-->
+              <!--<el-button type="success" @click="importExcel">导入</el-button>-->
+            <!--</el-tooltip>-->
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
           </div>
-        </el-col> -->
+        </el-col>
         <el-col :span="7" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
@@ -69,46 +69,27 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="关联单编码" prop="creator">
+                        <el-input v-model="params.code" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="标签名称" prop="information">
+                        <el-input v-model="params.label__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -169,6 +150,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="错误原因"
+          prop="code"
+          sortable="mistake_tag"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="标签名"
           prop="label"
           sortable="custom"
@@ -184,6 +174,15 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="完成数量"
+          prop="completed_quantity"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.completed_quantity }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -216,7 +215,7 @@
           label="创建时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.create_time }}</span>
+            <span>{{ scope.row.created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -405,7 +404,7 @@
 </template>
 
 <script>
-import { 
+import {
   getLabelCustomerOrderSubmit,
   createLabelCustomerOrderSubmit,
   updateLabelCustomerOrderSubmit,
@@ -413,14 +412,14 @@ import {
   excelImportLabelCustomerOrderSubmit,
   checkLabelCustomerOrderSubmit,
   rejectLabelCustomerOrderSubmit
- } from '@/api/crm/labels/labelorder/order/submit' 
+ } from '@/api/crm/labels/labelorder/order/submit'
 import {  getLabel } from '@/api/crm/labels/label/label'
 import { getCompanyList } from '@/api/base/company'
-import { getLogLabelCustomerOrder } from '@/api/crm/labels/labelorder/order/manage' 
+import { getLogLabelCustomerOrder } from '@/api/crm/labels/labelorder/order/manage'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkLabel',
+  name: 'submitLabelOrder',
   data() {
     return {
       DataList: [],
@@ -468,11 +467,11 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
-      if (typeof (this.params.create_time) !== 'undefined') {
-        if (this.params.create_time.length === 2) {
-          this.params.create_time_after = moment.parseZone(this.params.create_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.create_time_before = moment.parseZone(this.params.create_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      // console.log(this.params.created_time)
+      if (typeof (this.params.created_time) !== 'undefined') {
+        if (this.params.created_time.length === 2) {
+          this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getLabelCustomerOrderSubmit(this.params).then(
@@ -509,6 +508,12 @@ export default {
     // 提交编辑完成的数据
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
+      let attrStr
+      console.log(data)
+      const transFieldStr = ['mistake_tag', 'order_status']
+      for (attrStr in transFieldStr) {
+        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
+      }
       updateLabelCustomerOrderSubmit(id, data).then(
         () => {
           this.$notify({
@@ -556,7 +561,7 @@ export default {
             title: '创建成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.fetchData()
           this.handleCancelAdd()
@@ -567,7 +572,7 @@ export default {
           message: res.data,
           type: 'success',
           offset: 0,
-          duration: 0
+          duration: 5000
         })
       })
     },
@@ -679,37 +684,17 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.create_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
+                    标签关联单名称: item.name,
+                    标签关联单编码: item.code,
+                    标签: item.label.name,
+                    数量: item.quantity,
+                    单据状态: item.order_status.name,
+                    错误标签: item.mistake_tag.name,
                     处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    备注: item.memo,
+                    创建时间: item.created_time,
+                    更新时间: item.updated_time,
+                    创建者: item.creator,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -761,119 +746,6 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 校正
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixLabel(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法校正',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixLabel(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
     // 审核单据
     handleCheck() {
       this.tableLoading = true
@@ -886,7 +758,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -895,7 +767,7 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
@@ -907,12 +779,11 @@ export default {
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -942,7 +813,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -951,7 +822,7 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
@@ -966,25 +837,17 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
@@ -993,11 +856,10 @@ export default {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '取消工单',
+        title: '驳回工单',
         message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
+          h('span', null, '驳回工单到处理！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1013,20 +875,20 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
@@ -1040,22 +902,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
@@ -1080,20 +935,20 @@ export default {
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
+                      title: '驳回成功',
+                      message: `驳回成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
+                      title: '驳回失败',
+                      message: `驳回败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
@@ -1107,22 +962,15 @@ export default {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
+                    message: error.data,
                     type: 'error',
                     offset: 210,
                     duration: 0
                   })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                () => {
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()

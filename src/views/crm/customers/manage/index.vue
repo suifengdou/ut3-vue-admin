@@ -109,7 +109,7 @@
                       <el-col :span="12"><el-form-item label="创建时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.create_time"
+                            v-model="params.created_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -330,7 +330,7 @@ export default {
       // console.log('我开始运行了')
       console.log(this.params)
       this.tableLoading = true
-      // console.log(this.params.create_time)
+      // console.log(this.params.created_time)
       getCustomerList(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -645,7 +645,7 @@ export default {
                     创建公司: item.sign_company.name,
                     创建部门: item.sign_department.name,
                     客户昵称: item.nickname,
-                    创建时间: item.create_time,
+                    创建时间: item.created_time,
                     更新时间: item.update_time,
                     创建者: item.creator,
                     处理标签: item.process_tag.name,

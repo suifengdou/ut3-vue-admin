@@ -1637,7 +1637,7 @@ export default {
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'feedback') {
         this.handleFeedback(row)
-      } 
+      }
     },
     handleFeedback(row) {
       this.$prompt('请输入工单反馈', '添加工单反馈', {
