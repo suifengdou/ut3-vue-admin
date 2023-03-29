@@ -342,6 +342,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="仓库"
+          prop="district"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.warehouse.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="日志查看"
         >
           <template slot-scope="scope">
@@ -453,6 +461,26 @@
                   :value="item.value"
                 />
               </el-select>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="仓库" prop="shop">
+              <template>
+                <el-select
+                  v-model="formAdd.warehouse"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择店铺"
+                  :remote-method="remoteMethodWarehouse"
+                >
+                  <el-option
+                    v-for="item in optionsWarehouse"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
             </el-form-item></el-col>
           </el-row>
         </el-card>
@@ -933,6 +961,7 @@
   import { getProvinceList } from '@/api/utils/geography/province'
   import { getCityList } from '@/api/utils/geography/city'
   import { getDistrictList } from '@/api/utils/geography/district'
+  import { getWarehouse } from "@/api/base/warehouse"
   import moment from 'moment'
   import XLSX from 'xlsx'
   export default {
@@ -963,7 +992,9 @@
         dialogVisibleAdd: false,
         dialogVisibleEdit: false,
         importVisible: false,
-        formAdd: {},
+        formAdd: {
+          warehouse: 2,
+        },
         formEdit: {},
         importFile: {},
         logViewVisible: false,
@@ -973,6 +1004,12 @@
         optionsCompany: [],
         optionsPlatform: [],
         optionsProvince: [],
+        optionsWarehouse: [
+          {
+            value: 2,
+            label: '中外运苏州配件仓'
+          },
+        ],
         optionsCity: [],
         optionsDistrict: [],
         optionsGoods: [],
@@ -1852,7 +1889,7 @@
             )
           }, 200)
         } else {
-          this.options = []
+          this.optionsGoods = []
         }
       },
       // 店铺搜索
@@ -1872,7 +1909,7 @@
             )
           }, 200)
         } else {
-          this.options = []
+          this.optionsShop = []
         }
       },
       // 公司搜索
@@ -1893,7 +1930,7 @@
             )
           }, 200)
         } else {
-          this.options = []
+          this.optionsCompany = []
         }
       },
       // 城市搜索
@@ -1952,6 +1989,26 @@
           }, 200)
         } else {
           this.optionsDistrict = []
+        }
+      },
+      // 店铺搜索
+      remoteMethodWarehouse(query) {
+        if (query !== '') {
+          // console.log("我准备开始检索啦")
+          setTimeout(() => {
+            // console.log("我是真正的开始检索啦")
+            const paramsSearch = {}
+            paramsSearch.name = query
+            getWarehouse(paramsSearch).then(
+              res => {
+                this.optionsWarehouse = res.data.results.map(item => {
+                  return { label: item.name, value: item.id }
+                })
+              }
+            )
+          }, 200)
+        } else {
+          this.optionsWarehouse = []
         }
       },
       // 排序

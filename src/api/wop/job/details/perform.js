@@ -101,3 +101,20 @@ export function rejectJobOrderDetailsPerform(data) {
   })
 }
 
+// 取消工单
+export function setOverJobOrderDetailsPerform(data) {
+  return request({
+    url: `/workorder/job/joborderdetailsperform/set_over/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 取消工单
+export function setCompleteJobOrderDetailsPerform(data) {
+  return request({
+    url: `/workorder/job/joborderdetailsperform/set_complete/`,
+    method: 'patch',
+    data
+  })
+}

@@ -51,3 +51,11 @@ export function updateWarehouseType(id, data) {
     data
   })
 }
+
+export function getWarehouse(params) {
+  return request({
+    url: '/base/warehouseactivate/',
+    method: 'get',
+    params
+  })
+}

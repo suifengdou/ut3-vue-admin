@@ -191,7 +191,7 @@ const crmChannelRouter = {
                 },
                 {
                   path: 'manage',
-                  component: () => import('@/views/crm/order/oriorder/details/check'),
+                  component: () => import('@/views/crm/label/labelorder/details/manage'),
                   name: 'labelorderdetailsmanage',
                   meta: { title: '明细管理', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] }
                 }

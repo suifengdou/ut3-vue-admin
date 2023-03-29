@@ -21,6 +21,13 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="2" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="显示已锁定的任务明细" placement="top-start">
+              <el-button type="success" @click="handleCurrentHandler">我的任务</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="客户电话" placement="top-start">
@@ -582,15 +589,6 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.customer__name !== undefined) {
-        if (this.params.customer__name.length > 20) {
-          const names = this.params.customer__name.split(' ').toString()
-          if (names.length > 1) {
-            this.params.customer__name__in = names
-            delete this.params.customer__name
-          }
-        }
-      }
       getJobOrderDetailsAccept(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -614,6 +612,10 @@ export default {
     },
     handleCurrentChange(val) {
       this.params.page = val
+      this.fetchData()
+    },
+    handleCurrentHandler() {
+      this.params.handler = this.$store.state.user.name
       this.fetchData()
     },
     // 跳出编辑对话框

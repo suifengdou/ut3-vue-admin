@@ -374,8 +374,8 @@
             <span>标签类别信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="客户网名" prop="name">
-              <el-input v-model="formEdit.name" placeholder="请输入类型名称" />
+            <el-col :span="8"><el-form-item label="名称" prop="name">
+              <el-input v-model="formEdit.name" placeholder="请输入名称" />
             </el-form-item></el-col>
             <el-col :span="8"><el-form-item label="类型" prop="category">
               <template>
@@ -544,7 +544,7 @@ export default {
         },
         {
           value: 'SVC',
-          label: '售后'
+          label: '服务'
         },
         {
           value: 'SAT',

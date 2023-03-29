@@ -28,33 +28,12 @@
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="3" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="标签名称" placement="top-start">
-              <el-input v-model="params.labelcustomer__label__name" class="grid-content bg-purple" placeholder="支持简单逻辑非" @keyup.enter.native="fetchData">
-                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
-              </el-input>
-            </el-tooltip>
-          </div>
-        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
-            <el-button type="success" @click="test">测试</el-button>
           </div>
-        </el-col>
-        <el-col :span="3" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出新建界面" placement="top-start">
-              <el-button type="primary" @click="add">新增</el-button>
-            </el-tooltip>
-          </div>
-
         </el-col>
       </el-row>
       <el-row :gutter="10">
@@ -77,52 +56,42 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="基础标签" prop="customerlabelperson">
+                        <el-input v-model="params.customerlabelperson__label__name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="拓展标签" prop="customerlabelfamilay">
+                        <el-input v-model="params.customerlabelfamilay__label__name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
 
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="创建时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.created_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
+                      <el-col :span="6"><el-form-item label="产品标签" prop="customerlabelproduct">
+                        <el-input v-model="params.customerlabelproduct__label__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="交易标签" prop="customerlabelorder">
+                        <el-input v-model="params.customerlabelorder__label__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="服务标签" prop="customerlabelservice">
+                        <el-input v-model="params.customerlabelservice__label__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="体验标签" prop="customerlabelsatisfacition">
+                        <el-input v-model="params.customerlabelsatisfacition__label__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="退换标签" prop="customerlabelrefund">
+                        <el-input v-model="params.customerlabelrefund__label__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="其他标签" prop="customerlabelothers">
+                        <el-input v-model="params.customerlabelothers__label__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
@@ -169,25 +138,108 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标签名称"
-          prop="labels"
+          label="基础"
+          prop="label_person"
           sortable="custom"
-          width="300px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <div v-for="(item, i) in scope.row.labels">
+            <div v-for="(item, i) in scope.row.label_person">
               <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          label="客服备注"
-          prop="cs_remark"
+          label="拓展"
+          prop="label_family"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_family">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="产品"
+          prop="label_product"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_product">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="交易"
+          prop="label_order"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_order">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="服务"
+          prop="label_service"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_service">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="体验"
+          prop="label_satisfaction"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_satisfaction">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="退换"
+          prop="label_refund"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_refund">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="其他"
+          prop="label_others"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.label_others">
+              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="备注"
+          prop="memo"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memorandum }}</span>
+            <span>{{ scope.row.memo }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -202,48 +254,6 @@
 
       </el-table>
     </div>
-    <!--新建添加模态窗-->
-    <el-dialog
-      title="新增"
-      width="60%"
-      :visible.sync="dialogVisibleAdd"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <el-form
-        ref="handleFormAdd"
-        label-width="88px"
-        size="mini"
-        :rules="rules"
-        :model="formAdd"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>客户相关信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="会员名" prop="name">
-              <el-input v-model="formAdd.name" placeholder="请输入客户手机" />
-            </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="备注" prop="memorandum">
-              <el-input v-model="formAdd.memorandum" placeholder="请输入备注" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-        <el-card class="box-card">
-          <el-row :gutter="20">
-            <el-col :span="16" :offset="8"><el-form-item size="large">
-              <div class="btn-warpper">
-                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
-                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
-              </div>
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-
-      </el-form>
-    </el-dialog>
     <!--修改信息模态窗-->
     <el-dialog
       title="编辑"
@@ -278,35 +288,85 @@
             <el-card class="box-card">
               <div slot="header" class="clearfix">
                 <span>标签信息</span>
-                <p>标签无法删除，标签一旦添加则永久添加。手工添加需要谨慎，添加错误无法修改！！！</p>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="现有标签" prop="labels">
+                <el-col :span="8"><el-form-item label="基础" prop="label_person">
                   <template>
-                    <div v-for="(item, i) in formEdit.labels">
+                    <div v-for="(item, i) in formEdit.label_person">
                       <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
                     </div>
                   </template>
                 </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="新加标签" prop="label_add">
+                <el-col :span="8"><el-form-item label="拓展" prop="label_family">
                   <template>
-                    <el-select
-                      v-model="formEdit.label_add"
-                      filterable
-                      default-first-option
-                      remote
-                      reserve-keyword
-                      placeholder="请选择标签"
-                      :remote-method="remoteMethodLabel"
-                    >
-                      <el-option
-                        v-for="item in optionsLabel"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                    <div v-for="(item, i) in formEdit.label_family">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
                   </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="产品" prop="label_product">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_product">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="交易" prop="label_order">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_order">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="服务" prop="label_service">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_service">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="体验" prop="label_satisfaction">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_satisfaction">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="退换" prop="label_refund">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_refund">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="其他" prop="label_others">
+                  <template>
+                    <div v-for="(item, i) in formEdit.label_others">
+                      <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                    </div>
+                  </template>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>添加删除标签</span>
+              </div>
+
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="添加标签" prop="add_label">
+                  <el-input v-model="formEdit.add_label" placeholder="请输入标签" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="18"><el-form-item label="删除标签" prop="del_label">
+                  <el-input v-model="formEdit.del_label" placeholder="请输入标签" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -481,10 +541,6 @@ export default {
     handleEdit(values) {
       console.log(values)
       this.formEdit = { ...values }
-      this.optionsLabel = this.formEdit.labels.map(item => {
-        return { label: item.name, value: item.id }
-      })
-      this.formEdit.label = this.formEdit.labels.map(item => item.id)
       this.dialogVisibleEdit = true
     },
     // 提交编辑完成的数据
@@ -496,7 +552,7 @@ export default {
             title: '修改成功',
             type: 'success',
             offset: 0,
-            duration: 0
+            duration: 3000
           })
           this.dialogVisibleEdit = false
           this.fetchData()
@@ -520,38 +576,7 @@ export default {
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
     },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
-    // 关闭添加界面
-    handleCancelAdd() {
-      this.dialogVisibleAdd = false
-      this.$refs.handleFormAdd.resetFields()
-    },
-    handleSubmitAdd() {
-      console.log(this.formAdd)
-      createCustomerLabel(this.formAdd).then(
-        () => {
-          this.$notify({
-            title: '创建成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
-          this.fetchData()
-          this.handleCancelAdd()
-        }
-      ).catch((res) => {
-        this.$notify({
-          title: '创建出错',
-          message: res.data,
-          type: 'success',
-          offset: 0,
-          duration: 0
-        })
-      })
-    },
+
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -560,159 +585,6 @@ export default {
       // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportCustomerLabel(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
-    },
-    test() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportCustomerLabel(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
     },
     // 导出
     exportExcel() {
@@ -723,7 +595,7 @@ export default {
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '系统限制导出最大条数为2000条，如果超过2000条，请根据时间条件重新筛选。否则只导出前2000条!如果要大量导出数据请联系管理员。'),
+          h('span', null, '系统限制导出最大条数为200条，如果超过200条，请根据时间条件重新筛选。否则只导出前200条!如果要大量导出数据请联系管理员。'),
           h('hr', null, ''),
           h('span', null, '系统导出数据优先按照当前多重筛选的条件，如果没有设置条件则导出全部数据。注意导出数据数量，超出最大数量则无法全部导出！'),
           h('hr', null, '')
@@ -739,37 +611,7 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.created_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    用户名: item.customer.name,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

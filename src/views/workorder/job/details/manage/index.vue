@@ -81,7 +81,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否完成">
-                        <el-select v-model="params.is_complete" placeholder="是否理赔">
+                        <el-select v-model="params.is_complete" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -91,7 +91,7 @@
                         </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="是否结束">
-                        <el-select v-model="params.is_over" placeholder="是否返回">
+                        <el-select v-model="params.is_over" clearable placeholder="是否返回">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -106,7 +106,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否重置">
-                        <el-select v-model="params.is_reset" placeholder="是否理赔">
+                        <el-select v-model="params.is_reset" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -116,7 +116,16 @@
                         </el-select>
                       </el-form-item></el-col>
 
-                      <el-col :span="6" />
+                      <el-col :span="6"><el-form-item label="工单状态">
+                        <el-select v-model="params.order_status" multiple clearable placeholder="工单类型">
+                          <el-option
+                            v-for="item in optionsStatus"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
@@ -729,6 +738,14 @@ export default {
       formEdit: {},
       optionsLabel: [],
       optionsJobCategory: [],
+      optionsStatus: [
+        { value: 0, label: '已取消' },
+        { value: 1, label: '待处理' },
+        { value: 2, label: '待领取' },
+        { value: 3, label: '待执行' },
+        { value: 4, label: '待审核' },
+        { value: 5, label: '已完成' },
+      ],
       optionsJudgment: [
         {
           value: true,
@@ -765,14 +782,10 @@ export default {
           this.params.completed_time_before = moment.parseZone(this.params.completed_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.customer__name !== undefined) {
-        if (this.params.customer__name.length > 20) {
-          const names = this.params.customer__name.split(' ').toString()
-          if (names.length > 1) {
-            this.params.customer__name__in = names
-            delete this.params.customer__name
-          }
-        }
+      if (typeof (this.params.order_status) !== 'undefined') {
+        console.log(this.params.order_status)
+        this.params.order_status__in = this.params.order_status.toString()
+        console.log(this.params.order_status__in)
       }
       getJobOrderDetails(this.params).then(
         res => {

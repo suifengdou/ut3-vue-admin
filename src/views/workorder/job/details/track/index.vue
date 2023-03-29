@@ -101,7 +101,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否完成">
-                        <el-select v-model="params.is_complete" placeholder="是否理赔">
+                        <el-select v-model="params.is_complete" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -111,7 +111,7 @@
                         </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="是否结束">
-                        <el-select v-model="params.is_over" placeholder="是否返回">
+                        <el-select v-model="params.is_over" clearable placeholder="是否返回">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -126,7 +126,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否重置">
-                        <el-select v-model="params.is_reset" placeholder="是否理赔">
+                        <el-select v-model="params.is_reset" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -799,15 +799,6 @@ export default {
         if (this.params.created_time.length === 2) {
           this.params.created_time_after = moment.parseZone(this.params.created_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
-      if (this.params.customer__name !== undefined) {
-        if (this.params.customer__name.length > 20) {
-          const names = this.params.customer__name.split(' ').toString()
-          if (names.length > 1) {
-            this.params.customer__name__in = names
-            delete this.params.customer__name
-          }
         }
       }
       getJobOrderDetailsPerform(this.params).then(

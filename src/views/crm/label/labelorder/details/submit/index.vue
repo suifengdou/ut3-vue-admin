@@ -2,7 +2,7 @@
   <div class="label-order-details-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
@@ -21,16 +21,25 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+            <el-tooltip class="item" effect="dark" content="快捷搜索客户电话" placement="top-start">
+              <el-input v-model="params.customer__name" class="grid-content bg-purple" placeholder="请输入客户电话" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="7" class="titleBar">
+        <el-col :span="3" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索标签单名称" placement="top-start">
+              <el-input v-model="params.order__name" class="grid-content bg-purple" placeholder="请输入标签单名称" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+        </el-col>
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExceltemplate">模板导出</el-button>
@@ -71,37 +80,19 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="标签单编码" prop="order__code">
+                        <el-input v-model="params.order__code" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="标签名称" prop="order__label__name">
+                        <el-input v-model="params.order__label__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
@@ -148,9 +139,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
-              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
-            </el-tooltip>
+            <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -244,19 +233,39 @@
             <span>标签相关信息</span>
           </div>
           <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="标签" prop="label">
+            <el-col :span="8"><el-form-item label="标签单" prop="order">
               <template>
                 <el-select
-                  v-model="formAdd.label"
+                  v-model="formAdd.order"
                   filterable
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请搜索并选中标签"
-                  :remote-method="remoteMethodLabel"
+                  placeholder="请搜索标签单编码并选中标签"
+                  :remote-method="remoteMethodLabelOrder"
                 >
                   <el-option
-                    v-for="item in optionsLabel"
+                    v-for="item in optionsLabelOrder"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="客户" prop="customer">
+              <template>
+                <el-select
+                  v-model="formAdd.customer"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索用户电话并选中标签"
+                  :remote-method="remoteMethodCustomer"
+                >
+                  <el-option
+                    v-for="item in optionsCustomer"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -265,11 +274,7 @@
               </template>
             </el-form-item></el-col>
           </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
-            </el-form-item></el-col>
-          </el-row>
+
         </el-card>
         <el-card class="box-card">
           <el-row :gutter="20">
@@ -283,70 +288,6 @@
         </el-card>
 
       </el-form>
-    </el-dialog>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      ref="editdata"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rules"
-          >
-          <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>标签类别信息</span>
-          </div>
-          <el-row :gutter="20">
-            <el-col :span="8"><el-form-item label="标签" prop="label">
-              <template>
-                <el-select
-                  v-model="formEdit.label"
-                  filterable
-                  default-first-option
-                  remote
-                  reserve-keyword
-                  placeholder="请搜索并选中标签"
-                  :remote-method="remoteMethodLabel"
-                >
-                  <el-option
-                    v-for="item in optionsLabel"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </template>
-            </el-form-item></el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="18"><el-form-item label="备注" prop="memo">
-              <el-input v-model="formEdit.memo" placeholder="请输入收货地址" />
-            </el-form-item></el-col>
-          </el-row>
-        </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
     </el-dialog>
     <!--日志查看模态窗-->
     <el-dialog
@@ -412,6 +353,8 @@ import {
  } from '@/api/crm/labels/labelorder/details/submit'
 import {  getLabel } from '@/api/crm/labels/label/label'
 import { getCompanyList } from '@/api/base/company'
+import { getLabelCustomerOrderSubmit} from "@/api/crm/labels/labelorder/order/submit"
+import { getCustomerList} from "@/api/crm/customers/csmanage"
 import { getLogLabelCustomerOrdeDetails } from '@/api/crm/labels/labelorder/details/manage'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -428,7 +371,8 @@ export default {
       tableData: {},
       params: {
         page: 1,
-        allSelectTag: 0
+        allSelectTag: 0,
+        customer__name: '',
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
@@ -437,6 +381,8 @@ export default {
       formAdd: {},
       formEdit: {},
       optionsLabel: [],
+      optionsLabelOrder: [],
+      optionsCustomer: [],
       optionsJudgment: [
         {
           value: true,
@@ -495,45 +441,6 @@ export default {
     handleCurrentChange(val) {
       this.params.page = val
       this.fetchData()
-    },
-    // 跳出编辑对话框
-    handleEdit(values) {
-      console.log(values)
-      this.formEdit = { ...values }
-      this.dialogVisibleEdit = true
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      const { id, ...data } = this.formEdit
-      updateLabelCustomerOrderDetailsSubmit(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
-          this.dialogVisibleEdit = false
-          this.fetchData()
-        },
-        err => {
-          this.$notify({
-            title: '修改出错',
-            message: err.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-        }
-      )
-
-    },
-
-    // 关闭修改界面
-    handleCancelEdit() {
-      this.dialogVisibleEdit = false
-      this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetails()
     },
     // 添加界面
     add() {
@@ -675,37 +582,10 @@ export default {
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.created_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    标签单名称: item.order.name,
+                    客户: item.customer.name,
+                    错误标签: item.mistake_tag.name,
+                    发票类型: item.memo,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1228,6 +1108,46 @@ export default {
         }, 200)
       } else {
         this.optionsLabel = []
+      }
+    },
+    // 类型搜索
+    remoteMethodLabelOrder(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.code = query
+          getLabelCustomerOrderSubmit(paramsSearch).then(
+            res => {
+              this.optionsLabelOrder = res.data.results.map(item => {
+                return { label: item.code, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsLabelOrder = []
+      }
+    },
+    // 类型搜索
+    remoteMethodCustomer(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getCustomerList(paramsSearch).then(
+            res => {
+              this.optionsCustomer = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsCustomer = []
       }
     },
     // 查看日志

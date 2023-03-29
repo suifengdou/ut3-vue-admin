@@ -9,6 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchSetOver">批量设置结束</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchSetComplete">批量设置完成</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchAddLabel">批量加标签</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchContent">批量加操作</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">完结执行单</el-button></el-dropdown-item>
@@ -101,7 +103,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否完成">
-                        <el-select v-model="params.is_complete" placeholder="是否理赔">
+                        <el-select v-model="params.is_complete" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -111,7 +113,7 @@
                         </el-select>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="是否结束">
-                        <el-select v-model="params.is_over" placeholder="是否返回">
+                        <el-select v-model="params.is_over" clearable placeholder="是否返回">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -126,7 +128,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="是否重置">
-                        <el-select v-model="params.is_reset" placeholder="是否理赔">
+                        <el-select v-model="params.is_reset" clearable placeholder="是否理赔">
                           <el-option
                             v-for="item in optionsJudgment"
                             :key="item.value"
@@ -442,15 +444,66 @@
                         </el-form-item></el-col>
                       </el-row>
                       <el-row :gutter="20">
-                        <el-col :span="18"><el-form-item label="已有标签">
-                          <template slot-scope="scope">
-                            <el-tag
-                              v-for="item in  customer_info.labels"
-                              :key="item.name"
-                              effect="dark"
-                              hit>
-                              {{ item.name }}
-                            </el-tag>
+                        <el-col :span="8"><el-form-item label="基础" prop="label_person">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_person">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                        <el-col :span="8"><el-form-item label="拓展" prop="label_family">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_family">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="8"><el-form-item label="产品" prop="label_product">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_product">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                        <el-col :span="8"><el-form-item label="交易" prop="label_order">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_order">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="8"><el-form-item label="服务" prop="label_service">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_service">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                        <el-col :span="8"><el-form-item label="体验" prop="label_satisfaction">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_satisfaction">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="8"><el-form-item label="退换" prop="label_refund">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_refund">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
+                          </template>
+                        </el-form-item></el-col>
+                        <el-col :span="8"><el-form-item label="其他" prop="label_others">
+                          <template>
+                            <div v-for="(item, i) in customer_info.label_others">
+                              <el-tag type="success" size="mini"><span>{{ item.name }}</span></el-tag>
+                            </div>
                           </template>
                         </el-form-item></el-col>
                       </el-row>
@@ -909,7 +962,9 @@ import {
   rejectJobOrderDetailsPerform,
   signJobOrderDetailsPerform,
   batchTextJobOrderDetailsPerform,
-  fileImportJobOrderDetailsPerform
+  fileImportJobOrderDetailsPerform,
+  setOverJobOrderDetailsPerform,
+  setCompleteJobOrderDetailsPerform
  } from '@/api/wop/job/details/perform'
 import {
   getManualOrderSubmitList,
@@ -948,7 +1003,6 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
       dialogVisibleEdit: false,
       logViewVisible: false,
       logDetails: [],
@@ -1045,15 +1099,6 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.customer__name !== undefined) {
-        if (this.params.customer__name.length > 20) {
-          const names = this.params.customer__name.split(' ').toString()
-          if (names.length > 1) {
-            this.params.customer__name__in = names
-            delete this.params.customer__name
-          }
-        }
-      }
       getJobOrderDetailsPerform(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -1075,13 +1120,9 @@ export default {
         }
       )
     },
-    // 添加界面
-    add() {
-      this.dialogVisibleAdd = true
-    },
+
     // 关闭添加界面
     handleCancelAdd() {
-      this.dialogVisibleAdd = false
       this.$refs.handleFormAdd.resetFields()
     },
     handleSubmitAdd() {
@@ -1844,6 +1885,218 @@ export default {
           this.fetchData()
         })
     },
+    // 批量设置结束
+    handleBatchSetOver() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setOverJobOrderDetailsPerform(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setOverJobOrderDetailsPerform(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
+    // 批量设置完成
+    handleBatchSetComplete() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        setCompleteJobOrderDetailsPerform(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        setCompleteJobOrderDetailsPerform(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
     // 审核单据
     handleCheck() {
       this.tableLoading = true
@@ -2544,6 +2797,44 @@ export default {
           this.fetchData()
         })
     },
+    // 货品列表顺序
+    rowClassName({ row, rowIndex }) {
+      row.xh = rowIndex + 1
+    },
+    // 选中新建表单货品项
+    handleDetailSelectionChange(selection) {
+      if (selection.length > 1) {
+        this.$refs.tableAdd.clearSelection()
+        this.$refs.tableAdd.toggleRowSelection(selection.pop())
+      } else {
+        this.checkedDetail = selection
+      }
+    },
+    // 添加表单货品项
+    handleAddDetails() {
+      if (this.OrderDetailsList === undefined) {
+        this.OrderDetailsList = []
+      }
+      const obj = {
+        id: 'n'
+      }
+      this.OrderDetailsList.push(obj)
+    },
+    // 删除选中表单货品项
+    handleDeleteDetails() {
+      if (this.checkedDetail.length === 0) {
+        this.$alert('请先选择要删除的数据', '提示', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        this.OrderDetailsList.splice(this.checkedDetail[0].xh - 1, 1)
+      }
+    },
+    // 删除全部表单货品项
+    handleDeleteAllDetails() {
+      this.OrderDetailsList = undefined
+    },
+
     rowStyle({ row, rowIndex}) {
       let row_style = {}
       if (row.is_complete === true) {

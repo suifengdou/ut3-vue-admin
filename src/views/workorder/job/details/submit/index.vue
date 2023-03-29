@@ -771,15 +771,6 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (this.params.customer__name !== undefined) {
-        if (this.params.customer__name.length > 20) {
-          const names = this.params.customer__name.split(' ').toString()
-          if (names.length > 1) {
-            this.params.customer__name__in = names
-            delete this.params.customer__name
-          }
-        }
-      }
       getJobOrderDetailsSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
