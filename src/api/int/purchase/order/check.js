@@ -13,8 +13,8 @@ export function getIntPurchaseOrderCheckList(params) {
 
 // 更新工单
 export function updateIntPurchaseOrderCheck(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/int/intpurchase/check/${id}/`,
     method: 'patch',

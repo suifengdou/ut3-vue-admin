@@ -179,7 +179,7 @@
                       <el-col :span="12"><el-form-item label="更新时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.update_time"
+                            v-model="params.updated_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -464,10 +464,10 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
-          prop="update_time"
+          prop="updated_time"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -768,7 +768,7 @@ export default {
             sign_department: '',
             nickname: '',
             created_time: '',
-            update_time: '',
+            updated_time: '',
             is_delete: false,
             creator: '',
             process_tag: '',
@@ -833,10 +833,10 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.update_time) !== 'undefined') {
-        if (this.params.update_time.length === 2) {
-          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (typeof (this.params.updated_time) !== 'undefined') {
+        if (this.params.updated_time.length === 2) {
+          this.params.updated_time_after = moment.parseZone(this.params.updated_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.updated_time_before = moment.parseZone(this.params.updated_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getDeliverManage(this.params).then(
@@ -931,7 +931,7 @@ export default {
                     收件人: item.consignee,
                     地址: item.address,
                     手机: item.smartphone,
-                    更新时间: item.update_time,
+                    更新时间: item.updated_time,
                     商家编码: item.goods_id,
                     货品名称: item.goods_name,
                     货品数量: item.quantity,

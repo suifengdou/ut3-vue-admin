@@ -21,8 +21,8 @@ export function createCallLogCheck(data) {
 
 // 更新工单
 export function updateCallLogCheck(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/crm/callcenter/calllogcheck/${id}/`,
     method: 'patch',

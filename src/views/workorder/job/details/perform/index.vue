@@ -598,6 +598,26 @@
                               />
                             </el-select>
                           </el-form-item></el-col>
+                          <el-col :span="8"><el-form-item label="仓库" prop="warehouse">
+                            <template>
+                              <el-select
+                                v-model="formAdd.warehouse"
+                                filterable
+                                default-first-option
+                                remote
+                                reserve-keyword
+                                placeholder="请搜索并选择仓库"
+                                :remote-method="remoteMethodWarehouse"
+                              >
+                                <el-option
+                                  v-for="item in optionsWarehouse"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value"
+                                />
+                              </el-select>
+                            </template>
+                          </el-form-item></el-col>
                         </el-row>
                       </el-card>
 
@@ -713,7 +733,7 @@
                         <el-row :gutter="20">
                           <el-col :span="8" :offset="16"><el-form-item size="large">
                             <div class="btn-warpper">
-                              <el-button type="danger" @click="handleCancelAdd">取消</el-button>
+                              <el-button type="danger" @click="handleCancelAdd">清除表单</el-button>
                               <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
                             </div>
                           </el-form-item></el-col>
@@ -979,6 +999,7 @@ import { getLogJobOrderDetails, getFilesJobOrderDetails } from '@/api/wop/job/de
 import { deleteJobDetailsFile } from '@/api/wop/job/details/jodfiles'
 import { getShopList } from '@/api/base/shop'
 import { getGoodsList } from '@/api/base/goods'
+import { getWarehouse } from "@/api/base/warehouse"
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -1009,11 +1030,20 @@ export default {
       filesViewVisible: false,
       importVisible: false,
 
-      formAdd: {},
+      formAdd: {
+        warehouse: 2,
+        servicer: this.$store.state.user.name,
+      },
       formEdit: {},
       optionsLabel: [],
       optionsShop: [],
       optionsGoods: [],
+      optionsWarehouse: [
+        {
+          value: 2,
+          label: '中外运苏州配件仓'
+        },
+      ],
       optionsCategory: [
         {
           value: 1,
@@ -1133,6 +1163,13 @@ export default {
         () => {
           this.fetchData()
           this.handleCancelAdd()
+          this.$notify({
+            title: '创建成功',
+            message: "单据创建成功，请在手工单界面递交订单！",
+            type: 'error',
+            offset: 210,
+            duration: 3000
+          })
         }
       ).catch((error) => {
         this.$notify({
@@ -2464,6 +2501,46 @@ export default {
         }, 200)
       } else {
         this.options = []
+      }
+    },
+    // 货品搜索
+    remoteMethodGoods(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getGoodsList(paramsSearch).then(
+            res => {
+              this.optionsGoods = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsGoods = []
+      }
+    },
+    // 店铺搜索
+    remoteMethodWarehouse(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getWarehouse(paramsSearch).then(
+            res => {
+              this.optionsWarehouse = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsWarehouse = []
       }
     },
     // 图片上传模块  getJobCategory

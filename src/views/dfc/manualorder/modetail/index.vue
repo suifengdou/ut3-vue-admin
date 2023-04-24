@@ -311,7 +311,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -454,7 +454,7 @@ export default {
                     物流单号: item.logistics_no,
                     创建部门: item.manual_order.department,
                     创建时间: item.created_time,
-                    更新时间: item.update_time,
+                    更新时间: item.updated_time,
                     创建者: item.creator
                   }
                 })

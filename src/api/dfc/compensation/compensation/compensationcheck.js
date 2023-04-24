@@ -21,8 +21,8 @@ export function createCompensationCheck(data) {
 
 // 更新
 export function updateCompensationCheck(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/dfc/compensation/compensationcheck/${id}/`,
     method: 'patch',

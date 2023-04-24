@@ -21,8 +21,8 @@ export function createExceptionIPOCheck(data) {
 
 // 更新工单
 export function updateExceptionIPOCheck(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/int/exceptionipo/check/${id}/`,
     method: 'patch',

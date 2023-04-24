@@ -116,7 +116,7 @@
                       <el-col :span="12"><el-form-item label="更新时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.update_time"
+                            v-model="params.updated_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -327,6 +327,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="仓库"
+          prop="warehouse"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.warehouse.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="卖家备注"
           prop="cs_memoranda"
         >
@@ -360,7 +368,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -420,10 +428,10 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.update_time) !== 'undefined') {
-        if (this.params.update_time.length === 2) {
-          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (typeof (this.params.updated_time) !== 'undefined') {
+        if (this.params.updated_time.length === 2) {
+          this.params.updated_time_after = moment.parseZone(this.params.updated_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.updated_time_before = moment.parseZone(this.params.updated_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       getMOExportList(this.params).then(
@@ -485,6 +493,7 @@ export default {
                     订单类别: item.category,
                     买家备注: item.buyer_remark,
                     客服备注: item.cs_memoranda,
+                    仓库名称: item.warehouse.name,
                     省: item.province.name,
                     市: item.city.name,
                     区: item.district.name,

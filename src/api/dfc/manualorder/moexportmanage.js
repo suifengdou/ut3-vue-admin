@@ -21,8 +21,8 @@ export function createMOExport(data) {
 
 // 更新工单
 export function updateMOExport(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/dfc/manualorder/moexportmanage/${id}/`,
     method: 'patch',

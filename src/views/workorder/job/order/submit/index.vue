@@ -1150,7 +1150,7 @@ export default {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '清除锁定',
+        title: '取消',
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),

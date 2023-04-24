@@ -448,10 +448,10 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
-          prop="update_time"
+          prop="updated_time"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -738,7 +738,7 @@ export default {
             sign_department: '',
             nickname: '',
             created_time: '',
-            update_time: '',
+            updated_time: '',
             is_delete: false,
             creator: '',
             process_tag: '',

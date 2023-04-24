@@ -394,7 +394,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -462,7 +462,7 @@
                 />
               </el-select>
             </el-form-item></el-col>
-            <el-col :span="8"><el-form-item label="仓库" prop="shop">
+            <el-col :span="8"><el-form-item label="仓库" prop="warehouse">
               <template>
                 <el-select
                   v-model="formAdd.warehouse"
@@ -470,7 +470,7 @@
                   default-first-option
                   remote
                   reserve-keyword
-                  placeholder="请搜索并选择店铺"
+                  placeholder="请搜索并选择仓库"
                   :remote-method="remoteMethodWarehouse"
                 >
                   <el-option
@@ -669,6 +669,26 @@
                       :value="item.value"
                     />
                   </el-select>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="仓库" prop="warehouse">
+                  <template>
+                    <el-select
+                      v-model="formEdit.warehouse"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择仓库"
+                      :remote-method="remoteMethodWarehouse"
+                    >
+                      <el-option
+                        v-for="item in optionsWarehouse"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
                 </el-form-item></el-col>
               </el-row>
             </el-card>
@@ -1130,6 +1150,9 @@
         this.optionsCity = [{ label: this.formEdit.city.name, value: this.formEdit.city.id }]
         this.formEdit.city = this.formEdit.city.id
 
+        this.optionsWarehouse = [{ label: this.formEdit.warehouse.name, value: this.formEdit.warehouse.id }]
+        this.formEdit.warehouse = this.formEdit.warehouse.id
+
         // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
         // console.log(currentShop)
         this.optionsShop = [{ label: this.formEdit.shop.name, value: this.formEdit.shop.id }]
@@ -1163,7 +1186,7 @@
           const { id, ...data } = this.formEdit
           let attrStr
           console.log(data)
-          const transFieldStr = ['mistake_tag', 'process_tag', 'department', 'order_status']
+          const transFieldStr = ['mistake_tag', 'process_tag', 'department', 'order_status', 'settle_category']
           for (attrStr in transFieldStr) {
             data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
           }
@@ -1318,7 +1341,7 @@
                       故障描述: item.description,
                       客服: item.servicer,
                       创建时间: item.created_time,
-                      更新时间: item.update_time,
+                      更新时间: item.updated_time,
                       创建者: item.creator,
                       处理标签: item.process_tag.name,
                       错误原因: item.mistake_tag.name

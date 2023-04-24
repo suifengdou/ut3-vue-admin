@@ -341,7 +341,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -585,7 +585,7 @@
                       故障描述: item.description,
                       客服: item.servicer,
                       创建时间: item.created_time,
-                      更新时间: item.update_time,
+                      更新时间: item.updated_time,
                       创建者: item.creator,
                       处理标签: item.process_tag.name,
                       错误原因: item.mistake_tag.name

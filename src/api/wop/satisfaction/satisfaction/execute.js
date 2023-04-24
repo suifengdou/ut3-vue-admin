@@ -21,8 +21,8 @@ export function createWorkOrderExecute(data) {
 
 // 更新工单
 export function updateWorkOrderExecute(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/satisfaction/swoexecute/${id}/`,
     method: 'patch',

@@ -377,6 +377,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="仓库"
+          prop="warehouse"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.warehouse.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建者"
           prop="creator"
         >
@@ -402,7 +410,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -549,6 +557,7 @@ export default {
                     省: item.province.name,
                     市: item.city.name,
                     区: item.district.name,
+                    仓库名称: item.warehouse.name,
                     订单号: item.order_id,
                     创建者: item.creator,
                     来源单号: item.ori_order.name

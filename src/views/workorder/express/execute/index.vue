@@ -386,7 +386,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -631,7 +631,7 @@ export default {
                     处理状态: item.handling_status,
                     错误原因: item.mistake_tag,
                     创建时间: item.created_time,
-                    更新时间: item.update_time,
+                    更新时间: item.updated_time,
                     创建者: item.creator
                   }
                 })

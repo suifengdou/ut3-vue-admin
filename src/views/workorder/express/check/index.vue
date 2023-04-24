@@ -261,7 +261,7 @@
                       <el-col :span="6"><el-form-item label="更新时间">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.update_time"
+                            v-model="params.updated_time"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -513,7 +513,7 @@
           label="更新时间"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -694,10 +694,10 @@ export default {
           this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.update_time) !== 'undefined') {
-        if (this.params.update_time.length === 2) {
-          this.params.update_time_after = moment.parseZone(this.params.update_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.update_time_before = moment.parseZone(this.params.update_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (typeof (this.params.updated_time) !== 'undefined') {
+        if (this.params.updated_time.length === 2) {
+          this.params.updated_time_after = moment.parseZone(this.params.updated_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.updated_time_before = moment.parseZone(this.params.updated_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
       if (this.params.track_id !== undefined) {
@@ -901,7 +901,7 @@ export default {
                     处理状态: item.handling_status,
                     错误原因: item.mistake_tag,
                     创建时间: item.created_time,
-                    更新时间: item.update_time,
+                    更新时间: item.updated_time,
                     创建者: item.creator
                   }
                 })

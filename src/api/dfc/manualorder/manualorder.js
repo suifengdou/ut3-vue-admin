@@ -20,8 +20,8 @@ export function createManualOrderSubmit(data) {
 
 // 更新
 export function updateManualOrderSubmit(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/dfc/manualorder/mosubmit/${id}/`,
     method: 'patch',

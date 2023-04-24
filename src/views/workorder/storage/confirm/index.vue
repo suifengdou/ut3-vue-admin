@@ -309,12 +309,12 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
-          prop="update_time"
+          prop="updated_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
 
@@ -480,7 +480,7 @@ export default {
                     处理状态: item.handling_status.name,
                     错误原因: item.mistake_tag.name,
                     创建时间: item.created_time,
-                    更新时间: item.update_time,
+                    更新时间: item.updated_time,
                     创建者: item.creator
                   }
                 })

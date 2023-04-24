@@ -21,8 +21,8 @@ export function createOriCallLogSubmit(data) {
 
 // 更新工单
 export function updateOriCallLogSubmit(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/crm/callcenter/oricalllogsubmit/${id}/`,
     method: 'patch',

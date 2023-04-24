@@ -21,8 +21,8 @@ export function createSWOPFilesList(data) {
 
 // 更新工单
 export function updateSWOPFiles(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/satisfaction/swopfiles/${id}/`,
     method: 'patch',

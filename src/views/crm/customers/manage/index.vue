@@ -398,7 +398,6 @@ export default {
     handleCancelEdit() {
       this.dialogVisibleEdit = false
       this.$refs.handleFormEdit.resetFields()
-      this.handleDeleteAllDetails()
     },
     // 添加界面
     add() {

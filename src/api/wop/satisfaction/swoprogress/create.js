@@ -21,8 +21,8 @@ export function createWorkOrderCreate(data) {
 
 // 更新工单
 export function updateWorkOrderCreate(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/satisfaction/swopcreate/${id}/`,
     method: 'patch',

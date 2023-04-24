@@ -22,8 +22,8 @@ export function createOriInvoiceApplicate(data) {
 
 // 更新工单
 export function updateOriInvoiceApplicate(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/invoice/oriinvoiceapp/${id}/`,
     method: 'patch',
@@ -88,8 +88,8 @@ export function createOriInvoiceSubmit(data) {
 
 // 更新工单
 export function updateOriInvoiceSubmit(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/invoice/oriinvoicesub/${id}/`,
     method: 'patch',
@@ -154,8 +154,8 @@ export function getOriInvoiceListHandle(params) {
 
 // 更新工单
 export function updateOriInvoiceHandle(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/invoice/oriinvoicehand/${id}/`,
     method: 'patch',
@@ -230,8 +230,8 @@ export function getInvoiceListHandle(params) {
 
 // 更新工单
 export function updateInvoiceHandle(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/invoice/invoicehand/${id}/`,
     method: 'patch',
@@ -298,8 +298,8 @@ export function getDeliverList(params) {
 // 更新快递单
 export function updateDeliver(id, data) {
   console.log(data)
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/invoice/deliverhandle/${id}/`,
     method: 'patch',

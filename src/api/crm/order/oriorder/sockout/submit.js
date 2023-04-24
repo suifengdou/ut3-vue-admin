@@ -21,8 +21,8 @@ export function createOriOrderStockOutSubmit(data) {
 
 // 更新工单
 export function updateOriOrderStockOutSubmit(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/crm/order/oriorderstockoutsubmit/${id}/`,
     method: 'patch',

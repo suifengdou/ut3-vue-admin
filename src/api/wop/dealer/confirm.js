@@ -12,8 +12,8 @@ export function getWorkOrderConfirm(params) {
 
 // 更新工单
 export function updateWorkOrderConfirm(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/workorder/dealers/dwoconfirm/${id}/`,
     method: 'patch',

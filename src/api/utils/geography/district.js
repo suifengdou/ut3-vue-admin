@@ -21,8 +21,8 @@ export function createDistrict(data) {
 
 // 更新工单
 export function updateDistrict(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/utils/geography/district/${id}/`,
     method: 'patch',

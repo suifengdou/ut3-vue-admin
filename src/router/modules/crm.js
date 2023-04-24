@@ -10,7 +10,7 @@ const crmChannelRouter = {
   meta: {
     title: '客户关系',
     icon: 'nested',
-    roles: ['order.view_oriorderinfo', 'service.view_orimaintenance', 'service.view_maintenance', 'callcenter.view_oricalllog', 'dialog.view_dialogtb', 'dialog.view_dialogow', 'dialog.view_dialogjd', 'customers.view_customer', 'AllPrivileges']
+    roles: ['order.view_oriorderinfo', 'service.view_orimaintenance', 'service.view_maintenance', 'callcenter.view_oricalllog', 'dialog.view_dialogtb', 'dialog.view_dialogow', 'dialog.view_dialogjd', 'customers.view_customer', 'labels.view_label', 'AllPrivileges']
   },
   children: [
     {
@@ -115,38 +115,44 @@ const crmChannelRouter = {
           meta: { title: '标签档案', roles: ['customers.view_customer', 'AllPrivileges'] }
         },
         {
-          path: 'blacklist',
-          component: () => import('@/views/crm/customers/manage'),
-          name: '黑名单',
-          meta: { title: '黑名单', roles: ['customers.view_customer', 'AllPrivileges'] }
-        }
+          path: 'csaddress',
+          component: () => import('@/views/crm/csaddress/manage'),
+          name: '收件信息',
+          meta: { title: '收件信息', roles: ['customers.view_customer', 'AllPrivileges'] }
+        },
+        {
+          path: 'csgoods',
+          component: () => import('@/views/crm/csgoods/manage'),
+          name: '已购货品',
+          meta: { title: '已购货品', roles: ['customers.view_customer', 'AllPrivileges'] }
+        },
       ]
     },
     {
       path: 'labelsystem',
       component: () => import('@/views/crm/order'), // Parent router-view
       name: 'labelsystem',
-      meta: { title: '标签系统', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
+      meta: { title: '标签系统', roles: ['labels.view_label',  'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'label',
           component: () => import('@/views/crm/order/oriorder'),
           name: 'label',
-          meta: { title: '标签', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
+          meta: { title: '标签', roles: ['labels.view_label',  'AllPrivileges'] },
           children: [
             {
               path: 'labelcategory',
               component: () => import('@/views/crm/label/labelcategory'),
               name: 'labelcategory',
-              meta: { title: '标签类别', roles: ['AllPrivileges'] },
+              meta: { title: '标签类别', roles: ['labels.view_labelcategory', 'AllPrivileges'] },
 
             },
             {
               path: 'labelmanage',
               component: () => import('@/views/crm/label/label/manage'),
               name: 'labelmanage',
-              meta: { title: '标签管理', roles: ['AllPrivileges'] },
+              meta: { title: '标签管理', roles: ['labels.view_label', 'AllPrivileges'] },
 
             },
           ]
@@ -155,25 +161,25 @@ const crmChannelRouter = {
           path: 'labelordersystem',
           component: () => import('@/views/crm/order/oriorder'),
           name: 'labelordersystem',
-          meta: { title: '标签单', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
+          meta: { title: '标签单', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] },
           children: [
             {
               path: 'labelorder',
               component: () => import('@/views/crm/order/oriorder/sockout'),
               name: 'labelorder',
-              meta: { title: '标签单', roles: ['AllPrivileges'] },
+              meta: { title: '标签单', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] },
               children: [
                 {
                   path: 'submit',
                   component: () => import('@/views/crm/label/labelorder/order/submit'),
                   name: 'labelordersubmit',
-                  meta: { title: '标签单提交', roles: ['AllPrivileges'] }
+                  meta: { title: '标签单提交', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] }
                 },
                 {
                   path: 'manage',
                   component: () => import('@/views/crm/label/labelorder/order/manage'),
                   name: 'labelordermanage',
-                  meta: { title: '标签单管理', roles: ['AllPrivileges'] }
+                  meta: { title: '标签单管理', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] }
                 }
               ]
             },
@@ -181,43 +187,21 @@ const crmChannelRouter = {
               path: 'labelorderdetails',
               component: () => import('@/views/crm/order/oriorder/details'),
               name: 'labelorderdetails',
-              meta: { title: '标签单明细', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] },
+              meta: { title: '标签单明细', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] },
               children: [
                 {
                   path: 'submit',
                   component: () => import('@/views/crm/label/labelorder/details/submit'),
                   name: 'labelorderdetailssubmit',
-                  meta: { title: '明细提交', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] }
+                  meta: { title: '明细提交', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] }
                 },
                 {
                   path: 'manage',
                   component: () => import('@/views/crm/label/labelorder/details/manage'),
                   name: 'labelorderdetailsmanage',
-                  meta: { title: '明细管理', roles: ['order.view_bmsorderinfo', 'AllPrivileges'] }
+                  meta: { title: '明细管理', roles: ['labels.view_labelcustomerorder', 'AllPrivileges'] }
                 }
               ]
-            },
-          ]
-        },
-        {
-          path: 'labelcustomer',
-          component: () => import('@/views/crm/order/oriorder'),
-          name: 'labelcustomer',
-          meta: { title: '客户标签', roles: ['order.view_oriorderinfo', 'AllPrivileges'] },
-          children: [
-            {
-              path: 'labelcustomercenter',
-              component: () => import('@/views/crm/label/labelcustomer/center'),
-              name: 'labelcustomercenter',
-              meta: { title: '客户标签-中心', roles: ['AllPrivileges'] },
-
-            },
-            {
-              path: 'labelcustomermanage',
-              component: () => import('@/views/crm/label/labelcustomer/manage'),
-              name: 'labelcustomermanage',
-              meta: { title: '客户标签-管理', roles: ['AllPrivileges'] },
-
             },
           ]
         },

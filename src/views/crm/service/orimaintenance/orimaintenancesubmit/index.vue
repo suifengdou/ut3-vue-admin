@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="ori-maintenance-order-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -808,7 +808,7 @@
 
 <script>
 import {
-  getOriMaintenanceSubmitList,
+  getOriMaintenanceSubmit,
   createOriMaintenanceSubmit,
   updateOriMaintenanceSubmit,
   exportOriMaintenanceSubmit,
@@ -821,7 +821,7 @@ import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'submitExpressWorkOrder',
+  name: 'submitOriMaintenanceOrder',
   data() {
     return {
       DataList: [],
@@ -837,36 +837,7 @@ export default {
       },
       dialogVisibleEdit: false,
       formEdit: {},
-      optionsMistake: [
-        {
-          value: 0,
-          label: '正常'
-        },
-        {
-          value: 1,
-          label: '尝试修复数据'
-        },
-        {
-          value: 2,
-          label: '二级市错误'
-        },
-        {
-          value: 3,
-          label: '寄件地区出错'
-        },
-        {
-          value: 4,
-          label: 'UT无此店铺'
-        },
-        {
-          value: 5,
-          label: 'UT此型号整机未创建'
-        },
-        {
-          value: 6,
-          label: 'UT系统无此店铺'
-        },
-      ],
+      optionsMistake: [],
       optionsJudgment: [
         {
           value: true,
@@ -925,7 +896,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriMaintenanceSubmitList(this.params).then(
+      getOriMaintenanceSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count

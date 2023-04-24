@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getOriMaintenanceSubmitList(params) {
+export function getOriMaintenanceSubmit(params) {
   return request({
     url: '/crm/service/orimaintenancesubmit/',
     method: 'get',
@@ -21,8 +21,8 @@ export function createOriMaintenanceSubmit(data) {
 
 // 更新工单
 export function updateOriMaintenanceSubmit(id, data) {
-  delete data.create_time
-  delete data.update_time
+  delete data.created_time
+  delete data.updated_time
   return request({
     url: `/crm/service/orimaintenancesubmit/${id}/`,
     method: 'patch',
