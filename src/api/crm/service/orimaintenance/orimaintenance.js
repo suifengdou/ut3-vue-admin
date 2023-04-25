@@ -75,3 +75,13 @@ export function rejectOriMaintenance(data) {
   })
 }
 
+
+// 查询日志
+export function getLogOriMaintenance(data) {
+  return request({
+    url: `/crm/service/orimaintenance/get_log_details/`,
+    method: 'patch',
+    data
+  })
+}
+

@@ -58,20 +58,37 @@ export function fixOriMaintenanceBefore(data) {
 }
 
 // 审核工单
-export function checkOriMaintenanceBefore(data) {
+export function batchSignOriMaintenanceBefore(data) {
   return request({
-    url: `/crm/service/orimaintenancebefore/check/`,
+    url: `/crm/service/orimaintenancebefore/batch_sign/`,
     method: 'patch',
     data
   })
 }
 
 // 取消工单
-export function rejectOriMaintenanceBefore(data) {
+export function batchTextOriMaintenanceBefore(data) {
   return request({
-    url: `/crm/service/orimaintenancebefore/reject/`,
+    url: `/crm/service/orimaintenancebefore/batchtext/`,
     method: 'patch',
     data
   })
 }
 
+// 设置预约
+export function setAppointmentOriMaintenanceBefore(data) {
+  return request({
+    url: `/crm/service/orimaintenancebefore/set_appointment/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 重置预约
+export function setRecoverOriMaintenanceBefore(data) {
+  return request({
+    url: `/crm/service/orimaintenancebefore/set_recover/`,
+    method: 'patch',
+    data
+  })
+}

@@ -66,41 +66,37 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="SN" prop="sn">
+                        <el-input v-model="params.sn" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
+                      <el-col :span="6"><el-form-item label="货品名称" prop="goods">
+                        <el-input v-model="params.goods__name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
+                      <el-col :span="6"><el-form-item label="备注" prop="memo">
+                        <el-input v-model="params.memo" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
-
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="购买时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.purchase_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
                   </el-form>
                 </div>
               </el-collapse-item>
@@ -453,6 +449,12 @@ export default {
       console.log(this.params)
       this.tableLoading = true
       // console.log(this.params.created_time)
+      if (typeof (this.params.purchase_time) !== 'undefined') {
+        if (this.params.purchase_time.length === 2) {
+          this.params.purchase_time_after = moment.parseZone(this.params.purchase_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.purchase_time_before = moment.parseZone(this.params.purchase_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+        }
+      }
       getCSGoods(this.params).then(
         res => {
           this.DataList = res.data.results

@@ -225,22 +225,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="递交状态"
-          prop="towork_status"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.towork_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="保修单状态"
-          prop="order_status"
+          prop="ori_order_status"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_status }}</span>
+            <span>{{ scope.row.ori_order_status }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -251,16 +242,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.machine_sn }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="换新序列号"
-          prop="new_machine_sn"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.new_machine_sn }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -404,46 +385,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="寄件客户姓名"
-          prop="buyer_nick"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.buyer_nick }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户手机"
-          prop="sender_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户省市县"
-          prop="sender_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户地址"
-          prop="sender_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="收件物流公司"
           prop="send_logistics_company"
           sortable="custom"
@@ -545,12 +486,12 @@
         </el-table-column>
         <el-table-column
           label="保修货品商家编码"
-          prop="goods_id"
+          prop="goods_code"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
+            <span>{{ scope.row.goods_code }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -575,12 +516,12 @@
         </el-table-column>
         <el-table-column
           label="保修数量"
-          prop="created_time"
+          prop="ori_created_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.created_time }}</span>
+            <span>{{ scope.row.ori_created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -660,7 +601,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -740,8 +681,8 @@
                 <span>货品信息</span>
               </div>
               <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="保修货品商家编码" prop="goods_id">
-                  <el-input v-model="formEdit.goods_id" placeholder="请输入保修货品商家编码" />
+                <el-col :span="8"><el-form-item label="保修货品商家编码" prop="goods_code">
+                  <el-input v-model="formEdit.goods_code" placeholder="请输入保修货品商家编码" />
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item label="保修货品名称" prop="goods_name">
                   <el-input v-model="formEdit.goods_name" placeholder="请输入保修货品名称" />
@@ -931,7 +872,7 @@ export default {
     handleSubmitEdit() {
       const { id, ...data } = this.formEdit
       let attrStr
-      const transFieldStr = ['mistake_tag', 'towork_status', 'process_tag']
+      const transFieldStr = ['mistake_tag', 'order_status', 'process_tag']
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
@@ -1114,7 +1055,7 @@ export default {
                     寄件指定物流公司: item.return_logistics_company,
                     寄件物流单号: item.return_logistics_no,
                     寄件备注: item.return_memory,
-                    保修货品商家编码: item.goods_id,
+                    保修货品商家编码: item.goods_code,
                     保修货品名称: item.goods_name,
                     保修货品简称: item.goods_abbreviation,
                     故障描述: item.description,
