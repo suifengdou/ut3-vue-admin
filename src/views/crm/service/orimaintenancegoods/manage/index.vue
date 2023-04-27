@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-maintenance-before-container">
+  <div class="ori-maintenance-goods-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
@@ -837,24 +837,24 @@
 
 <script>
 import {
-  getOriMaintenanceBeforeList,
-  createOriMaintenanceBefore,
-  updateOriMaintenanceBefore,
-  exportOriMaintenanceBefore,
-  excelImportOriMaintenanceBefore,
-  batchSignOriMaintenanceBefore,
-  batchTextOriMaintenanceBefore,
-  setAppointmentOriMaintenanceBefore,
-  setRecoverOriMaintenanceBefore,
-  handleRepeatedOriMaintenanceBefore
-} from '@/api/crm/service/orimaintenance/orimaintenancebefore'
-import { getLogOriMaintenance } from "@/api/crm/service/orimaintenance/orimaintenance"
+  getOriMaintenanceGoodsSubmit,
+  createOriMaintenanceGoodsSubmit,
+  updateOriMaintenanceGoodsSubmit,
+  exportOriMaintenanceGoodsSubmit,
+  excelImportOriMaintenanceGoodsSubmit,
+  batchSignOriMaintenanceGoodsSubmit,
+  batchTextOriMaintenanceGoodsSubmit,
+  setAppointmentOriMaintenanceGoodsSubmit,
+  setRecoverOriMaintenanceGoodsSubmit,
+  handleRepeatedOriMaintenanceGoodsSubmit
+} from '@/api/crm/service/orimaintenancegoods/submit'
+import { getLogOriMaintenanceGoods } from "@/api/crm/service/orimaintenancegoods/manage"
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
 
 export default {
-  name: 'orimaintenancebefore',
+  name: 'orimaintenanceGoodsSubmit',
   data() {
     return {
       DataList: [],
@@ -1004,7 +1004,7 @@ export default {
         this.params.sign__in = this.params.sign__in.toString()
         console.log(this.params.sign__in)
       }
-      getOriMaintenanceBeforeList(this.params).then(
+      getOriMaintenanceGoodsSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -1057,7 +1057,7 @@ export default {
         id: id,
         days: 1
       }
-      setAppointmentOriMaintenanceBefore(data).then(
+      setAppointmentOriMaintenanceGoodsSubmit(data).then(
         (res) => {
           if (res.data.successful == 1) {
             this.$notify({
@@ -1097,7 +1097,7 @@ export default {
         id: id,
         days: 3
       }
-      setAppointmentOriMaintenanceBefore(data).then(
+      setAppointmentOriMaintenanceGoodsSubmit(data).then(
         (res) => {
           if (res.data.successful == 1) {
             this.$notify({
@@ -1135,7 +1135,7 @@ export default {
       let data = {
         id: row.id
       }
-      setRecoverOriMaintenanceBefore(data).then(
+      setRecoverOriMaintenanceGoodsSubmit(data).then(
         (res) => {
           if (res.data.successful == 1) {
             this.$notify({
@@ -1200,7 +1200,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportOriMaintenanceBefore(importformData, config).then(
+            excelImportOriMaintenanceGoodsSubmit(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -1267,7 +1267,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriMaintenanceBefore(this.params).then(
+            exportOriMaintenanceGoodsSubmit(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
@@ -1381,7 +1381,7 @@ export default {
     handleBatchSign() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        batchSignOriMaintenanceBefore(this.params).then(
+        batchSignOriMaintenanceGoodsSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1437,7 +1437,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        batchSignOriMaintenanceBefore(this.params).then(
+        batchSignOriMaintenanceGoodsSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1521,7 +1521,7 @@ export default {
           }
           console.log(this.params)
           if (this.params.allSelectTag === 1) {
-            batchTextOriMaintenanceBefore(this.params).then(
+            batchTextOriMaintenanceGoodsSubmit(this.params).then(
               res => {
                 if (res.data.successful !== 0) {
                   this.$notify({
@@ -1576,7 +1576,7 @@ export default {
             }
             const ids = this.multipleSelection.map(item => item.id)
             this.params.ids = ids
-            batchTextOriMaintenanceBefore(this.params).then(
+            batchTextOriMaintenanceGoodsSubmit(this.params).then(
               res => {
                 if (res.data.successful !== 0) {
                   this.$notify({
@@ -1655,7 +1655,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              handleRepeatedOriMaintenanceBefore(this.params).then(
+              handleRepeatedOriMaintenanceGoodsSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1729,7 +1729,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              handleRepeatedOriMaintenanceBefore(this.params).then(
+              handleRepeatedOriMaintenanceGoodsSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1843,7 +1843,7 @@ export default {
         sign: details.sign.id
       }
       console.log(data, id)
-      updateOriMaintenanceBefore(id, data).then(
+      updateOriMaintenanceGoodsSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -1952,7 +1952,7 @@ export default {
           let data = {
             suggestion: value
           }
-          updateOriMaintenanceBefore(id, data).then(
+          updateOriMaintenanceGoodsSubmit(id, data).then(
             () => {
               this.$notify({
                 title: '修改成功',

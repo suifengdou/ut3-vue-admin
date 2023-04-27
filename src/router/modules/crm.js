@@ -434,6 +434,26 @@ const crmChannelRouter = {
           ]
         },
         {
+          path: 'orimaintenancegoods',
+          component: () => import('@/views/crm/service/orimaintenancegoods'),
+          name: 'orimaintenancegoods',
+          meta: { title: '原始单配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'orimaintenancegoodssubmit',
+              component: () => import('@/views/crm/service/orimaintenancegoods/submit'),
+              name: 'orimaintenancegoodssubmit',
+              meta: { title: '原始单配件-递交', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            },
+            {
+              path: 'orimaintenancegoodsmanage',
+              component: () => import('@/views/crm/service/orimaintenancegoods/manage'),
+              name: 'orimaintenancegoodsmanage',
+              meta: { title: '原始单配件-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
           path: 'maintenance',
           component: () => import('@/views/crm/service/maintenance'),
           name: 'maintenance',
@@ -465,12 +485,6 @@ const crmChannelRouter = {
           name: 'mantenancesummary',
           meta: { title: '维修统计', roles: ['service.view_maintenance', 'AllPrivileges'] }
         },
-        {
-          path: 'findandfound',
-          component: () => import('@/views/crm/service/findandfound'),
-          name: 'findandfound',
-          meta: { title: '二次明细', roles: ['service.view_maintenance', 'AllPrivileges'] }
-        }
 
       ]
     }

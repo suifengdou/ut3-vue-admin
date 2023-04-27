@@ -2,7 +2,7 @@
   <div class="ori-maintenance-order-container">
     <div class="tableTitle">
       <el-row :gutter="20">
-        <el-col :span="7" class="titleBar">
+        <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <div id="operationBoard">
               <el-tooltip class="item" effect="dark" content="点击展开操作列表，可执行对应操作" placement="top-start">
@@ -10,7 +10,8 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleFix">修复</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleDecrypt">解密</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleRelateGoods">关联货品</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -21,10 +22,17 @@
             </div>
           </div>
         </el-col>
+        <el-col :span="2" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="筛选所有未标记过的异常单" placement="top-start">
+              <el-button type="success" @click="handleNotDecrypt">未解密</el-button>
+            </el-tooltip>
+          </div>
+        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+            <el-tooltip class="item" effect="dark" content="支持多单号搜索" placement="top-start">
+              <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入保修单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -59,17 +67,18 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="处理类别" prop="mistake_tag">
+                      <el-col :span="6"><el-form-item label="异常类别" prop="process_tag__in">
                         <template>
                           <el-select
-                            v-model="params.mistake_tag"
+                            v-model="params.mistake_tag__in"
+                            multiple
                             filterable
                             default-first-option
                             reserve-keyword
-                            placeholder="请选择处理类别"
+                            placeholder="请选择错误类别"
                           >
                             <el-option
-                              v-for="item in optionsMistake"
+                              v-for="item in optionsProcess"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -77,22 +86,48 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
+                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
+                        <template>
+                          <el-select
+                            v-model="params.sign__in"
+                            filterable
+                            default-first-option
+                            reserve-keyword
+                            placeholder="请选择错误类别"
+                          >
+                            <el-option
+                              v-for="item in optionsSign"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="店铺" prop="shop">
                         <el-input v-model="params.shop" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="寄件手机" prop="sender_mobile">
-                        <el-input v-model="params.sender_mobile" type="text" />
+                      <el-col :span="6"><el-form-item label="客户手机" prop="return_mobile">
+                        <el-input v-model="params.return_mobile" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="故障类型" prop="fault_type">
                         <el-input v-model="params.fault_type" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="原创建者" prop="ori_creator">
+                        <el-input v-model="params.ori_creator" type="text" />
+                      </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="序列号" prop="machine_sn">
+                        <el-input v-model="params.machine_sn" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件人" prop="return_name">
+                        <el-input v-model="params.return_name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件单号" prop="send_logistics_no">
+                        <el-input v-model="params.send_logistics_no" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -176,6 +211,7 @@
         style="width: 100%"
         @sort-change="onSortChange"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handelDoubleClick"
       >
         <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
@@ -207,15 +243,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="错误标签"
           prop="mistake_tag"
           sortable="custom"
@@ -225,13 +252,66 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="保修单状态"
-          prop="ori_order_status"
+          label="寄件备注"
+          prop="return_memory"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ori_order_status }}</span>
+            <span>{{ scope.row.return_memory }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否解密"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_decrypted"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="寄回客户姓名"
+          prop="return_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回客户手机"
+          prop="return_mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回省市区"
+          prop="return_area"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_area }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回地址"
+          prop="return_address"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_address }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -242,6 +322,84 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.machine_sn }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="关联货品"
+          prop="goods"
+          sortable="custom"
+          width="180"
+          :sort-orders="['ascending','descending']"
+
+        >
+          <template slot-scope="scope">
+            <div v-if="scope.row.goods.id==-1">
+              <template>
+                <el-select
+                  v-model="scope.row.goods.id"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请选择货品"
+                  :remote-method="remoteMethodGoods"
+                  @change="confirmSign(scope.row)"
+                >
+                  <el-option
+                    v-for="item in optionsGoods"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </div>
+            <div v-else>
+              <span>{{ scope.row.goods.name }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修货品名称"
+          prop="goods_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否二次返修"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_repeated"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否标记返修"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_month_filter"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -414,46 +572,7 @@
             <span>{{ scope.row.send_memory }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="寄回客户姓名"
-          prop="return_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回客户手机"
-          prop="return_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回省市区"
-          prop="return_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回地址"
-          prop="return_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_address }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="寄件指定物流公司"
           prop="return_logistics_company"
@@ -474,16 +593,7 @@
             <span>{{ scope.row.return_logistics_no }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="寄件备注"
-          prop="return_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_memory }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="保修货品商家编码"
           prop="goods_code"
@@ -494,26 +604,7 @@
             <span>{{ scope.row.goods_code }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="保修货品名称"
-          prop="goods_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修货品简称"
-          prop="goods_abbreviation"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_abbreviation }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="保修数量"
           prop="ori_created_time"
@@ -582,6 +673,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.charge_memory }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修单状态"
+          prop="ori_order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_order_status }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -738,6 +839,48 @@
         </div>
       </template>
     </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -755,10 +898,13 @@ import {
   exportOriMaintenanceSubmit,
   excelImportOriMaintenanceSubmit,
   checkOriMaintenanceSubmit,
-  fixOriMaintenanceSubmit,
-  rejectOriMaintenanceSubmit
+  decryptOriMaintenanceSubmit,
+  rejectOriMaintenanceSubmit,
+  relateGoodsOriMaintenanceSubmit
 } from '@/api/crm/service/orimaintenance/orimaintenancesubmit'
 import { getCompanyList } from '@/api/base/company'
+import { getGoodsList } from '@/api/base/goods'
+import { getLogOriMaintenance } from "@/api/crm/service/orimaintenance/orimaintenance"
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
@@ -779,6 +925,14 @@ export default {
       dialogVisibleEdit: false,
       formEdit: {},
       optionsMistake: [],
+      logViewVisible: false,
+      logDetails: [],
+      optionsGoods: [
+        {
+          value: -1,
+          label: '未关联货品'
+        },
+      ],
       optionsJudgment: [
         {
           value: true,
@@ -860,6 +1014,10 @@ export default {
     },
     handleCurrentChange(val) {
       this.params.page = val
+      this.fetchData()
+    },
+    handleNotDecrypt() {
+      this.params.is_decrypted = false
       this.fetchData()
     },
     // 跳出编辑对话框
@@ -1123,7 +1281,6 @@ export default {
       console.log('我是全选的' + this.selectNum)
     },
     // 审核单据
-
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
@@ -1135,7 +1292,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1144,27 +1301,26 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -1177,7 +1333,7 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
@@ -1191,7 +1347,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1200,14 +1356,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1215,72 +1371,59 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
+          }).catch(
           (error) => {
+            delete this.params.ids
             this.$notify({
               title: '错误详情',
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
+            this.fetchData()
           }
         )
       }
     },
-    handleFix() {
+    // 解密单据
+    handleDecrypt() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixOriMaintenanceSubmit(this.params).then(
+        decryptOriMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '解密成功',
+                message: `解密成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '解密失败',
+                message: `解密失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -1302,31 +1445,31 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixOriMaintenanceSubmit(this.params).then(
+        decryptOriMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '解密成功',
+                message: `解密成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '解密失败',
+                message: `解密失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1334,43 +1477,137 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
-        ).catch(
+        )
+      }
+    },
+    // 解密单据
+    handleRelateGoods() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        relateGoodsOriMaintenanceSubmit(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '关联成功',
+                message: `关联成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '关联失败',
+                message: `关联失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
           (error) => {
             this.$notify({
               title: '错误详情',
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        relateGoodsOriMaintenanceSubmit(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '关联成功',
+                message: `关联成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '关联失败',
+                message: `关联失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
           }
         )
       }
     },
+    // 取消单据
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '取消工单',
+        title: '清除锁定',
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '取消保修单！无法再次导入，请慎重选择！'),
+          h('span', null, '清除锁定会清除领取人！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1390,7 +1627,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1399,46 +1636,32 @@ export default {
                       message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
                       message: res.data.error,
                       type: 'error',
                       offset: 210,
-                      duration: 0
+                      duration: 5000
                     })
                   }
                   delete this.params.allSelectTag
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                (error) => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                  this.$notify({
-                    title: '错误详情',
                     message: error.data,
                     type: 'error',
                     offset: 210,
-                    duration: 0
+                    duration: 5000
                   })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
                 }
               )
             } else {
@@ -1464,7 +1687,7 @@ export default {
                       message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
-                      duration: 0
+                      duration: 3000
                     })
                   }
                   if (res.data.false !== 0) {
@@ -1473,46 +1696,32 @@ export default {
                       message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
-                      duration: 0
+                      duration: 5000
                     })
                     this.$notify({
                       title: '失败错误详情',
                       message: res.data.error,
                       type: 'error',
                       offset: 210,
-                      duration: 0
+                      duration: 5000
                     })
                   }
                   delete this.params.allSelectTag
                   instance.confirmButtonLoading = false
                   done()
                   this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
+                }).catch(
+                (error) => {
                   this.$notify({
                     title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                (error) => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                  this.$notify({
-                    title: '错误详情',
                     message: error.data,
                     type: 'error',
                     offset: 210,
-                    duration: 0
+                    duration: 5000
                   })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
                 }
               )
             }
@@ -1522,7 +1731,14 @@ export default {
           }
         }
       }).then().catch(
-        () => {
+        (error) => {
+          this.$notify({
+            title: '异常错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 210,
+            duration: 5000
+          })
           this.fetchData()
         }
       )
@@ -1556,11 +1772,141 @@ export default {
         }
       }
     },
+    // 货品搜索
+    remoteMethodGoods(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          paramsSearch.goods_attribute = 1
+          getGoodsList(paramsSearch).then(
+            res => {
+              this.optionsGoods = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.options = []
+      }
+    },
+    // 修改标记
+    confirmSign(row) {
+      console.log(row)
+      const { id, ...details } = row
+      const data = {
+        goods: details.goods.id
+      }
+      console.log(data, id)
+      updateOriMaintenanceSubmit(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 3000
+          })
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 5000
+          })
+        }
+      )
 
+    },
     resetParams() {
       this.params = {
         page: 1
       }
+    },
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogOriMaintenance(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
+    // 双击改内容
+    handelDoubleClick(row, column, cell, event) {
+      if (column.property === 'return_memory') {
+        this.handleRetrunMemo(row)
+      }
+    },
+    handleRetrunMemo(row) {
+      this.$prompt('请输入备注', '添加备注', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_memory,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_memory: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
     }
   }
 }

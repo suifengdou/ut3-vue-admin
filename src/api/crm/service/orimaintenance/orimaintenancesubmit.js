@@ -49,9 +49,18 @@ export function excelImportOriMaintenanceSubmit(data) {
 }
 
 // 校正
-export function fixOriMaintenanceSubmit(data) {
+export function decryptOriMaintenanceSubmit(data) {
   return request({
-    url: `/crm/service/orimaintenancesubmit/fix/`,
+    url: `/crm/service/orimaintenancesubmit/decrypt/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 关联货品
+export function relateGoodsOriMaintenanceSubmit(data) {
+  return request({
+    url: `/crm/service/orimaintenancesubmit/relate_goods/`,
     method: 'patch',
     data
   })

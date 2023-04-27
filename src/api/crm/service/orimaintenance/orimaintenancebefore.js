@@ -49,9 +49,9 @@ export function excelImportOriMaintenanceBefore(data) {
 }
 
 // 校正
-export function fixOriMaintenanceBefore(data) {
+export function handleRepeatedOriMaintenanceBefore(data) {
   return request({
-    url: `/crm/service/orimaintenancebefore/fix/`,
+    url: `/crm/service/orimaintenancebefore/handle_repeated/`,
     method: 'patch',
     data
   })
