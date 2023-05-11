@@ -54,19 +54,18 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="二次维修" prop="repeat_tag">
+                      <el-col :span="8"><el-form-item label="缺陷原因" prop="fault_cause">
                         <template>
                           <el-select
-                            v-model="params.repeat_tag"
+                            v-model="params.fault_cause"
                             filterable
                             default-first-option
                             reserve-keyword
                             multiple
-                            clearable
-                            placeholder="请选择重复维修标记"
+                            placeholder="请选择缺陷原因"
                           >
                             <el-option
-                              v-for="item in optionsRepeat"
+                              v-for="item in optionsFaultCause"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -179,16 +178,6 @@
         </el-table-column>
 
         <el-table-column
-          label="重复维修标记"
-          prop="repeat_tag"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.repeat_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="判责说明"
           prop="memo"
           sortable="custom"
@@ -209,20 +198,43 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="发现二次维修"
-          prop="found_tag"
+          label="是否返修"
+          prop="is_repeated"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.found_tag"
+              v-model="scope.row.is_repeated"
               active-color="#13ce66"
               inactive-color="#ff4949"
               disabled
             />
           </template>
-
+        </el-table-column>
+        <el-table-column
+          label="是否缺陷"
+          prop="is_fault"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_fault"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="缺陷原因"
+          prop="fault_cause"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ FaultCause[scope.row.fault_cause] }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="店铺"
@@ -234,13 +246,14 @@
           </template>
         </el-table-column>
 
+
         <el-table-column
           label="货品"
           prop="goods_name"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
+            <span>{{ scope.row.goods.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -270,7 +283,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warehouse }}</span>
+            <span>{{ scope.row.warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -324,33 +337,23 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="客户网名"
-          prop="buyer_nick"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.buyer_nick }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户姓名"
+          label="客户姓名"
           prop="sender_name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sender_name }}</span>
+            <span>{{ scope.row.return_name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="寄件客户手机"
+          label="客户手机"
           prop="sender_mobile"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sender_mobile }}</span>
+            <span>{{ scope.row.return_mobile }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -413,26 +416,7 @@
             <span>{{ scope.row.ori_created_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="审核人"
-          prop="handler_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handler_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核时间"
-          prop="handle_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handle_time }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="处理登记人"
           prop="completer"
@@ -453,36 +437,6 @@
             <span>{{ scope.row.finish_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="保修完成日期"
-          prop="finish_date"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_date }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修完成月度"
-          prop="finish_month"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_month }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修完成年度"
-          prop="finish_year"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_year }}</span>
-          </template>
-        </el-table-column>
 
         <el-table-column
           label="省"
@@ -500,15 +454,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.city.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="区"
-          prop="district"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.district.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -581,26 +526,30 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      optionsRepeat: [
+      optionsFaultCause: [
         {
           value: 0,
           label: '正常'
         },
         {
           value: 1,
-          label: '未处理'
-        },
-        {
-          value: 2,
           label: '产品'
         },
         {
-          value: 3,
+          value: 2,
           label: '维修'
         },
         {
+          value: 3,
+          label: '客服'
+        },
+        {
           value: 4,
-          label: '其他'
+          label: '快递'
+        },
+        {
+          value: 5,
+          label: '用户'
         }
       ],
       optionsJudgment: [
@@ -613,6 +562,14 @@ export default {
           label: '否'
         }
       ],
+      FaultCause:{
+        0: '正常',
+        1: '产品',
+        2: '维修',
+        3: '客服',
+        4: '快递',
+        5: '用户'
+      },
       rules: {
         buyer_nick: [
           { required: true, message: '请选择客户网名', trigger: 'blur' }
@@ -889,36 +846,6 @@ export default {
       console.log('我是全选的' + this.selectNum)
     },
     // 审核单据
-    // 提交编辑完成的数据
-    confirmResponsibility(row) {
-      const { id, ...details } = this.row
-      const data = {
-        repeat_tag: details.repeat_tag
-      }
-      console.log(data, id)
-      updateMaintenance(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 3000
-          })
-          this.dialogVisibleEdit = false
-          this.fetchData()
-        },
-        err => {
-          this.$notify({
-            title: '修改出错',
-            message: err.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-        }
-      )
-
-    },
 
     handleCheck() {
       this.tableLoading = true
@@ -1354,11 +1281,11 @@ export default {
     },
     rowStyle({ row, rowIndex}) {
       let row_style = {}
-      if (row.repeat_tag.id === 1) {
+      if (row.is_repeated === 1) {
         row_style = {
           backgroundColor: 'lightpink'
         }
-      } else if (row.repeat_tag.id > 1) {
+      } else if (row.is_fault == 1) {
         row_style = {
           backgroundColor: 'palegreen'
         }

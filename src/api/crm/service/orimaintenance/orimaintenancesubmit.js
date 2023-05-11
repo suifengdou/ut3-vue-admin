@@ -57,6 +57,14 @@ export function decryptOriMaintenanceSubmit(data) {
   })
 }
 
+export function bruteForceAttackOriMaintenanceSubmit(data) {
+  return request({
+    url: `/crm/service/orimaintenancesubmit/brute_force_attack/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 关联货品
 export function relateGoodsOriMaintenanceSubmit(data) {
   return request({

@@ -463,7 +463,7 @@ const crmChannelRouter = {
               path: 'maintenancesubmit',
               component: () => import('@/views/crm/service/maintenance/maintenancesubmit'),
               name: 'maintenancesubmit',
-              meta: { title: '维修单-计算', roles: ['service.view_maintenance', 'AllPrivileges'] }
+              meta: { title: '维修单-统计', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'maintenancejudgment',

@@ -49,9 +49,9 @@ export function excelImportMaintenanceJudgment(data) {
 }
 
 // 校正
-export function fixMaintenanceJudgment(data) {
+export function getFaultMaintenanceJudgment(data) {
   return request({
-    url: `/crm/service/maintenancejudgment/fix/`,
+    url: `/crm/service/maintenancejudgment/get_fault/`,
     method: 'patch',
     data
   })

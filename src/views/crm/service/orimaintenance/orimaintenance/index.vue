@@ -1,34 +1,16 @@
 <template>
-  <div class="ori-maintenance-container">
+  <div class="ori-maintenance-order-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+            <el-tooltip class="item" effect="dark" content="支持多单号搜索" placement="top-start">
               <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入保修单号" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="5" class="titleBar">
-          <el-select
-            v-model="params.process_tag"
-            filterable
-            default-first-option
-            reserve-keyword
-            clearable
-            placeholder="请选择异常类别"
-            @change="fetchData"
-            @clear="fetchData"
-          >
-            <el-option
-              v-for="item in optionsProcess"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
@@ -55,14 +37,52 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="错误类别" prop="process_tag">
+                      <el-col :span="6"><el-form-item label="错误类型" prop="mistake_tag">
                         <template>
                           <el-select
-                            v-model="params.process_tag"
+                            v-model="params.mistake_tag__in"
+                            multiple
                             filterable
                             default-first-option
                             reserve-keyword
                             placeholder="请选择错误类别"
+                          >
+                            <el-option
+                              v-for="item in optionsMistake"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
+                        <template>
+                          <el-select
+                            v-model="params.sign__in"
+                            filterable
+                            default-first-option
+                            reserve-keyword
+                            placeholder="请选择标记类别"
+                          >
+                            <el-option
+                              v-for="item in optionsSign"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="异常类别" prop="process_tag__in">
+                        <template>
+                          <el-select
+                            v-model="params.process_tag__in"
+                            multiple
+                            filterable
+                            default-first-option
+                            reserve-keyword
+                            placeholder="请选择异常类别"
                           >
                             <el-option
                               v-for="item in optionsProcess"
@@ -73,40 +93,27 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="标记名称" prop="mark_name">
-                        <template>
-                          <el-select
-                            v-model="params.mark_name"
-                            filterable
-                            default-first-option
-                            reserve-keyword
-                            placeholder="请选择错误类别"
-                          >
-                            <el-option
-                              v-for="item in optionsMark"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="店铺" prop="shop">
-                        <el-input v-model="params.shop" type="text" />
-                      </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="寄件手机" prop="sender_mobile">
-                        <el-input v-model="params.sender_mobile" type="text" />
+                      <el-col :span="6"><el-form-item label="客户手机" prop="return_mobile">
+                        <el-input v-model="params.return_mobile" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="故障类型" prop="fault_type">
                         <el-input v-model="params.fault_type" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
-                        <el-input v-model="params.creator" type="text" />
+                      <el-col :span="6"><el-form-item label="原创建者" prop="ori_creator">
+                        <el-input v-model="params.ori_creator" type="text" />
+                      </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="序列号" prop="machine_sn">
+                        <el-input v-model="params.machine_sn" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件人" prop="return_name">
+                        <el-input v-model="params.return_name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="收件单号" prop="send_logistics_no">
+                        <el-input v-model="params.send_logistics_no" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -189,9 +196,7 @@
         border
         style="width: 100%"
         @sort-change="onSortChange"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
@@ -219,15 +224,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="处理标签"
-          prop="process_tag"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.process_tag.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="错误标签"
           prop="mistake_tag"
           sortable="custom"
@@ -237,22 +233,66 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="递交状态"
-          prop="towork_status"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.towork_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修单状态"
-          prop="order_status"
+          label="寄件备注"
+          prop="return_memory"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.order_status }}</span>
+            <span>{{ scope.row.return_memory }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否解密"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_decrypted"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="寄回客户姓名"
+          prop="return_name"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回客户手机"
+          prop="return_mobile"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回省市区"
+          prop="return_area"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_area }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="寄回地址"
+          prop="return_address"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_address }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -266,13 +306,46 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="换新序列号"
-          prop="new_machine_sn"
+          label="保修货品名称"
+          prop="goods_name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.new_machine_sn }}</span>
+            <span>{{ scope.row.goods_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="是否二次返修"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_repeated"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否标记返修"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_month_filter"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -416,46 +489,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="寄件客户姓名"
-          prop="buyer_nick"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.buyer_nick }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户手机"
-          prop="sender_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户省市县"
-          prop="sender_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户地址"
-          prop="sender_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sender_address }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="收件物流公司"
           prop="send_logistics_company"
           sortable="custom"
@@ -485,46 +518,7 @@
             <span>{{ scope.row.send_memory }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="寄回客户姓名"
-          prop="return_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回客户手机"
-          prop="return_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回省市区"
-          prop="return_area"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_area }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄回地址"
-          prop="return_address"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_address }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="寄件指定物流公司"
           prop="return_logistics_company"
@@ -545,54 +539,26 @@
             <span>{{ scope.row.return_logistics_no }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="寄件备注"
-          prop="return_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_memory }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="保修货品商家编码"
-          prop="goods_id"
+          prop="goods_code"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
+            <span>{{ scope.row.goods_code }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="保修货品名称"
-          prop="goods_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修货品简称"
-          prop="goods_abbreviation"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.goods_abbreviation }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="保修数量"
-          prop="created_time"
+          prop="ori_created_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.created_time }}</span>
+            <span>{{ scope.row.ori_created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -656,6 +622,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="保修单状态"
+          prop="ori_order_status"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_order_status }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="创建时间"
           prop="created_time"
           sortable="custom"
@@ -672,7 +648,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -687,6 +663,48 @@
         </el-table-column>
       </el-table>
     </div>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -697,21 +715,17 @@
 </template>
 
 <script>
-import {
-  getOriMaintenanceList,
-  createOriMaintenance,
-  updateOriMaintenance,
-  exportOriMaintenance,
-  excelImportOriMaintenance,
-  checkOriMaintenance,
-  rejectOriMaintenance
-} from '@/api/crm/service/orimaintenance/orimaintenance'
 import { getCompanyList } from '@/api/base/company'
+import { getGoodsList } from '@/api/base/goods'
+import {
+  getLogOriMaintenance,
+  getOriMaintenance,
+  exportOriMaintenance
+} from "@/api/crm/service/orimaintenance/orimaintenance"
 import moment from 'moment'
 import XLSX from 'xlsx'
-
 export default {
-  name: 'orimaintenance',
+  name: 'OriMaintenanceOrder',
   data() {
     return {
       DataList: [],
@@ -727,6 +741,86 @@ export default {
       },
       dialogVisibleEdit: false,
       formEdit: {},
+      optionsMistake: [
+        {
+          value: 0,
+          label: '正常'
+        },
+        {
+          value: 1,
+          label: '单据货品为空导致出错'
+        },
+        {
+          value: 2,
+          label: '货品名称无法提取到整机型号'
+        },
+        {
+          value: 3,
+          label: '备注格式错误'
+        },
+        {
+          value: 4,
+          label: '不可重复递交'
+        },
+        {
+          value: 5,
+          label: 'UT系统无此店铺'
+        },
+        {
+          value: 6,
+          label: 'UT系统无此仓库'
+        },
+        {
+          value: 7,
+          label: '未解密的单据不可递交'
+        },
+        {
+          value: 8,
+          label: '以旧换新类型'
+        },
+        {
+          value: 9,
+          label: '寄回区域无法提取省市'
+        },
+        {
+          value: 10,
+          label: '创建出错'
+        }
+      ],
+      optionsSign: [
+        {
+          value: 0,
+          label: '无'
+        },
+        {
+          value: 1,
+          label: '处理完毕'
+        },
+        {
+          value: 2,
+          label: '配件缺货'
+        },
+        {
+          value: 3,
+          label: '延后处理'
+        },
+        {
+          value: 4,
+          label: '快递异常'
+        },
+        {
+          value: 5,
+          label: '特殊问题'
+        },
+        {
+          value: 6,
+          label: '处理收费'
+        },
+        {
+          value: 7,
+          label: '其他情况'
+        }
+      ],
       optionsProcess: [
         {
           value: 0,
@@ -734,54 +828,36 @@ export default {
         },
         {
           value: 1,
-          label: '未更新到'
+          label: '审核异常'
         },
         {
           value: 2,
-          label: '取件超时'
+          label: '逆向异常'
         },
         {
           value: 3,
-          label: '到库超时'
+          label: '取件异常'
         },
         {
           value: 4,
-          label: '维修超时'
-        }
-      ],
-      optionsMark: [
-        {
-          value: 0,
-          label: '正常'
-        },
-        {
-          value: 1,
-          label: '配件缺货'
-        },
-        {
-          value: 2,
-          label: '快递异常'
-        },
-        {
-          value: 3,
-          label: '客户沟通'
-        },
-        {
-          value: 4,
-          label: '检测无故'
+          label: '入库异常'
         },
         {
           value: 5,
-          label: 'OA拆机'
+          label: '维修异常'
         },
         {
           value: 6,
-          label: '无效保修'
-        },
-        {
-          value: 7,
-          label: '其他情况'
+          label: '超期异常'
         }
+      ],
+      logViewVisible: false,
+      logDetails: [],
+      optionsGoods: [
+        {
+          value: -1,
+          label: '未关联货品'
+        },
       ],
       optionsJudgment: [
         {
@@ -793,6 +869,13 @@ export default {
           label: '否'
         }
       ],
+      rules: {
+        buyer_nick: [
+          { required: true, message: '请选择客户网名', trigger: 'blur' }
+        ]
+      },
+      checkedDetail: [],
+      checkedDetailEdit: []
     }
   },
   created() {
@@ -834,7 +917,7 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getOriMaintenanceList(this.params).then(
+      getOriMaintenance(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -859,6 +942,20 @@ export default {
       this.params.page = val
       this.fetchData()
     },
+    handleNotDecrypt() {
+      this.params.is_decrypted = false
+      this.fetchData()
+    },
+
+    // 检索用户组选项
+    unique(arr) {
+      // 根据唯一标识no来对数组进行过滤
+      // 定义常量 res,值为一个Map对象实例
+      const res = new Map()
+      // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
+      // 如果res中没有某个键，就设置这个键的值为1
+      return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
+    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -880,7 +977,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportOriMaintenanceBefore(this.params).then(
+            exportOriMaintenance(this.params).then(
               res => {
                 console.log(res)
                 res.data = res.data.map(item => {
@@ -921,7 +1018,7 @@ export default {
                     寄件指定物流公司: item.return_logistics_company,
                     寄件物流单号: item.return_logistics_no,
                     寄件备注: item.return_memory,
-                    保修货品商家编码: item.goods_id,
+                    保修货品商家编码: item.goods_code,
                     保修货品名称: item.goods_name,
                     保修货品简称: item.goods_abbreviation,
                     故障描述: item.description,
@@ -930,9 +1027,7 @@ export default {
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
                     处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name,
-                    标记名称: item.mark_name.name,
-                    异常备注: item.mark_memo,
+                    错误原因: item.mistake_tag.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -974,6 +1069,7 @@ export default {
         }
       )
     },
+
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -1003,12 +1099,60 @@ export default {
         }
       }
     },
+    // 货品搜索
+    remoteMethodGoods(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          paramsSearch.goods_attribute = 1
+          getGoodsList(paramsSearch).then(
+            res => {
+              this.optionsGoods = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.options = []
+      }
+    },
 
     resetParams() {
       this.params = {
         page: 1
       }
-    }
+    },
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogOriMaintenance(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
+
   }
 }
 </script>

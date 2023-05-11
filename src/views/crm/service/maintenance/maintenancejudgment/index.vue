@@ -9,7 +9,7 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleGetFault">审核</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -55,18 +55,18 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="8"><el-form-item label="二次维修" prop="repeat_tag">
+                      <el-col :span="8"><el-form-item label="缺陷原因" prop="fault_cause">
                         <template>
                           <el-select
-                            v-model="params.repeat_tag"
+                            v-model="params.fault_cause"
                             filterable
                             default-first-option
                             reserve-keyword
                             multiple
-                            placeholder="请选择二次维修标记"
+                            placeholder="请选择缺陷原因"
                           >
                             <el-option
-                              v-for="item in optionsRepeat"
+                              v-for="item in optionsFaultCause"
                               :key="item.value"
                               :label="item.label"
                               :value="item.value"
@@ -93,30 +93,6 @@
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="购买时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.purchase_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
-                      <el-col :span="12"><el-form-item label="审核时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.handle_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="原单创建时间">
                         <div class="block">
                           <el-date-picker
@@ -128,6 +104,8 @@
                           />
                         </div>
                       </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="完成时间">
                         <div class="block">
                           <el-date-picker
@@ -184,9 +162,18 @@
             <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="重复维修标记"
+          label="处理标签"
+          prop="process_tag"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.process_tag.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="重复原因"
           prop="repeat_tag"
           sortable="custom"
           width="180"
@@ -194,18 +181,18 @@
 
         >
           <template slot-scope="scope">
-            <div v-if="scope.row.found_tag==1">
-              <span>{{ scope.row.repeat_tag.name }}</span>
+            <div v-if="scope.row.is_fault != true">
+              <span>正常</span>
             </div>
             <div v-else>
               <el-select
-                v-model="scope.row.repeat_tag.id"
+                v-model="scope.row.fault_cause"
                 reserve-keyword
-                placeholder="请选择重复维修标记"
+                placeholder="请选择重复原因"
                 @change="confirmResponsibility(scope.row)"
               >
                 <el-option
-                  v-for="item in optionsRepeat"
+                  v-for="item in optionsFaultCause"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -216,12 +203,12 @@
         </el-table-column>
         <el-table-column
           label="判责说明"
-          prop="memo"
+          prop="judge_description"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.judge_description }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -235,14 +222,30 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="发现二次维修"
-          prop="found_tag"
+          label="是否返修"
+          prop="is_repeated"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.found_tag"
+              v-model="scope.row.is_repeated"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              disabled
+            />
+          </template>
+
+        </el-table-column>
+        <el-table-column
+          label="是否缺陷"
+          prop="is_fault"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.is_fault"
               active-color="#13ce66"
               inactive-color="#ff4949"
               disabled
@@ -262,11 +265,11 @@
 
         <el-table-column
           label="货品"
-          prop="goods_name"
+          prop="goods"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
+            <span>{{ scope.row.goods.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -291,12 +294,12 @@
         </el-table-column>
         <el-table-column
           label="收发仓库"
-          prop="new_machine_sn"
+          prop="warehouse"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warehouse }}</span>
+            <span>{{ scope.row.warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -350,33 +353,23 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="客户网名"
-          prop="buyer_nick"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.buyer_nick }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="寄件客户姓名"
-          prop="sender_name"
+          prop="return_name"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sender_name }}</span>
+            <span>{{ scope.row.return_name }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="寄件客户手机"
-          prop="sender_mobile"
+          prop="return_mobile"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.sender_mobile }}</span>
+            <span>{{ scope.row.return_mobile }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -448,42 +441,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="区"
-          prop="district"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.district.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建时间"
+          label="原始创建时间"
           prop="ori_created_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.ori_created_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核人"
-          prop="handler_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handler_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核时间"
-          prop="handle_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handle_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -506,37 +470,6 @@
             <span>{{ scope.row.finish_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="保修完成日期"
-          prop="finish_date"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_date }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修完成月度"
-          prop="finish_month"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_month }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="保修完成年度"
-          prop="finish_year"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.finish_year }}</span>
-          </template>
-        </el-table-column>
-
 
         <el-table-column
           label="创建者"
@@ -563,9 +496,9 @@
           prop="update_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
-        >
+        >v
           <template slot-scope="scope">
-            <span>{{ scope.row.update_time }}</span>
+            <span>{{ scope.row.updated_time }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -587,7 +520,7 @@ import {
   exportMaintenanceJudgment,
   excelImportMaintenanceJudgment,
   checkMaintenanceJudgment,
-  fixMaintenanceJudgment,
+  getFaultMaintenanceJudgment,
   rejectMaintenanceJudgment
 } from '@/api/crm/service/maintenance/maintenancejudgment'
 import { getCompanyList } from '@/api/base/company'
@@ -608,26 +541,30 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      optionsRepeat: [
+      optionsFaultCause: [
         {
           value: 0,
           label: '正常'
         },
         {
           value: 1,
-          label: '未处理'
-        },
-        {
-          value: 2,
           label: '产品'
         },
         {
-          value: 3,
+          value: 2,
           label: '维修'
         },
         {
+          value: 3,
+          label: '客服'
+        },
+        {
           value: 4,
-          label: '其他'
+          label: '快递'
+        },
+        {
+          value: 5,
+          label: '用户'
         }
       ],
       optionsJudgment: [
@@ -656,7 +593,7 @@ export default {
     fetchData() {
       // console.log('我开始运行了')
       if (typeof (this.params.repeat_tag) !== 'undefined') {
-        this.params.repeat_tag__in = this.params.repeat_tag.toString()
+        this.params.fault_cause__in = this.params.fault_cause.toString()
         delete this.params.repeat_tag
       }
       console.log(this.params)
@@ -955,11 +892,18 @@ export default {
       )
 
     },
+    checkAllOption() {
+      this.$refs.tableList.clearSelection()
+      this.$refs.tableList.toggleAllSelection()
+      this.params.allSelectTag = 1
+      this.selectNum = this.totalNum
+      console.log('我是全选的' + this.selectNum)
+    },
     // 审核单据
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkMaintenanceJudgment(this.params).then(
+        checkOriMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -967,7 +911,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -976,27 +920,26 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -1009,13 +952,13 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkMaintenanceJudgment(this.params).then(
+        checkOriMaintenanceSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1023,7 +966,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -1032,14 +975,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1047,72 +990,59 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
+          }).catch(
           (error) => {
+            delete this.params.ids
             this.$notify({
               title: '错误详情',
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
+            this.fetchData()
           }
         )
       }
     },
-    handleFix() {
+    // 解密单据
+    handleGetFault() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixMaintenanceJudgment(this.params).then(
+        getFaultMaintenanceJudgment(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '锁定成功',
+                message: `锁定成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '锁定失败',
+                message: `锁定失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
               duration: 0
@@ -1134,31 +1064,31 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixMaintenanceJudgment(this.params).then(
+        getFaultMaintenanceJudgment(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                title: '锁定成功',
+                message: `锁定成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '审核失败',
-                message: `审核失败条数：${res.data.false}`,
+                title: '锁定失败',
+                message: `锁定失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -1166,34 +1096,22 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
+          }).catch(
           (error) => {
+            delete this.params.ids
             this.$notify({
               title: '错误详情',
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
+            this.fetchData()
           }
         )
       }
     },
+
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -1388,6 +1306,38 @@ export default {
         }
       }
     },
+    // 提交编辑完成的数据
+    confirmResponsibility(row) {
+
+      const { id, ...details } = row
+      const data = {
+        fault_cause: details.fault_cause
+      }
+      console.log(data, id)
+      updateMaintenanceJudgment(id, data).then(
+        () => {
+          this.$notify({
+            title: '修改成功',
+            type: 'success',
+            offset: 0,
+            duration: 3000
+          })
+          this.dialogVisibleEdit = false
+          this.fetchData()
+        },
+        err => {
+          this.$notify({
+            title: '修改出错',
+            message: err.data,
+            type: 'error',
+            offset: 0,
+            duration: 0
+          })
+        }
+      )
+
+    },
+
     // 清楚筛选条件
     resetParams() {
       this.params = {
@@ -1397,11 +1347,23 @@ export default {
     // 行样式
     rowStyle({ row, rowIndex}) {
       let row_style = {}
-      if (row.repeat_tag.id === 1) {
+      if (row.fault_cause === 1) {
         row_style = {
           backgroundColor: 'lightpink'
         }
-      } else if (row.repeat_tag.id > 1) {
+      } else if (row.fault_cause == 2) {
+        row_style = {
+          backgroundColor: 'tan'
+        }
+      }else if (row.fault_cause == 3) {
+        row_style = {
+          backgroundColor: 'papayawhip'
+        }
+      }else if (row.fault_cause == 4) {
+        row_style = {
+          backgroundColor: 'lightgoldenrodyellow'
+        }
+      }else if (row.fault_cause == 5) {
         row_style = {
           backgroundColor: 'palegreen'
         }

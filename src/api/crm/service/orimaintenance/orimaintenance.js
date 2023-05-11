@@ -2,31 +2,11 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getOriMaintenanceList(params) {
+export function getOriMaintenance(params) {
   return request({
     url: '/crm/service/orimaintenance/',
     method: 'get',
     params
-  })
-}
-
-// 创建工单
-export function createOriMaintenance(data) {
-  return request({
-    url: `/crm/service/orimaintenance/`,
-    method: 'post',
-    data
-  })
-}
-
-// 更新工单
-export function updateOriMaintenance(id, data) {
-  delete data.created_time
-  delete data.updated_time
-  return request({
-    url: `/crm/service/orimaintenance/${id}/`,
-    method: 'patch',
-    data
   })
 }
 
@@ -38,43 +18,6 @@ export function exportOriMaintenance(data) {
     data
   })
 }
-
-// 导入工单
-export function excelImportOriMaintenance(data) {
-  return request({
-    url: `/crm/service/orimaintenance/excel_import/`,
-    method: 'patch',
-    data
-  })
-}
-
-// 校正
-export function fixOriMaintenance(data) {
-  return request({
-    url: `/crm/service/orimaintenance/fix/`,
-    method: 'patch',
-    data
-  })
-}
-
-// 审核工单
-export function checkOriMaintenance(data) {
-  return request({
-    url: `/crm/service/orimaintenance/check/`,
-    method: 'patch',
-    data
-  })
-}
-
-// 取消工单
-export function rejectOriMaintenance(data) {
-  return request({
-    url: `/crm/service/orimaintenance/reject/`,
-    method: 'patch',
-    data
-  })
-}
-
 
 // 查询日志
 export function getLogOriMaintenance(data) {
