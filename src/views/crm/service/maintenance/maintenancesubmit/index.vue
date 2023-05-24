@@ -9,8 +9,7 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">计算</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">取消</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">统计</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -189,16 +188,6 @@
         </el-table-column>
 
         <el-table-column
-          label="单据状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="计算状态"
           prop="process_tag"
           sortable="custom"
@@ -254,6 +243,13 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.add_labels }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -618,6 +614,48 @@
         </div>
       </template>
     </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -638,6 +676,7 @@ import {
   fixMaintenanceSubmit,
   rejectMaintenanceSubmit
 } from '@/api/crm/service/maintenance/maintenancesubmit'
+import { getLogMaintenance } from '@/api/crm/service/maintenance/maintenance'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -658,6 +697,8 @@ export default {
       },
       dialogVisibleEdit: false,
       formEdit: {},
+      logViewVisible: false,
+      logDetails: [],
       optionsMistake: [
         {
           value: 0,
@@ -1037,10 +1078,10 @@ export default {
       if (this.params.allSelectTag === 1) {
         checkMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1093,10 +1134,10 @@ export default {
         this.params.ids = ids
         checkMaintenanceSubmit(this.params).then(
           res => {
-            if (res.data.success !== 0) {
+            if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.success}`,
+                message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 0
@@ -1151,171 +1192,152 @@ export default {
         )
       }
     },
-    handleReject() {
-      const h = this.$createElement
-      let resultMessage, resultType
-      this.$msgbox({
-        title: '取消工单',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('hr', null, ''),
-          h('span', null, '驳回保修单到原始单界面！'),
-          h('hr', null, '')
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.tableLoading = true
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            if (this.params.allSelectTag === 1) {
-              rejectMaintenanceSubmit(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                (error) => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                  this.$notify({
-                    title: '错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                }
-              )
-            } else {
-              if (typeof (this.multipleSelection) === 'undefined') {
-                this.$notify({
-                  title: '错误详情',
-                  message: '未选择订单无法取消',
-                  type: 'error',
-                  offset: 70,
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                done()
-                this.fetchData()
-              }
-              const ids = this.multipleSelection.map(item => item.id)
-              this.params.ids = ids
-              rejectMaintenanceSubmit(this.params).then(
-                res => {
-                  if (res.data.successful !== 0) {
-                    this.$notify({
-                      title: '取消成功',
-                      message: `取消成功条数：${res.data.successful}`,
-                      type: 'success',
-                      offset: 70,
-                      duration: 0
-                    })
-                  }
-                  if (res.data.false !== 0) {
-                    this.$notify({
-                      title: '取消失败',
-                      message: `取消败条数：${res.data.false}`,
-                      type: 'error',
-                      offset: 140,
-                      duration: 0
-                    })
-                    this.$notify({
-                      title: '失败错误详情',
-                      message: res.data.error,
-                      type: 'error',
-                      offset: 210,
-                      duration: 0
-                    })
-                  }
-                  delete this.params.allSelectTag
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                },
-                error => {
-                  console.log('我是全选错误返回')
-                  this.$notify({
-                    title: '异常错误详情',
-                    message: error.response.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                }
-              ).catch(
-                (error) => {
-                  instance.confirmButtonLoading = false
-                  done()
-                  this.fetchData()
-                  this.$notify({
-                    title: '错误详情',
-                    message: error.data,
-                    type: 'error',
-                    offset: 210,
-                    duration: 0
-                  })
-                }
-              )
-            }
-          } else {
-            done()
-            this.fetchData()
-          }
-        }
-      }).then().catch(
-        () => {
-          this.fetchData()
-        }
-      )
-    },
+
+    // // 取消单据
+    // handleReject() {
+    //   const h = this.$createElement
+    //   let resultMessage, resultType
+    //   this.$msgbox({
+    //     title: '取消单据',
+    //     message: h('p', null, [
+    //       h('h3', { style: 'color: teal' }, '特别注意：'),
+    //       h('hr', null, ''),
+    //       h('span', null, '此为单独取消单据，不会驳回到原始单据，取消后也不可恢复！'),
+    //       h('hr', null, '')
+    //     ]),
+    //     showCancelButton: true,
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     beforeClose: (action, instance, done) => {
+    //       if (action === 'confirm') {
+    //         this.tableLoading = true
+    //         instance.confirmButtonLoading = true
+    //         instance.confirmButtonText = '执行中...'
+    //         if (this.params.allSelectTag === 1) {
+    //           rejectMaintenanceSubmit(this.params).then(
+    //             res => {
+    //               if (res.data.successful !== 0) {
+    //                 this.$notify({
+    //                   title: '取消成功',
+    //                   message: `取消成功条数：${res.data.successful}`,
+    //                   type: 'success',
+    //                   offset: 70,
+    //                   duration: 3000
+    //                 })
+    //               }
+    //               if (res.data.false !== 0) {
+    //                 this.$notify({
+    //                   title: '取消失败',
+    //                   message: `取消败条数：${res.data.false}`,
+    //                   type: 'error',
+    //                   offset: 140,
+    //                   duration: 0
+    //                 })
+    //                 this.$notify({
+    //                   title: '失败错误详情',
+    //                   message: res.data.error,
+    //                   type: 'error',
+    //                   offset: 210,
+    //                   duration: 0
+    //                 })
+    //               }
+    //               delete this.params.allSelectTag
+    //               instance.confirmButtonLoading = false
+    //               done()
+    //               this.fetchData()
+    //             }).catch(
+    //             (error) => {
+    //               this.$notify({
+    //                 title: '异常错误详情',
+    //                 message: error.data,
+    //                 type: 'error',
+    //                 offset: 210,
+    //                 duration: 0
+    //               })
+    //               instance.confirmButtonLoading = false
+    //               done()
+    //               this.fetchData()
+    //             }
+    //           )
+    //         } else {
+    //           if (typeof (this.multipleSelection) === 'undefined') {
+    //             this.$notify({
+    //               title: '错误详情',
+    //               message: '未选择订单无法取消',
+    //               type: 'error',
+    //               offset: 70,
+    //               duration: 0
+    //             })
+    //             instance.confirmButtonLoading = false
+    //             done()
+    //             this.fetchData()
+    //           }
+    //           const ids = this.multipleSelection.map(item => item.id)
+    //           this.params.ids = ids
+    //           rejectMaintenanceSubmit(this.params).then(
+    //             res => {
+    //               if (res.data.successful !== 0) {
+    //                 this.$notify({
+    //                   title: '取消成功',
+    //                   message: `取消成功条数：${res.data.successful}`,
+    //                   type: 'success',
+    //                   offset: 70,
+    //                   duration: 3000
+    //                 })
+    //               }
+    //               if (res.data.false !== 0) {
+    //                 this.$notify({
+    //                   title: '取消失败',
+    //                   message: `取消败条数：${res.data.false}`,
+    //                   type: 'error',
+    //                   offset: 140,
+    //                   duration: 0
+    //                 })
+    //                 this.$notify({
+    //                   title: '失败错误详情',
+    //                   message: res.data.error,
+    //                   type: 'error',
+    //                   offset: 210,
+    //                   duration: 0
+    //                 })
+    //               }
+    //               delete this.params.allSelectTag
+    //               instance.confirmButtonLoading = false
+    //               done()
+    //               this.fetchData()
+    //             }).catch(
+    //             (error) => {
+    //               this.$notify({
+    //                 title: '异常错误详情',
+    //                 message: error.data,
+    //                 type: 'error',
+    //                 offset: 210,
+    //                 duration: 0
+    //               })
+    //               instance.confirmButtonLoading = false
+    //               done()
+    //               this.fetchData()
+    //             }
+    //           )
+    //         }
+    //       } else {
+    //         done()
+    //         this.fetchData()
+    //       }
+    //     }
+    //   }).then().catch(
+    //     (error) => {
+    //       this.$notify({
+    //         title: '异常错误详情',
+    //         message: error.data,
+    //         type: 'error',
+    //         offset: 210,
+    //         duration: 0
+    //       })
+    //       this.fetchData()
+    //     }
+    //   )
+    // },
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -1354,6 +1376,32 @@ export default {
         }
       }
       return row_style
+    },
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogMaintenance(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
     },
     // 重置
     resetParams() {

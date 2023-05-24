@@ -10,8 +10,8 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleDecrypt">推送解密</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchContent">加操作内容</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleRepeatedOrder">处理二次维修</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">递交单据</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-check" size="mini" round @click="handleReject">取消单据</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -544,10 +544,8 @@ import {
   updateOriMaintenanceGoodsSubmit,
   exportOriMaintenanceGoodsSubmit,
   excelImportOriMaintenanceGoodsSubmit,
-  batchSignOriMaintenanceGoodsSubmit,
-  batchTextOriMaintenanceGoodsSubmit,
-  setAppointmentOriMaintenanceGoodsSubmit,
-  setRecoverOriMaintenanceGoodsSubmit,
+  checkOriMaintenanceGoodsSubmit,
+  rejectOriMaintenanceGoodsSubmit,
   decryptOriMaintenanceGoodsSubmit
 } from '@/api/crm/service/orimaintenancegoods/submit'
 import { getLogOriMaintenanceGoods } from "@/api/crm/service/orimaintenancegoods/manage"
@@ -1079,263 +1077,6 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 批量设置标记
-    handleBatchSign() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        batchSignOriMaintenanceGoodsSubmit(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '清除成功',
-                message: `清除成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '清除失败',
-                message: `清除失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法清除',
-            type: 'error',
-            offset: 70,
-            duration: 5000
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        batchSignOriMaintenanceGoodsSubmit(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '清除成功',
-                message: `清除成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '清除失败',
-                message: `审清除失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-          }
-        )
-      }
-    },
-    // 批量添加操作内容
-    handleBatchContent() {
-      this.$prompt('请输入操作内容', '批量添加操作内容', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        inputValue: this.updatetext,
-        inputErrorMessage: '输入不能为空',
-        inputValidator: (value) => {
-          if(!value) {
-            return '输入不能为空';
-          }
-        }
-      }).then(
-        ({ value }) => {
-          console.log(value)
-          let CurrentTimeStamp = new Date()
-          let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
-          value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
-          this.params.data = {
-            suggestion: value
-          }
-          console.log(this.params)
-          if (this.params.allSelectTag === 1) {
-            batchTextOriMaintenanceGoodsSubmit(this.params).then(
-              res => {
-                if (res.data.successful !== 0) {
-                  this.$notify({
-                    title: '审核成功',
-                    message: `审核成功条数：${res.data.successful}`,
-                    type: 'success',
-                    offset: 70,
-                    duration: 3000
-                  })
-                }
-                if (res.data.false !== 0) {
-                  this.$notify({
-                    title: '审核失败',
-                    message: `审核失败条数：${res.data.false}`,
-                    type: 'error',
-                    offset: 140,
-                    duration: 5000
-                  })
-                  this.$notify({
-                    title: '错误详情',
-                    message: res.data.error,
-                    type: 'error',
-                    offset: 210,
-                    duration: 5000
-                  })
-                }
-                delete this.params.allSelectTag
-                this.fetchData()
-              }).catch(
-              (error) => {
-                this.$notify({
-                  title: '错误详情',
-                  message: error.data,
-                  type: 'error',
-                  offset: 210,
-                  duration: 5000
-                })
-                this.fetchData()
-              }
-            )
-          } else {
-            console.log(this.multipleSelection)
-            if (typeof (this.multipleSelection) === 'undefined') {
-              this.$notify({
-                title: '错误详情',
-                message: '未选择订单无法审核',
-                type: 'error',
-                offset: 70,
-                duration: 5000
-              })
-              this.fetchData()
-            }
-            const ids = this.multipleSelection.map(item => item.id)
-            this.params.ids = ids
-            batchTextOriMaintenanceGoodsSubmit(this.params).then(
-              res => {
-                if (res.data.successful !== 0) {
-                  this.$notify({
-                    title: '审核成功',
-                    message: `审核成功条数：${res.data.successful}`,
-                    type: 'success',
-                    offset: 70,
-                    duration: 3000
-                  })
-                }
-                if (res.data.false !== 0) {
-                  this.$notify({
-                    title: '审核失败',
-                    message: `审核失败条数：${res.data.false}`,
-                    type: 'error',
-                    offset: 140,
-                    duration: 5000
-                  })
-                  this.$notify({
-                    title: '错误详情',
-                    message: res.data.error,
-                    type: 'error',
-                    offset: 210,
-                    duration: 5000
-                  })
-                }
-                console.log(this.params)
-                console.log(this.params.ids)
-
-                delete this.params.ids
-                this.fetchData()
-              }).catch(
-              (error) => {
-                delete this.params.ids
-                this.$notify({
-                  title: '错误详情',
-                  message: error.data,
-                  type: 'error',
-                  offset: 210,
-                  duration: 5000
-                })
-                this.fetchData()
-              }
-            )
-          }
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '修改失败',
-            message: `修改失败：${error.data}`,
-            type: 'error',
-            offset: 70,
-            duration: 3000
-          })
-          this.fetchData()
-        })
-    },
     // 解密单据
     handleDecrypt() {
       this.tableLoading = true
@@ -1441,6 +1182,249 @@ export default {
           }
         )
       }
+    },
+    // 审核单据
+    handleCheck() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        checkOriMaintenanceGoodsSubmit(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        checkOriMaintenanceGoodsSubmit(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '审核成功',
+                message: `审核成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '审核失败',
+                message: `审核失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
+   // 审核单据
+    handleReject() {
+      const h = this.$createElement
+      let resultMessage, resultType
+      this.$msgbox({
+        title: '取消单据',
+        message: h('p', null, [
+          h('hr', null, ''),
+          h('span', null, '取消单据！'),
+          h('hr', null, '')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            this.tableLoading = true
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            if (this.params.allSelectTag === 1) {
+              rejectOriMaintenanceGoodsSubmit(this.params).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 3000
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 5000
+                    })
+                    this.$notify({
+                      title: '失败错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  delete this.params.allSelectTag
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }).catch(
+                (error) => {
+                  this.$notify({
+                    title: '异常错误详情',
+                    message: error.data,
+                    type: 'error',
+                    offset: 210,
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              )
+            } else {
+              if (typeof (this.multipleSelection) === 'undefined') {
+                this.$notify({
+                  title: '错误详情',
+                  message: '未选择订单无法取消',
+                  type: 'error',
+                  offset: 70,
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                done()
+                this.fetchData()
+              }
+              const ids = this.multipleSelection.map(item => item.id)
+              this.params.ids = ids
+              rejectOriMaintenanceGoodsSubmit(this.params).then(
+                res => {
+                  if (res.data.successful !== 0) {
+                    this.$notify({
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
+                      type: 'success',
+                      offset: 70,
+                      duration: 3000
+                    })
+                  }
+                  if (res.data.false !== 0) {
+                    this.$notify({
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
+                      type: 'error',
+                      offset: 140,
+                      duration: 5000
+                    })
+                    this.$notify({
+                      title: '失败错误详情',
+                      message: res.data.error,
+                      type: 'error',
+                      offset: 210,
+                      duration: 0
+                    })
+                  }
+                  delete this.params.allSelectTag
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }).catch(
+                (error) => {
+                  this.$notify({
+                    title: '异常错误详情',
+                    message: error.data,
+                    type: 'error',
+                    offset: 210,
+                    duration: 0
+                  })
+                  instance.confirmButtonLoading = false
+                  done()
+                  this.fetchData()
+                }
+              )
+            }
+          } else {
+            done()
+            this.fetchData()
+          }
+        }
+      }).then().catch(
+        () => {
+          this.fetchData()
+        }
+      )
     },
     // 排序
     onSortChange({ prop, order }) {

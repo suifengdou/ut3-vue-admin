@@ -75,3 +75,12 @@ export function rejectMaintenance(data) {
   })
 }
 
+
+// 查询日志
+export function getLogMaintenance(data) {
+  return request({
+    url: `/crm/service/maintenance/get_log_details/`,
+    method: 'patch',
+    data
+  })
+}

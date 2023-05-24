@@ -460,16 +460,22 @@ const crmChannelRouter = {
           meta: { title: '维修单', roles: ['service.view_maintenance', 'AllPrivileges'] },
           children: [
             {
+              path: 'maintenancejudgment',
+              component: () => import('@/views/crm/service/maintenance/maintenancejudgment'),
+              name: 'maintenancejudgment',
+              meta: { title: '维修单-判责', roles: ['service.view_maintenance', 'AllPrivileges'] }
+            },
+            {
               path: 'maintenancesubmit',
               component: () => import('@/views/crm/service/maintenance/maintenancesubmit'),
               name: 'maintenancesubmit',
               meta: { title: '维修单-统计', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
-              path: 'maintenancejudgment',
-              component: () => import('@/views/crm/service/maintenance/maintenancejudgment'),
-              name: 'maintenancejudgment',
-              meta: { title: '维修单-判责', roles: ['service.view_maintenance', 'AllPrivileges'] }
+              path: 'maintenancesignlabel',
+              component: () => import('@/views/crm/service/maintenance/maintenancesignlabel'),
+              name: 'maintenancesignlabel',
+              meta: { title: '维修单-打标', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'maintenancemanage',
@@ -480,12 +486,45 @@ const crmChannelRouter = {
           ]
         },
         {
+          path: 'maintenancegoods',
+          component: () => import('@/views/crm/service/maintenancegoods'),
+          name: 'maintenancegoods',
+          meta: { title: '维修单配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'maintenancegoodssubmit',
+              component: () => import('@/views/crm/service/maintenancegoods/submit'),
+              name: 'maintenancegoodssubmit',
+              meta: { title: '维修单配件-统计', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            },
+            {
+              path: 'maintenancegoodsmanage',
+              component: () => import('@/views/crm/service/maintenancegoods/manage'),
+              name: 'maintenancegoodsmanage',
+              meta: { title: '维修单配件-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
           path: 'mantenancesummary',
           component: () => import('@/views/crm/service/maintenancesummary'),
           name: 'mantenancesummary',
-          meta: { title: '维修统计', roles: ['service.view_maintenance', 'AllPrivileges'] }
+          meta: { title: '维修单统计', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          children: [
+            {
+              path: 'summaryorder',
+              component: () => import('@/views/crm/service/maintenancesummary/order'),
+              name: 'summaryorder',
+              meta: { title: '非配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            },
+            {
+              path: 'summaryparts',
+              component: () => import('@/views/crm/service/maintenancesummary/parts'),
+              name: 'summaryparts',
+              meta: { title: '配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+            }
+          ]
         },
-
       ]
     }
   ]

@@ -842,10 +842,6 @@ import {
   updateOriMaintenanceGoodsSubmit,
   exportOriMaintenanceGoodsSubmit,
   excelImportOriMaintenanceGoodsSubmit,
-  batchSignOriMaintenanceGoodsSubmit,
-  batchTextOriMaintenanceGoodsSubmit,
-  setAppointmentOriMaintenanceGoodsSubmit,
-  setRecoverOriMaintenanceGoodsSubmit
 } from '@/api/crm/service/orimaintenancegoods/submit'
 import { getLogOriMaintenanceGoods } from "@/api/crm/service/orimaintenancegoods/manage"
 import { getCompanyList } from '@/api/base/company'

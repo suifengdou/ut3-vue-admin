@@ -58,18 +58,18 @@ export function decryptOriMaintenanceGoodsSubmit(data) {
 }
 
 // 审核工单
-export function batchSignOriMaintenanceGoodsSubmit(data) {
+export function checkOriMaintenanceGoodsSubmit(data) {
   return request({
-    url: `/crm/service/orimaintenancegoodssubmit/batch_sign/`,
+    url: `/crm/service/orimaintenancegoodssubmit/check/`,
     method: 'patch',
     data
   })
 }
 
 // 取消工单
-export function batchTextOriMaintenanceGoodsSubmit(data) {
+export function rejectOriMaintenanceGoodsSubmit(data) {
   return request({
-    url: `/crm/service/orimaintenancegoodssubmit/batchtext/`,
+    url: `/crm/service/orimaintenancegoodssubmit/reject/`,
     method: 'patch',
     data
   })
