@@ -21,24 +21,10 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="1" class="titleBar">
+        <el-col :span="2" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="筛选所有未标记过的异常单" placement="top-start">
               <el-button type="success" @click="handleShortCuts">一键干活</el-button>
-            </el-tooltip>
-          </div>
-        </el-col>
-        <el-col :span="1" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="筛选所有未标记过的异常单" placement="top-start">
-              <el-button type="success" @click="handleRepeated">二次维修</el-button>
-            </el-tooltip>
-          </div>
-        </el-col>
-        <el-col :span="2" class="titleBar">
-          <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="筛选登录账号为原始创建人的保修单" placement="top-start">
-              <el-button type="success" @click="myWorkOrder">我的工单</el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -50,44 +36,6 @@
               </el-input>
             </el-tooltip>
           </div>
-        </el-col>
-        <el-col :span="2" class="titleBar">
-          <el-select
-            v-model="params.process_tag"
-            filterable
-            default-first-option
-            reserve-keyword
-            clearable
-            placeholder="请选择异常类别"
-            @change="fetchData"
-            @clear="fetchData"
-          >
-            <el-option
-              v-for="item in optionsProcess"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-col>
-        <el-col :span="2" class="titleBar">
-          <el-select
-            v-model="params.sign"
-            filterable
-            default-first-option
-            reserve-keyword
-            clearable
-            placeholder="请选择标签名称"
-            @change="fetchData"
-            @clear="fetchData"
-          >
-            <el-option
-              v-for="item in optionsSign"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
         </el-col>
         <el-col :span="4" class="titleBar">
           <div class="grid-content bg-purple">
@@ -117,67 +65,25 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="异常类别" prop="process_tag__in">
-                        <template>
-                          <el-select
-                            v-model="params.process_tag__in"
-                            multiple
-                            filterable
-                            default-first-option
-                            reserve-keyword
-                            placeholder="请选择异常类别"
-                          >
-                            <el-option
-                              v-for="item in optionsProcess"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
+                      <el-col :span="6"><el-form-item label="配件编码" prop="part_code">
+                        <el-input v-model="params.part_code" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
-                        <template>
-                          <el-select
-                            v-model="params.sign__in"
-                            filterable
-                            default-first-option
-                            reserve-keyword
-                            placeholder="请选择标记名称"
-                          >
-                            <el-option
-                              v-for="item in optionsSign"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value"
-                            />
-                          </el-select>
-                        </template>
+                      <el-col :span="6"><el-form-item label="配件名称" prop="part_name">
+                        <el-input v-model="params.part_name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="店铺" prop="shop">
-                        <el-input v-model="params.shop" type="text" />
-                      </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="客户手机" prop="return_mobile">
-                        <el-input v-model="params.return_mobile" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="故障类型" prop="fault_type">
-                        <el-input v-model="params.fault_type" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="原创建者" prop="ori_creator">
-                        <el-input v-model="params.ori_creator" type="text" />
+                      <el-col :span="6"><el-form-item label="收发仓库" prop="warehouse">
+                        <el-input v-model="params.warehouse" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="序列号" prop="machine_sn">
                         <el-input v-model="params.machine_sn" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="收件人" prop="return_name">
+                      <el-col :span="6"><el-form-item label="寄件客户姓名" prop="return_name">
                         <el-input v-model="params.return_name" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="收件单号" prop="send_logistics_no">
-                        <el-input v-model="params.send_logistics_no" type="text" />
+                      <el-col :span="6"><el-form-item label="寄件客户手机" prop="return_mobile">
+                        <el-input v-model="params.return_mobile" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -192,30 +98,8 @@
                           />
                         </div>
                       </el-form-item></el-col>
-                      <el-col :span="12"><el-form-item label="审核时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.handle_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="原单创建时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.ori_created_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
                       <el-col :span="12"><el-form-item label="完成时间">
                         <div class="block">
                           <el-date-picker
@@ -729,17 +613,7 @@ export default {
       this.fetchData()
     },
     handleShortCuts() {
-      this.params.process_tag__in = '1,2,3,4,5,6'
-      this.params.sign = '0'
-      this.fetchData()
-    },
-    handleRepeated() {
-      this.params.is_repeated = true
-      this.params.is_month_filter = false
-      this.fetchData()
-    },
-    myWorkOrder() {
-      this.params.ori_creator = this.$store.state.user.name
+      this.params.is_decrypted = false
       this.fetchData()
     },
     // 检索用户组选项
@@ -973,52 +847,28 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     保修单号: item.order_id,
-                    保修单状态: item.ori_order_status,
+                    配件编码: item.part_code,
+                    配件名称: item.part_name,
+                    配件数量: item.quantity,
+                    配件备注: item.part_memo,
+                    处理状态: item.handling_status,
+                    保修处理内容: item.handling_content,
                     收发仓库: item.warehouse,
-                    处理登记人: item.completer,
-                    保修类型: item.maintenance_type,
-                    故障类型: item.fault_type,
-                    送修类型: item.transport_type,
-                    序列号: item.machine_sn,
-                    换新序列号: item.new_machine_sn,
-                    关联订单号: item.send_order_id,
-                    保修结束语: item.appraisal,
-                    关联店铺: item.shop,
-                    购买时间: item.purchase_time,
-                    创建时间: item.ori_created_time,
-                    创建人: item.ori_creator,
-                    审核时间: item.handle_time,
-                    审核人: item.handler_name,
-                    保修完成时间: item.finish_time,
-                    保修金额: item.fee,
-                    保修数量: item.quantity,
-                    最后修改时间: item.last_handle_time,
-                    客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-                    寄件客户省市县: item.sender_area,
-                    寄件客户地址: item.sender_address,
-                    收件物流公司: item.send_logistics_company,
-                    收件物流单号: item.send_logistics_no,
-                    收件备注: item.send_memory,
-                    寄回客户姓名: item.return_name,
-                    寄回客户手机: item.return_mobile,
-                    寄回省市区: item.return_area,
-                    寄回地址: item.return_address,
-                    寄件指定物流公司: item.return_logistics_company,
-                    寄件物流单号: item.return_logistics_no,
-                    寄件备注: item.return_memory,
                     保修货品商家编码: item.goods_code,
                     保修货品名称: item.goods_name,
-                    保修货品简称: item.goods_abbreviation,
-                    故障描述: item.description,
+                    序列号: item.machine_sn,
+                    发货订单编号: item.send_order_id,
+                    购买时间: item.purchase_time,
+                    保修完成时间: item.finish_time,
+                    创建人: item.return_name,
+                    寄件客户手机: item.return_mobile,
+                    寄件客户省市县: item.return_area,
+                    寄件客户地址: item.return_address,
                     是否在保修期内: item.is_guarantee,
-                    收费状态: item.charge_status,
-                    收费金额: item.charge_amount,
-                    收费说明: item.charge_memory,
+                    是否推送解密: item.is_decrypted,
                     处理标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name,
-                    标记名称: item.mark_name.name,
+                    标记名称: item.creator,
                     异常备注: item.mark_memo,
                   }
                 })

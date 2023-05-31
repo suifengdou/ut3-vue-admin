@@ -1027,7 +1027,8 @@ export default {
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
                     处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    错误原因: item.mistake_tag.name,
+                    单据状态: item.order_status.name,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

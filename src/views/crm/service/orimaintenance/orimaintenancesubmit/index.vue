@@ -42,9 +42,6 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -897,7 +894,6 @@ import {
   createOriMaintenanceSubmit,
   updateOriMaintenanceSubmit,
   exportOriMaintenanceSubmit,
-  excelImportOriMaintenanceSubmit,
   checkOriMaintenanceSubmit,
   decryptOriMaintenanceSubmit,
   rejectOriMaintenanceSubmit,
@@ -1154,84 +1150,6 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            console.log(importformData)
-            excelImportOriMaintenanceSubmit(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
-    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -1259,7 +1177,7 @@ export default {
                 res.data = res.data.map(item => {
                   return {
                     保修单号: item.order_id,
-                    保修单状态: item.order_status,
+                    保修单状态: item.ori_order_status,
                     收发仓库: item.warehouse,
                     处理登记人: item.completer,
                     保修类型: item.maintenance_type,
@@ -1280,12 +1198,6 @@ export default {
                     保修数量: item.quantity,
                     最后修改时间: item.last_handle_time,
                     客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-                    寄件客户省市县: item.sender_area,
-                    寄件客户地址: item.sender_address,
-                    收件物流公司: item.send_logistics_company,
-                    收件物流单号: item.send_logistics_no,
                     收件备注: item.send_memory,
                     寄回客户姓名: item.return_name,
                     寄回客户手机: item.return_mobile,
@@ -1302,8 +1214,17 @@ export default {
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    异常标签: item.process_tag.name,
+                    错误原因: item.mistake_tag.name,
+                    标记名称: item.sign.name,
+                    异常备注: item.suggestion,
+                    关联货品: item.goods.name,
+                    异常备注: item.suggestion,
+                    是否返修: item.is_repeated,
+                    是否解密: item.is_decrypted,
+                    是否配件: item.is_part,
+                    预约时间: item.check_time,
+
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

@@ -784,7 +784,7 @@
                   <el-input
                     type="textarea"
                     :rows="5"
-                    placeholder="请输入任务说明"
+                    placeholder="请输入操作内容"
                     v-model="formEdit.content">
                   </el-input>
                 </el-form-item></el-col>

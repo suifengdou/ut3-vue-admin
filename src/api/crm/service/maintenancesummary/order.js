@@ -67,9 +67,9 @@ export function checkMaintenanceOrderSummary(data) {
 }
 
 // 取消工单
-export function rejectMaintenanceOrderSummary(data) {
+export function oriRecountMaintenanceOrderSummary(data) {
   return request({
-    url: `/crm/service/maintenanceordersummary/reject/`,
+    url: `/crm/service/maintenanceordersummary/ori_recount/`,
     method: 'patch',
     data
   })

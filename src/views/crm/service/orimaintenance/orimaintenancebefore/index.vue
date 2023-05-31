@@ -24,25 +24,25 @@
         <el-col :span="1" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="筛选所有未标记过的异常单" placement="top-start">
-              <el-button type="success" @click="handleShortCuts">一键干活</el-button>
+              <el-button type="success" @click="handleShortCuts">异常单</el-button>
             </el-tooltip>
           </div>
         </el-col>
         <el-col :span="1" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="筛选所有未标记过的异常单" placement="top-start">
-              <el-button type="success" @click="handleRepeated">二次维修</el-button>
+              <el-button type="success" @click="handleRepeated">返修</el-button>
             </el-tooltip>
           </div>
         </el-col>
         <el-col :span="2" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="筛选登录账号为原始创建人的保修单" placement="top-start">
-              <el-button type="success" @click="myWorkOrder">我的工单</el-button>
+              <el-button type="success" @click="myWorkOrder">我的单</el-button>
             </el-tooltip>
           </div>
         </el-col>
-        <el-col :span="4" class="titleBar">
+        <el-col :span="3" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="支持多个保修单号" placement="top-start">
               <el-input v-model="params.order_id" class="grid-content bg-purple" placeholder="请输入保修单号" @keyup.enter.native="fetchData">
@@ -346,6 +346,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="寄件备注"
+          prop="return_memory"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.return_memory }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="操作"
           prop="reset_password"
           width="230px"
@@ -479,16 +489,7 @@
             <span>{{ scope.row.return_logistics_no }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="寄件备注"
-          prop="return_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_memory }}</span>
-          </template>
-        </el-table-column>
+
 
         <el-table-column
           label="故障类型"
@@ -838,7 +839,6 @@
 <script>
 import {
   getOriMaintenanceBeforeList,
-  createOriMaintenanceBefore,
   updateOriMaintenanceBefore,
   exportOriMaintenanceBefore,
   excelImportOriMaintenanceBefore,
@@ -1035,7 +1035,6 @@ export default {
     },
     handleRepeated() {
       this.params.is_repeated = true
-      this.params.is_month_filter = false
       this.fetchData()
     },
     myWorkOrder() {
@@ -1294,12 +1293,6 @@ export default {
                     保修数量: item.quantity,
                     最后修改时间: item.last_handle_time,
                     客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-                    寄件客户省市县: item.sender_area,
-                    寄件客户地址: item.sender_address,
-                    收件物流公司: item.send_logistics_company,
-                    收件物流单号: item.send_logistics_no,
                     收件备注: item.send_memory,
                     寄回客户姓名: item.return_name,
                     寄回客户手机: item.return_mobile,
@@ -1316,10 +1309,16 @@ export default {
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-                    处理标签: item.process_tag.name,
+                    异常标签: item.process_tag.name,
                     错误原因: item.mistake_tag.name,
-                    标记名称: item.mark_name.name,
-                    异常备注: item.mark_memo,
+                    标记名称: item.sign.name,
+                    异常备注: item.suggestion,
+                    关联货品: item.goods.name,
+                    异常备注: item.suggestion,
+                    是否返修: item.is_repeated,
+                    是否解密: item.is_decrypted,
+                    是否配件: item.is_part,
+                    预约时间: item.check_time,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1929,6 +1928,8 @@ export default {
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'suggestion') {
         this.handleSuggestion(row)
+      } else if (column.property === 'return_memory') {
+        this.handleRetrunMemo(row)
       }
     },
     handleSuggestion(row) {
@@ -1969,6 +1970,54 @@ export default {
                 type: 'error',
                 offset: 70,
                 duration: 0
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleRetrunMemo(row) {
+      this.$prompt('请输入备注', '添加备注', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_memory,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_memory: value
+          }
+          updateOriMaintenancebefore(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
               })
             }
           )

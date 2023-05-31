@@ -9,7 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSignArea">打标地域</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSignArea">添加地域</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSignProduct">添加产品</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核单据</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -32,9 +33,6 @@
         </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
-            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
-              <el-button type="success" @click="importExcel">导入</el-button>
-            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -231,18 +229,13 @@
           label="添加标签"
           prop="add_labels"
           sortable="custom"
+          width="200px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.add_labels }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="日志查看"
-        >
-          <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="市"
           prop="city"
@@ -288,7 +281,7 @@
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warehouse }}</span>
+            <span>{{ scope.row.warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -359,6 +352,13 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.return_mobile }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -483,128 +483,6 @@
         </el-table-column>
       </el-table>
     </div>
-    <!--修改信息模态窗-->
-    <el-dialog
-      title="编辑"
-      width="80%"
-      ref="editdata"
-      :visible.sync="dialogVisibleEdit"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <template>
-        <div class="handleFormEdit">
-          <el-form
-            ref="handleFormEdit"
-            label-width="80px"
-            size="mini"
-            :model="formEdit"
-            :rules="rules"
-          >
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>客户相关信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="客户网名" prop="buyer_nick">
-                  <el-input v-model="formEdit.buyer_nick" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户姓名" prop="sender_name">
-                  <el-input v-model="formEdit.sender_name" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户手机" prop="sender_mobile">
-                  <el-input v-model="formEdit.sender_mobile" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-                <el-col :span="6"><el-form-item label="寄件客户省市县" prop="sender_area">
-                  <el-input v-model="formEdit.sender_area" placeholder="请输入客户网名" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="18"><el-form-item label="收货地址" prop="sender_address">
-                  <el-input v-model="formEdit.sender_address" placeholder="请输入收货地址" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="收发仓库" prop="warehouse">
-                  <el-input v-model="formEdit.warehouse" placeholder="请输入收发仓库" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="关联订单号" prop="send_order_id">
-                  <el-input v-model="formEdit.send_order_id" placeholder="请输入关联订单号" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="保修类型" prop="maintenance_type">
-                  <el-input v-model="formEdit.maintenance_type" placeholder="请输入保修类型" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="故障类型" prop="fault_type">
-                  <el-input v-model="formEdit.fault_type" placeholder="请输入故障类型" />
-                </el-form-item></el-col>
-              </el-row>
-
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>货品信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="保修货品商家编码" prop="goods_id">
-                  <el-input v-model="formEdit.goods_id" placeholder="请输入保修货品商家编码" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="保修货品名称" prop="goods_name">
-                  <el-input v-model="formEdit.goods_name" placeholder="请输入保修货品名称" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="保修结束语" prop="appraisal">
-                  <el-input v-model="formEdit.appraisal" placeholder="请输入保修结束语" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="送修类型" prop="transport_type">
-                  <el-input v-model="formEdit.transport_type" placeholder="请输入送修类型" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="序列号" prop="machine_sn">
-                  <el-input v-model="formEdit.machine_sn" placeholder="序列号" />
-                </el-form-item></el-col>
-                <el-col :span="8"><el-form-item label="换新序列号" prop="new_machine_sn">
-                  <el-input v-model="formEdit.new_machine_sn" placeholder="请输入换新序列号" />
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>其他信息</span>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8"><el-form-item label="关联店铺" prop="shop">
-                  <el-input v-model="formEdit.shop" placeholder="请输入关联店铺" />
-                </el-form-item></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="6"><el-form-item label="购买时间" prop="purchase_time">
-                  <el-date-picker
-                    v-model="formEdit.purchase_time"
-                    type="datetime"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item></el-col>
-              </el-row>
-
-            </el-card>
-            <el-card class="box-card">
-              <el-row :gutter="20">
-                <el-col :span="16" :offset="8"><el-form-item size="large">
-                  <div class="btn-warpper">
-                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
-                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
-                  </div>
-                </el-form-item></el-col>
-              </el-row>
-            </el-card>
-          </el-form>
-        </div>
-      </template>
-    </el-dialog>
     <!--日志查看模态窗-->
     <el-dialog
       title="日志查看"
@@ -659,13 +537,11 @@
 <script>
 import {
   getMaintenanceSignLabel,
-  createMaintenanceSignLabel,
   updateMaintenanceSignLabel,
   exportMaintenanceSignLabel,
-  excelImportMaintenanceSignLabel,
   checkMaintenanceSignLabel,
   signAreaMaintenanceSignLabel,
-  rejectMaintenanceSignLabel
+  signProductMaintenanceSignLabel
 } from '@/api/crm/service/maintenance/maintenancesignlabel'
 import { getLogMaintenance } from '@/api/crm/service/maintenance/maintenance'
 import { getCompanyList } from '@/api/base/company'
@@ -760,12 +636,6 @@ export default {
           this.params.purchase_time_before = moment.parseZone(this.params.purchase_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.handle_time) !== 'undefined') {
-        if (this.params.handle_time.length === 2) {
-          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
       if (typeof (this.params.ori_created_time) !== 'undefined') {
         if (this.params.ori_created_time.length === 2) {
           this.params.ori_created_time_time_after = moment.parseZone(this.params.ori_created_time_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
@@ -803,50 +673,6 @@ export default {
       this.params.page = val
       this.fetchData()
     },
-    // 跳出编辑对话框
-    handleEdit(values) {
-      console.log(values)
-      this.formEdit = { ...values }
-      this.dialogVisibleEdit = true
-    },
-    // 提交编辑完成的数据
-    handleSubmitEdit() {
-      const { id, ...data } = this.formEdit
-      let attrStr
-      const transFieldStr = ['mistake_tag', 'towork_status', 'process_tag']
-      for (attrStr in transFieldStr) {
-        data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
-      }
-      updateMaintenanceSignLabel(id, data).then(
-        () => {
-          this.$notify({
-            title: '修改成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
-          this.dialogVisibleEdit = false
-          this.fetchData()
-        },
-        err => {
-          this.$notify({
-            title: '修改出错',
-            message: err.data,
-            type: 'error',
-            offset: 0,
-            duration: 0
-          })
-        }
-      )
-
-    },
-
-    // 关闭修改界面
-    handleCancelEdit() {
-      this.dialogVisibleEdit = false
-      this.$refs.handleFormEdit.resetFields()
-    },
-
     // 检索用户组选项
     unique(arr) {
       // 根据唯一标识no来对数组进行过滤
@@ -855,83 +681,6 @@ export default {
       // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
-    },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportMaintenanceSignLabel(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
     },
     // 导出
     exportExcel() {
@@ -959,52 +708,39 @@ export default {
                 console.log(res)
                 res.data = res.data.map(item => {
                   return {
+                    ID: item.id,
                     保修单号: item.order_id,
-                    保修单状态: item.order_status,
-                    收发仓库: item.warehouse,
-                    处理登记人: item.completer,
+                    店铺: item.shop.name,
+                    整机: item.goods.name,
+                    客户: item.customer.name,
+                    收发仓库: item.warehouse.name,
                     保修类型: item.maintenance_type,
                     故障类型: item.fault_type,
-                    送修类型: item.transport_type,
-                    序列号: item.machine_sn,
-                    换新序列号: item.new_machine_sn,
-                    关联订单号: item.send_order_id,
-                    保修结束语: item.appraisal,
-                    关联店铺: item.shop,
-                    购买时间: item.purchase_time,
-                    创建时间: item.ori_created_time,
-                    创建人: item.ori_creator,
-                    审核时间: item.handle_time,
-                    审核人: item.handler_name,
-                    保修完成时间: item.finish_time,
-                    保修金额: item.fee,
-                    保修数量: item.quantity,
-                    最后修改时间: item.last_handle_time,
-                    客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-                    寄件客户省市县: item.sender_area,
-                    寄件客户地址: item.sender_address,
-                    收件物流公司: item.send_logistics_company,
-                    收件物流单号: item.send_logistics_no,
-                    收件备注: item.send_memory,
-                    寄回客户姓名: item.return_name,
-                    寄回客户手机: item.return_mobile,
-                    寄回省市区: item.return_area,
+                    省: item.province.name,
+                    市: item.city.name,
                     寄回地址: item.return_address,
-                    寄件指定物流公司: item.return_logistics_company,
-                    寄件物流单号: item.return_logistics_no,
-                    寄件备注: item.return_memory,
-                    保修货品商家编码: item.goods_id,
-                    保修货品名称: item.goods_name,
-                    保修货品简称: item.goods_abbreviation,
+                    序列号: item.machine_sn,
+                    保修结束语: item.appraisal,
                     故障描述: item.description,
+                    缺陷原因: item.fault_cause.name,
+                    判责说明: item.judge_description,
+                    处理登记人: item.completer,
+                    保修完成时间: item.finish_time,
+                    寄回姓名: item.return_name,
+                    寄回手机: item.return_mobile,
+                    购买时间: item.purchase_time,
+                    审核时间: item.handle_time,
+                    创建人: item.ori_creator,
+                    创建时间: item.ori_created_time,
+                    处理登记人: item.completer,
+                    是否返修: item.is_repeated,
+                    是否缺陷: item.is_fault,
+                    添加标签: item.add_labels,
+                    是否配件: item.is_part,
                     是否在保修期内: item.is_guarantee,
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1168,7 +904,7 @@ export default {
         )
       }
     },
-    // 审核单据
+    // 添加地域标签
     handleSignArea() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
@@ -1176,8 +912,8 @@ export default {
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '打标地域成功',
-                message: `打标地域成功条数：${res.data.successful}`,
+                title: '添加地域标签成功',
+                message: `添加地域标签条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1185,8 +921,8 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '打标地域失败',
-                message: `打标地域失败条数：${res.data.false}`,
+                title: '添加地域标签失败',
+                message: `添加地域标签失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 5000
@@ -1231,8 +967,8 @@ export default {
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
-                title: '打标地域成功',
-                message: `打标地域成功条数：${res.data.successful}`,
+                title: '添加地域标签成功',
+                message: `添加地域标签成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
                 duration: 3000
@@ -1240,8 +976,114 @@ export default {
             }
             if (res.data.false !== 0) {
               this.$notify({
-                title: '打标地域失败',
-                message: `打标地域失败条数：${res.data.false}`,
+                title: '添加地域标签失败',
+                message: `添加地域标签失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      }
+    },
+    // 添加产品标签
+    handleSignProduct() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        signProductMaintenanceSignLabel(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '添加产品标签成功',
+                message: `添加产品标签条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '添加产品标签失败',
+                message: `添加产品标签失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        signProductMaintenanceSignLabel(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '添加产品标签成功',
+                message: `添加产品标签成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '添加产品标签失败',
+                message: `添加产品标签失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
                 duration: 5000

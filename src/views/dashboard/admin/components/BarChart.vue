@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+import * as echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
 
@@ -27,7 +27,16 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      chartData:[],
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
     }
   },
   mounted() {

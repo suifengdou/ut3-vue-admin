@@ -177,16 +177,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          label="判责说明"
-          prop="memo"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="单据状态"
           prop="order_status"
@@ -234,6 +225,16 @@
         >
           <template slot-scope="scope">
             <span>{{ FaultCause[scope.row.fault_cause] }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="判责说明"
+          prop="memo"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.memo }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -800,41 +801,38 @@ export default {
                   return {
                     ID: item.id,
                     保修单号: item.order_id,
+                    单据状态: item.order_status.name,
                     店铺: item.shop.name,
-                    保修货品名称: item.goods_name.name,
-                    收发仓库: item.warehouse,
-
+                    整机: item.goods.name,
+                    客户: item.customer.name,
+                    收发仓库: item.warehouse.name,
                     保修类型: item.maintenance_type,
                     故障类型: item.fault_type,
-
                     省: item.province.name,
                     市: item.city.name,
-                    区: item.district.name,
-
+                    寄回地址: item.return_address,
                     序列号: item.machine_sn,
-                    换新序列号: item.new_machine_sn,
-
-                    重复维修标记: item.repeat_tag,
-                    发现二次维修: item.found_tag,
+                    保修结束语: item.appraisal,
+                    故障描述: item.description,
+                    缺陷原因: item.fault_cause.name,
+                    判责说明: item.judge_description,
                     处理登记人: item.completer,
                     保修完成时间: item.finish_time,
-
-                    客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-
-                    审核人: item.handler_name,
+                    寄回姓名: item.return_name,
+                    寄回手机: item.return_mobile,
+                    购买时间: item.purchase_time,
                     审核时间: item.handle_time,
                     创建人: item.ori_creator,
                     创建时间: item.ori_created_time,
-
-                    保修结束语: item.appraisal,
-                    故障描述: item.description,
+                    处理登记人: item.completer,
+                    是否返修: item.is_repeated,
+                    是否缺陷: item.is_fault,
+                    添加标签: item.add_labels,
+                    是否配件: item.is_part,
                     是否在保修期内: item.is_guarantee,
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)

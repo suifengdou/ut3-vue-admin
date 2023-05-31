@@ -564,10 +564,8 @@
 <script>
 import {
   getMaintenanceJudgmentList,
-  createMaintenanceJudgment,
   updateMaintenanceJudgment,
   exportMaintenanceJudgment,
-  excelImportMaintenanceJudgment,
   checkMaintenanceJudgment,
   getFaultMaintenanceJudgment,
   rejectMaintenanceJudgment
@@ -716,83 +714,6 @@ export default {
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
     },
-    // 导入
-    importExcel() {
-      const h = this.$createElement
-      this.$msgbox({
-        title: '导入 Excel',
-        name: 'importmsg',
-        message: h('p', null, [
-          h('h3', { style: 'color: teal' }, '特别注意：'),
-          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
-          h('h4', null, '浏览并选择文件：'),
-          h('input', { attrs: {
-            name: 'importfile',
-            type: 'file'
-            }}, null, '导入文件' ),
-          h('p', null),
-          h('hr', null)
-        ]),
-        showCancelButton: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            const importformData = new FormData()
-            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
-            const config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            excelImportMaintenanceJudgment(importformData, config).then(
-              res => {
-                this.$notify({
-                  title: '导入结果',
-                  message: res.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                document.getElementsByName("importfile")[0].type = 'text'
-                document.getElementsByName("importfile")[0].value = ''
-                document.getElementsByName("importfile")[0].type = 'file'
-                this.fetchData()
-                done()
-              },
-              err => {
-                this.$notify({
-                  title: '失败原因',
-                  message: err.data,
-                  type: 'success',
-                  duration: 0
-                })
-                instance.confirmButtonLoading = false
-                this.fetchData()
-                done()
-              }
-            )
-          } else {
-            document.getElementsByName("importfile")[0].type = 'text'
-            document.getElementsByName("importfile")[0].value = ''
-            document.getElementsByName("importfile")[0].type = 'file'
-            this.fetchData()
-            done()
-          }
-        }
-      }).then(action => {
-        console.log(action)
-        done(false)
-      }).catch(
-        (error) => {
-          console.log(error)
-          done(false)
-        }
-
-      )
-    },
     // 导出
     exportExcel() {
       const h = this.$createElement
@@ -822,40 +743,36 @@ export default {
                     ID: item.id,
                     保修单号: item.order_id,
                     店铺: item.shop.name,
-                    保修货品名称: item.goods_name.name,
-                    收发仓库: item.warehouse,
-
+                    整机: item.goods.name,
+                    客户: item.customer.name,
+                    收发仓库: item.warehouse.name,
                     保修类型: item.maintenance_type,
                     故障类型: item.fault_type,
-
                     省: item.province.name,
                     市: item.city.name,
-                    区: item.district.name,
-
+                    寄回地址: item.return_address,
                     序列号: item.machine_sn,
-                    换新序列号: item.new_machine_sn,
-
-                    重复维修标记: item.repeat_tag,
-                    发现二次维修: item.found_tag,
+                    保修结束语: item.appraisal,
+                    故障描述: item.description,
+                    缺陷原因: item.fault_cause.name,
+                    判责说明: item.judge_description,
                     处理登记人: item.completer,
                     保修完成时间: item.finish_time,
-
-                    客户网名: item.buyer_nick,
-                    寄件客户姓名: item.sender_name,
-                    寄件客户手机: item.sender_mobile,
-
-                    审核人: item.handler_name,
+                    寄回姓名: item.return_name,
+                    寄回手机: item.return_mobile,
+                    购买时间: item.purchase_time,
                     审核时间: item.handle_time,
                     创建人: item.ori_creator,
                     创建时间: item.ori_created_time,
-
-                    保修结束语: item.appraisal,
-                    故障描述: item.description,
+                    处理登记人: item.completer,
+                    是否返修: item.is_repeated,
+                    是否缺陷: item.is_fault,
+                    添加标签: item.add_labels,
+                    是否配件: item.is_part,
                     是否在保修期内: item.is_guarantee,
                     收费状态: item.charge_status,
                     收费金额: item.charge_amount,
                     收费说明: item.charge_memory,
-
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -1284,17 +1201,17 @@ export default {
     },
     // 双击修改
     handelDoubleClick(row, column, cell, event) {
-      if (column.property === 'memo') {
-        this.handleMemo(row)
+      if (column.property === 'judge_description') {
+        this.handleJudgeDescription(row)
       }
     },
     // 修改备注
-    handleMemo(row) {
+    handleJudgeDescription(row) {
       this.$prompt('请输入反馈内容', '添加反馈', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-        inputValue: row.feedback,
+        inputValue: row.judge_description,
         inputErrorMessage: '输入不能为空',
         inputValidator: (value) => {
           if(!value) {
@@ -1308,7 +1225,7 @@ export default {
           value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
           let id = row.id
           let data = {
-            memo: value
+            judge_description: value
           }
           updateMaintenanceJudgment(id, data).then(
             () => {

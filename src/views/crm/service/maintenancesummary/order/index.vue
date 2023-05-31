@@ -9,7 +9,8 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">重算</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">保修单重算</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleOriRecount">原始单重算</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -327,7 +328,8 @@ import {
   getMaintenanceOrderSummary,
   exportMaintenanceOrderSummary,
   checkMaintenanceOrderSummary,
-  getLoMaintenanceOrderSummary
+  getLoMaintenanceOrderSummary,
+  oriRecountMaintenanceOrderSummary
 } from '@/api/crm/service/maintenancesummary/order'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
@@ -577,7 +579,7 @@ export default {
                 message: `重算成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -586,27 +588,26 @@ export default {
                 message: `重算失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -619,7 +620,7 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
@@ -633,7 +634,7 @@ export default {
                 message: `重算成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -642,14 +643,14 @@ export default {
                 message: `重算失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -657,30 +658,122 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
-        ).catch(
+        )
+      }
+    },
+    handleOriRecount() {
+      this.tableLoading = true
+      if (this.params.allSelectTag === 1) {
+        oriRecountMaintenanceOrderSummary(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '重算成功',
+                message: `重算成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '重算失败',
+                message: `重算失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            this.fetchData()
+          }).catch(
           (error) => {
             this.$notify({
               title: '错误详情',
               message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法审核',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        oriRecountMaintenanceOrderSummary(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '重算成功',
+                message: `重算成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '重算失败',
+                message: `重算失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+
+            delete this.params.ids
+            this.fetchData()
+          }).catch(
+          (error) => {
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
           }
         )
       }

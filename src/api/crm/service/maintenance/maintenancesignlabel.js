@@ -59,9 +59,9 @@ export function checkMaintenanceSignLabel(data) {
 }
 
 // 取消工单
-export function rejectMaintenanceSignLabel(data) {
+export function signProductMaintenanceSignLabel(data) {
   return request({
-    url: `/crm/service/maintenancesignlabel/reject/`,
+    url: `/crm/service/maintenancesignlabel/sign_product/`,
     method: 'patch',
     data
   })
