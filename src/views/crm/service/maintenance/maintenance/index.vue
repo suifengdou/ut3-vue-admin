@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-order-container">
+  <div class="maintenance-order-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -23,6 +23,16 @@
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
               <el-input v-model="params.machine_sn" class="grid-content bg-purple" placeholder="请输入序列号" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
+
+        </el-col>
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+              <el-input v-model="params.return_mobile" class="grid-content bg-purple" placeholder="请输入用户电话" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -73,10 +83,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="发现二次" prop="found_tag">
+                      <el-col :span="6"><el-form-item label="是否缺陷" prop="is_fault">
                         <template>
                           <el-select
-                            v-model="params.found_tag"
+                            v-model="params.is_fault"
                             default-first-option
                             reserve-keyword
                             clearable
@@ -91,19 +101,44 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="单号" prop="order_id">
-                        <el-input v-model="params.machine_sn" type="text" />
+                      <el-col :span="6"><el-form-item label="是否返修" prop="is_repeated">
+                        <template>
+                          <el-select
+                            v-model="params.is_repeated"
+                            default-first-option
+                            reserve-keyword
+                            clearable
+                            placeholder="请选择是否发现二次"
+                          >
+                            <el-option
+                              v-for="item in optionsJudgment"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </el-select>
+                        </template>
                       </el-form-item></el-col>
+
+                    </el-row>
+                    <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="保修单号" prop="order_id">
                         <el-input v-model="params.order_id" type="text" />
                       </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="寄件手机" prop="sender_mobile">
-                        <el-input v-model="params.sender_mobile" type="text" />
+                      <el-col :span="6"><el-form-item label="寄回姓名" prop="return_name">
+                        <el-input v-model="params.return_name" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="故障类型" prop="fault_type">
                         <el-input v-model="params.fault_type" type="text" />
+                      </el-form-item></el-col>
+
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="整机名称" prop="goods">
+                        <el-input v-model="params.goods__name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="保修结束语" prop="appraisal">
+                        <el-input v-model="params.appraisal" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
@@ -598,6 +633,10 @@ export default {
         {
           value: 5,
           label: '用户'
+        },
+        {
+          value: 99,
+          label: '其他'
         }
       ],
       optionsJudgment: [

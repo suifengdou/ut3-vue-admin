@@ -55,64 +55,15 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="单号" prop="order_id">
-                        <el-input v-model="params.order_id" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="店铺" prop="shop">
-                        <el-input v-model="params.shop" type="text" />
-                      </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="寄件手机" prop="sender_mobile">
-                        <el-input v-model="params.sender_mobile" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="故障类型" prop="fault_type">
-                        <el-input v-model="params.fault_type" type="text" />
-                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="购买时间">
+                      <el-col :span="12"><el-form-item label="统计日期">
                         <div class="block">
                           <el-date-picker
-                            v-model="params.purchase_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
-                      <el-col :span="12"><el-form-item label="审核时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.handle_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="原单创建时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.ori_created_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
-                      <el-col :span="12"><el-form-item label="完成时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.finish_time"
+                            v-model="params.summary_date"
                             type="datetimerange"
                             range-separator="至"
                             start-placeholder="开始日期"
@@ -408,7 +359,7 @@ export default {
   methods: {
     fetchData() {
       // console.log('我开始运行了')
-      console.log(this.params)
+
       this.tableLoading = true
       // console.log(this.params.created_time)
       if (typeof (this.params.created_time) !== 'undefined') {
@@ -417,30 +368,17 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.purchase_time) !== 'undefined') {
-        if (this.params.purchase_time.length === 2) {
-          this.params.purchase_time_after = moment.parseZone(this.params.purchase_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.purchase_time_before = moment.parseZone(this.params.purchase_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+      if (typeof (this.params.summary_date) !== 'undefined') {
+        let summary_date_range = []
+        let i = 0
+        if (this.params.summary_date.length === 2) {
+          for (i; i < this.params.summary_date.length; i++){
+            summary_date_range.push(moment.parseZone(this.params.summary_date[i]).local().format('YYYY-MM-DD HH:MM:SS'))
+          }
+          this.params.summary_date_range = summary_date_range.toString()
         }
       }
-      if (typeof (this.params.handle_time) !== 'undefined') {
-        if (this.params.handle_time.length === 2) {
-          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
-      if (typeof (this.params.ori_created_time) !== 'undefined') {
-        if (this.params.ori_created_time.length === 2) {
-          this.params.ori_created_time_time_after = moment.parseZone(this.params.ori_created_time_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.ori_created_time_time_before = moment.parseZone(this.params.ori_created_time_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
-      if (typeof (this.params.finish_time) !== 'undefined') {
-        if (this.params.finish_time.length === 2) {
-          this.params.finish_time_after = moment.parseZone(this.params.finish_timee[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
+      console.log(this.params)
       getMaintenanceOrderSummary(this.params).then(
         res => {
           this.DataList = res.data.results

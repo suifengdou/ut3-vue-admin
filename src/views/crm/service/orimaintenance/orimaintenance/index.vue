@@ -56,10 +56,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
+                      <el-col :span="6"><el-form-item label="标记名称" prop="sign">
                         <template>
                           <el-select
-                            v-model="params.sign__in"
+                            v-model="params.sign"
                             filterable
                             default-first-option
                             reserve-keyword

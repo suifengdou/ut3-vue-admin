@@ -1,98 +1,98 @@
 <template>
   <div class="shop-container">
-    <!--<div class="tableTitle">-->
-      <!--<el-row :gutter="20">-->
-        <!--<el-col :span="5" class="titleBar">-->
-          <!--<div class="grid-content bg-purple">-->
-            <!--<el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">-->
-              <!--<el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入店铺名称" @keyup.enter.native="fetchData">-->
-                <!--<el-button slot="append" icon="el-icon-search" @click="fetchData" />-->
-              <!--</el-input>-->
-            <!--</el-tooltip>-->
-          <!--</div>-->
+    <div class="tableTitle">
+      <el-row :gutter="20">
+        <el-col :span="5" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入店铺名称" @keyup.enter.native="fetchData">
+                <el-button slot="append" icon="el-icon-search" @click="fetchData" />
+              </el-input>
+            </el-tooltip>
+          </div>
 
-        <!--</el-col>-->
-      <!--</el-row>-->
-      <!--<el-row :gutter="10">-->
-        <!--<el-col :span="21" class="titleBar">-->
-          <!--<div class="grid-content bg-purple">-->
-            <!--<el-collapse @change="fetchData">-->
-              <!--<el-collapse-item>-->
-                <!--<template slot="title">-->
-                  <!--<el-button type="warning" icon="el-icon-s-unfold" circle />-->
-                  <!--<el-tooltip class="item" effect="dark" content="点击一次展开，再点击一次筛选" placement="bottom">-->
-                    <!--<el-button type="primary">多重筛选</el-button>-->
-                  <!--</el-tooltip>-->
-                  <!--<el-tooltip class="item" effect="dark" content="点击清空筛选内容，再点击一次刷新页面" placement="bottom">-->
-                    <!--<el-button type="info" @click="resetParams">重置</el-button>-->
-                  <!--</el-tooltip>-->
-                <!--</template>-->
-                <!--<div class="block">-->
-                  <!--<el-form ref="filterForm" :model="params" label-width="80px">-->
-                    <!--<el-row :gutter="20">-->
-                      <!--<el-col :span="6"><el-form-item label="店铺名称" prop="name">-->
-                        <!--<el-input v-model="params.name" type="text" />-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6"><el-form-item label="公司" prop="company">-->
-                        <!--<el-select-->
-                          <!--v-model="params.company"-->
-                          <!--filterable-->
-                          <!--default-first-option-->
-                          <!--remote-->
-                          <!--reserve-keyword-->
-                          <!--placeholder="请选择公司"-->
-                          <!--:remote-method="remoteMethodCompany"-->
-                        <!--&gt;-->
-                          <!--<el-option-->
-                            <!--v-for="item in optionsCompany"-->
-                            <!--:key="item.value"-->
-                            <!--:label="item.label"-->
-                            <!--:value="item.value"-->
-                          <!--/>-->
-                        <!--</el-select>-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6"><el-form-item label="ID" prop="category">-->
-                        <!--<el-input v-model="params.shop_id" type="text" />-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6" />-->
-                      <!--<el-col :span="6" />-->
-                    <!--</el-row>-->
-                    <!--<el-row :gutter="20">-->
-                      <!--<el-col :span="6"><el-form-item label="ID" prop="category">-->
-                        <!--<el-input v-model="params.shop_id" type="text" />-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6"><el-form-item label="创建者" prop="creator">-->
-                        <!--<el-input v-model="params.creator" type="text" />-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6" />-->
-                      <!--<el-col :span="6" />-->
-                    <!--</el-row>-->
-                    <!--<el-row :gutter="20">-->
-                      <!--<el-col :span="12"><el-form-item label="创建时间">-->
-                        <!--<div class="block">-->
-                          <!--<el-date-picker-->
-                            <!--v-model="params.created_time"-->
-                            <!--type="datetimerange"-->
-                            <!--range-separator="至"-->
-                            <!--start-placeholder="开始日期"-->
-                            <!--end-placeholder="结束日期"-->
-                          <!--/>-->
-                        <!--</div>-->
-                      <!--</el-form-item></el-col>-->
-                      <!--<el-col :span="6" />-->
-                      <!--<el-col :span="6" />-->
-                    <!--</el-row>-->
-                  <!--</el-form>-->
-                <!--</div>-->
-              <!--</el-collapse-item>-->
-            <!--</el-collapse>-->
-          <!--</div>-->
+        </el-col>
+      </el-row>
+      <el-row :gutter="10">
+        <el-col :span="21" class="titleBar">
+          <div class="grid-content bg-purple">
+            <el-collapse @change="fetchData">
+              <el-collapse-item>
+                <template slot="title">
+                  <el-button type="warning" icon="el-icon-s-unfold" circle />
+                  <el-tooltip class="item" effect="dark" content="点击一次展开，再点击一次筛选" placement="bottom">
+                    <el-button type="primary">多重筛选</el-button>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="点击清空筛选内容，再点击一次刷新页面" placement="bottom">
+                    <el-button type="info" @click="resetParams">重置</el-button>
+                  </el-tooltip>
+                </template>
+                <div class="block">
+                  <el-form ref="filterForm" :model="params" label-width="80px">
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="店铺名称" prop="name">
+                        <el-input v-model="params.name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="公司" prop="company">
+                        <el-select
+                          v-model="params.company"
+                          filterable
+                          default-first-option
+                          remote
+                          reserve-keyword
+                          placeholder="请选择公司"
+                          :remote-method="remoteMethodCompany"
+                        >
+                          <el-option
+                            v-for="item in optionsCompany"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          />
+                        </el-select>
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="ID" prop="category">
+                        <el-input v-model="params.shop_id" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="ID" prop="category">
+                        <el-input v-model="params.shop_id" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="创建者" prop="creator">
+                        <el-input v-model="params.creator" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="12"><el-form-item label="创建时间">
+                        <div class="block">
+                          <el-date-picker
+                            v-model="params.created_time"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                          />
+                        </div>
+                      </el-form-item></el-col>
+                      <el-col :span="6" />
+                      <el-col :span="6" />
+                    </el-row>
+                  </el-form>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
 
-        <!--</el-col>-->
-      <!--</el-row>-->
-    <!--</div>-->
+        </el-col>
+      </el-row>
+    </div>
 
-    <div ref="mychart" id="demo"></div>
+    <div class="chart-body" ref="mychart" id="demo"></div>
   </div>
 
 </template>
@@ -102,21 +102,14 @@ import { getServiceOrder } from '@/api/chart/service/order'
 import { getCompanyList } from '@/api/base/company'
 import { getPlatformList } from '@/api/base/platform'
 import moment from 'moment'
-// 引入 echarts 核心模块，核心模块提供了 echarts 使用必须要的接口。
 import * as echarts from 'echarts/core';
-// 引入柱状图图表，图表后缀都为 Chart
-import { BarChart } from 'echarts/charts';
-// 引入提示框，标题，直角坐标系，数据集，内置数据转换器组件，组件后缀都为 Component
 import {
-  TitleComponent,
   TooltipComponent,
   GridComponent,
-  DatasetComponent,
-  TransformComponent
+  LegendComponent,
+  MarkLineComponent
 } from 'echarts/components';
-// 标签自动布局、全局过渡动画等特性
-import { LabelLayout, UniversalTransition } from 'echarts/features';
-// 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
+import { BarChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 
 
@@ -130,48 +123,143 @@ export default {
       optionsPlatform: [],
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
+      chart_data: [],
       chart: null,
       height: '500px',
       width: '900px',
     }
   },
   created() {
-    // this.fetchData()
+    this.fetchData()
     echarts.use([
-      TitleComponent,
       TooltipComponent,
       GridComponent,
-      DatasetComponent,
-      TransformComponent,
+      LegendComponent,
+      MarkLineComponent,
       BarChart,
-      LabelLayout,
-      UniversalTransition,
       CanvasRenderer
-    ]);
-
+    ])
   },
   mounted() {
     let charDom = this.$refs.mychart
     // var myChart = echarts.init(document.getElementById('main'));
     var myChart = echarts.init(charDom)
     let option = {
-      title: {
-        text: 'ECharts 入门示例'
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
       },
-      tooltip: {},
-      xAxis: {
-        data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+      legend: {},
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
       },
-      yAxis: {},
+      xAxis: [
+        {
+          type: 'category',
+          data: this.chart_data.map(item => item.summary_date)
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value'
+        }
+      ],
       series: [
         {
-          name: '销量',
+          name: 'Direct',
           type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
+          emphasis: {
+            focus: 'series'
+          },
+          data: [320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+          name: 'Email',
+          type: 'bar',
+          stack: 'Ad',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+          name: 'Union Ads',
+          type: 'bar',
+          stack: 'Ad',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+          name: 'Video Ads',
+          type: 'bar',
+          stack: 'Ad',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+          name: 'Search Engine',
+          type: 'bar',
+          data: [862, 1018, 964, 1026, 1679, 1600, 1570],
+          emphasis: {
+            focus: 'series'
+          },
+          markLine: {
+            lineStyle: {
+              type: 'dashed'
+            },
+            data: [[{ type: 'min' }, { type: 'max' }]]
+          }
+        },
+        {
+          name: 'Baidu',
+          type: 'bar',
+          barWidth: 5,
+          stack: 'Search Engine',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [620, 732, 701, 734, 1090, 1130, 1120]
+        },
+        {
+          name: 'Google',
+          type: 'bar',
+          stack: 'Search Engine',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [120, 132, 101, 134, 290, 230, 220]
+        },
+        {
+          name: 'Bing',
+          type: 'bar',
+          stack: 'Search Engine',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [60, 72, 71, 74, 190, 130, 110]
+        },
+        {
+          name: 'Others',
+          type: 'bar',
+          stack: 'Search Engine',
+          emphasis: {
+            focus: 'series'
+          },
+          data: [62, 82, 91, 84, 109, 110, 120]
         }
       ]
     }
     console.log("%%$%$$%%$%$%^%%^%%")
+    this.fetchData()
     myChart.setOption(option);
   },
   methods: {
@@ -189,8 +277,8 @@ export default {
       }
       getServiceOrder(this.params).then(
         res => {
-          this.DataList = res.data.results
-          console.log(res.data.results)
+          console.log(res.data)
+          this.chart_data = res.data
         }
       ).catch(
         () => {
@@ -264,7 +352,7 @@ export default {
   z-index: 2;
   background-color: #b3d3c2;
 }
-.table-list {
+.chart-body {
   padding: 115px 15px 0px 15px;
   margin: 0px 0px 0px 0px;
 }
@@ -304,8 +392,8 @@ export default {
 }
 
 #demo {
-  height: 500px;
-  width: 900px;
+  height: 900px;
+  width: 100%;
   border: 1px solid red;
 }
 </style>

@@ -117,10 +117,10 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="异常类别" prop="process_tag__in">
+                      <el-col :span="6"><el-form-item label="异常类别" prop="process_tag">
                         <template>
                           <el-select
-                            v-model="params.process_tag__in"
+                            v-model="params.process_tag"
                             multiple
                             filterable
                             default-first-option
@@ -136,10 +136,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
+                      <el-col :span="6"><el-form-item label="标记名称" prop="sign">
                         <template>
                           <el-select
-                            v-model="params.sign__in"
+                            v-model="params.sign"
                             filterable
                             default-first-option
                             reserve-keyword
@@ -992,17 +992,11 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.process_tag__in) !== 'undefined') {
-        console.log(this.params.process_tag)
-        delete this.params.process_tag
-        this.params.process_tag__in = this.params.process_tag__in.toString()
-        console.log(this.params.process_tag__in)
+      if (typeof (this.params.process_tag) !== 'undefined') {
+        this.params.process_tag = this.params.process_tag.toString()
       }
-      if (typeof (this.params.sign__in) !== 'undefined') {
-        console.log(this.params.sign)
-        delete this.params.sign
-        this.params.sign__in = this.params.sign__in.toString()
-        console.log(this.params.sign__in)
+      if (typeof (this.params.sign) !== 'undefined') {
+        this.params.sign = this.params.sign.toString()
       }
       getOriMaintenanceBeforeList(this.params).then(
         res => {
@@ -1029,7 +1023,7 @@ export default {
       this.fetchData()
     },
     handleShortCuts() {
-      this.params.process_tag__in = '1,2,3,4,5,6'
+      this.params.process_tag = '1,2,3,4,5,6'
       this.params.sign = '0'
       this.fetchData()
     },

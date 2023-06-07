@@ -65,10 +65,10 @@
                 <div class="block">
                   <el-form ref="filterForm" :model="params" label-width="80px">
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="异常类别" prop="mistake_tag__in">
+                      <el-col :span="6"><el-form-item label="异常类别" prop="mistake_tag">
                         <template>
                           <el-select
-                            v-model="params.mistake_tag__in"
+                            v-model="params.mistake_tag"
                             multiple
                             filterable
                             default-first-option
@@ -84,10 +84,10 @@
                           </el-select>
                         </template>
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="标记名称" prop="sign__in">
+                      <el-col :span="6"><el-form-item label="标记名称" prop="sign">
                         <template>
                           <el-select
-                            v-model="params.sign__in"
+                            v-model="params.sign"
                             filterable
                             default-first-option
                             reserve-keyword
@@ -126,6 +126,14 @@
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="收件单号" prop="send_logistics_no">
                         <el-input v-model="params.send_logistics_no" type="text" />
+                      </el-form-item></el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="货品名称" prop="goods_name">
+                        <el-input v-model="params.goods_name" type="text" />
+                      </el-form-item></el-col>
+                      <el-col :span="6"><el-form-item label="货品编码" prop="goods_code">
+                        <el-input v-model="params.goods_code" type="text" />
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
@@ -1068,6 +1076,12 @@ export default {
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
+      if (typeof (this.params.sign) !== 'undefined') {
+        this.params.sign = this.params.sign.toString()
+      }
+      if (typeof (this.params.mistake_tag) !== 'undefined') {
+        this.params.mistake_tag = this.params.mistake_tag.toString()
+      }
       getOriMaintenanceSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
@@ -1966,6 +1980,16 @@ export default {
     handelDoubleClick(row, column, cell, event) {
       if (column.property === 'return_memory') {
         this.handleRetrunMemo(row)
+      } else if (column.property === 'return_area') {
+        this.handleRetrunArea(row)
+      } else if (column.property === 'return_name') {
+        this.handleRetrunName(row)
+      } else if (column.property === 'return_mobile') {
+        this.handleRetrunMobile(row)
+      } else if (column.property === 'goods_name') {
+        this.handleGoodsName(row)
+      } else if (column.property === 'return_address') {
+        this.handleRetrunAddress(row)
       }
     },
     handleRetrunMemo(row) {
@@ -2015,7 +2039,247 @@ export default {
           message: '取消输入'
         })
       })
-    }
+    },
+    handleRetrunArea(row) {
+      this.$prompt('请输入区域', '添加区域', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_area,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_area: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleRetrunName(row) {
+      this.$prompt('请输入姓名', '添加姓名', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_name,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_name: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleRetrunMobile(row) {
+      this.$prompt('请输入手机', '添加手机', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_mobile,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_mobile: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleRetrunAddress(row) {
+      this.$prompt('请输入地址', '添加地址', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.return_address,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            return_address: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleGoodsName(row) {
+      this.$prompt('请输入备注', '添加货品名称', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValue: row.goods_name,
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          // let CurrentTimeStamp = new Date()
+          // let SubmitTimeStamp = CurrentTimeStamp.toLocaleDateString()
+          // value = `${value} {${this.$store.state.user.name}-${SubmitTimeStamp}}`
+          let id = row.id
+          let data = {
+            goods_name: value
+          }
+          updateOriMaintenanceSubmit(id, data).then(
+            () => {
+              this.$notify({
+                title: '修改成功',
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+              this.fetchData()
+            },
+            err => {
+              this.$notify({
+                title: '修改失败',
+                message: `修改失败：${err.data}`,
+                type: 'error',
+                offset: 70,
+                duration: 5000
+              })
+            }
+          )
+        }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
   }
 }
 </script>

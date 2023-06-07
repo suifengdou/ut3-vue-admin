@@ -87,17 +87,6 @@
                       </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="12"><el-form-item label="购买时间">
-                        <div class="block">
-                          <el-date-picker
-                            v-model="params.purchase_time"
-                            type="datetimerange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                          />
-                        </div>
-                      </el-form-item></el-col>
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="12"><el-form-item label="完成时间">
@@ -222,6 +211,16 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.goods_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="保修配件编码"
+          prop="part_code"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.part_code }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -454,70 +453,6 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      optionsProcess: [
-        {
-          value: 0,
-          label: '无异常'
-        },
-        {
-          value: 1,
-          label: '审核异常'
-        },
-        {
-          value: 2,
-          label: '逆向异常'
-        },
-        {
-          value: 3,
-          label: '取件异常'
-        },
-        {
-          value: 4,
-          label: '入库异常'
-        },
-        {
-          value: 5,
-          label: '维修异常'
-        },
-        {
-          value: 6,
-          label: '超期异常'
-        }
-      ],
-      optionsSign: [
-        {
-          value: 0,
-          label: '无'
-        },
-        {
-          value: 1,
-          label: '处理完毕'
-        },
-        {
-          value: 2,
-          label: '配件缺货'
-        },
-        {
-          value: 3,
-          label: '延后处理'
-        },
-        {
-          value: 4,
-          label: '快递异常'
-        },
-        {
-          value: 5,
-          label: '特殊问题'
-        },
-        {
-          value: 6,
-          label: '处理收费'
-        },
-        {
-          value: 7,
-          label: '其他情况'
-        }
-      ],
       optionsJudgment: [
         {
           value: true,
@@ -552,41 +487,15 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      if (typeof (this.params.purchase_time) !== 'undefined') {
-        if (this.params.purchase_time.length === 2) {
-          this.params.purchase_time_after = moment.parseZone(this.params.purchase_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.purchase_time_before = moment.parseZone(this.params.purchase_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
-      if (typeof (this.params.handle_time) !== 'undefined') {
-        if (this.params.handle_time.length === 2) {
-          this.params.handle_time_after = moment.parseZone(this.params.handle_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.handle_time_before = moment.parseZone(this.params.handle_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
-      if (typeof (this.params.ori_created_time) !== 'undefined') {
-        if (this.params.ori_created_time.length === 2) {
-          this.params.ori_created_time_time_after = moment.parseZone(this.params.ori_created_time_time[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.ori_created_time_time_before = moment.parseZone(this.params.ori_created_time_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
-        }
-      }
       if (typeof (this.params.finish_time) !== 'undefined') {
+        let finish_time_range = []
+        let i = 0
         if (this.params.finish_time.length === 2) {
-          this.params.finish_time_after = moment.parseZone(this.params.finish_timee[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          for (i; i < this.params.finish_time.length; i++){
+            finish_time_range.push(moment.parseZone(this.params.finish_time[i]).local().format('YYYY-MM-DD HH:MM:SS'))
+          }
+          this.params.finish_time_range = finish_time_range.toString()
         }
-      }
-      if (typeof (this.params.process_tag__in) !== 'undefined') {
-        console.log(this.params.process_tag)
-        delete this.params.process_tag
-        this.params.process_tag__in = this.params.process_tag__in.toString()
-        console.log(this.params.process_tag__in)
-      }
-      if (typeof (this.params.sign__in) !== 'undefined') {
-        console.log(this.params.sign)
-        delete this.params.sign
-        this.params.sign__in = this.params.sign__in.toString()
-        console.log(this.params.sign__in)
       }
       getOriMaintenanceGoodsSubmit(this.params).then(
         res => {

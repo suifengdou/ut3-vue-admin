@@ -85,9 +85,9 @@ export function recoverWorkOrderHandle(data) {
 }
 
 // 设置重置
-export function setSuggestionWorkOrderHandle(data) {
+export function batchSuggestionWorkOrderHandle(data) {
   return request({
-    url: `/workorder/express/ewohandle/set_suggestion/`,
+    url: `/workorder/express/ewohandle/batchtext/`,
     method: 'patch',
     data
   })

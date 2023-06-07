@@ -181,12 +181,12 @@
 
         >
           <template slot-scope="scope">
-            <div v-if="scope.row.is_fault != true">
+            <div v-if="scope.row.is_fault == false">
               <span>正常</span>
             </div>
             <div v-else>
               <el-select
-                v-model="scope.row.fault_cause"
+                v-model="scope.row.fault_cause.id"
                 reserve-keyword
                 placeholder="请选择重复原因"
                 @change="confirmResponsibility(scope.row)"
@@ -1115,7 +1115,7 @@ export default {
 
       const { id, ...details } = row
       const data = {
-        fault_cause: details.fault_cause
+        fault_cause: details.fault_cause.id
       }
       console.log(data, id)
       updateMaintenanceJudgment(id, data).then(
@@ -1176,23 +1176,23 @@ export default {
     // 行样式
     rowStyle({ row, rowIndex}) {
       let row_style = {}
-      if (row.fault_cause === 1) {
+      if (row.fault_cause.id === 1) {
         row_style = {
           backgroundColor: 'lightpink'
         }
-      } else if (row.fault_cause == 2) {
+      } else if (row.fault_cause.id == 2) {
         row_style = {
           backgroundColor: 'tan'
         }
-      }else if (row.fault_cause == 3) {
+      }else if (row.fault_cause.id == 3) {
         row_style = {
           backgroundColor: 'papayawhip'
         }
-      }else if (row.fault_cause == 4) {
+      }else if (row.fault_cause.id == 4) {
         row_style = {
           backgroundColor: 'lightgoldenrodyellow'
         }
-      }else if (row.fault_cause == 5) {
+      }else if (row.fault_cause.id == 5) {
         row_style = {
           backgroundColor: 'palegreen'
         }

@@ -9,7 +9,7 @@
                 <el-dropdown split-button type="primary" placement="bottom-end" trigger="click">
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleSetFeedback">设置执行内容</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchFeedback">设置执行内容</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturn">设置返回</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturnTrackID">返单号置为发单号</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
@@ -271,6 +271,7 @@
         <el-table-column
           label="处理意见"
           prop="suggestion"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.suggestion }}</span>
@@ -279,6 +280,7 @@
         <el-table-column
           label="执行内容"
           prop="feedback"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.feedback }}</span>
@@ -356,6 +358,13 @@
         >
           <template slot-scope="scope">
             <el-button type="danger" size="mini" @click="handlePhotoView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column
@@ -438,6 +447,48 @@
 
 
     </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -454,10 +505,11 @@ import {
   exportWorkOrderExecute,
   checkWorkOrderExecute,
   rejectWorkOrderExecute,
-  setFeedbackWorkOrderExecute,
+  batchFeedbackWorkOrderExecute,
   setReturnWorkOrderExecute,
   setReturnTrackIDWorkOrderExecute
 } from '@/api/wop/express/execute'
+import { getLogWorkOrderManage } from "@/api/wop/express/manage"
 import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
 import { getGoodsList } from '@/api/base/goods'
@@ -476,6 +528,8 @@ export default {
       checkList: [],
       fileDetails: [],
       all_track_id: '',
+      logViewVisible: false,
+      logDetails: [],
       tableData: {
       },
       params: {
@@ -684,124 +738,136 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    handleSetFeedback() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        setFeedbackWorkOrderExecute(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '设置成功',
-                message: `设置成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '设置失败',
-                message: `设置失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
+    // 批量添加操作内容
+    handleBatchFeedback() {
+      this.$prompt('请输入操作内容', '批量添加操作内容', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputErrorMessage: '输入不能为空',
+        inputValidator: (value) => {
+          if(!value) {
+            return '输入不能为空';
+          }
+        }
+      }).then(
+        ({ value }) => {
+          this.params.data = {
+            feedback: value
+          }
+          if (this.params.allSelectTag === 1) {
+            batchFeedbackWorkOrderExecute(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '添加成功',
+                    message: `添加成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '添加失败',
+                    message: `添加失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                delete this.params.allSelectTag
+                this.fetchData()
+              }).catch(
+              (error) => {
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
+          } else {
+            console.log(this.multipleSelection)
+            if (typeof (this.multipleSelection) === 'undefined') {
               this.$notify({
                 title: '错误详情',
-                message: res.data.error,
+                message: '未选择订单无法审核',
                 type: 'error',
-                offset: 210,
-                duration: 0
+                offset: 70,
+                duration: 5000
               })
+              this.fetchData()
             }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
+            const ids = this.multipleSelection.map(item => item.id)
+            this.params.ids = ids
+            batchFeedbackWorkOrderExecute(this.params).then(
+              res => {
+                if (res.data.successful !== 0) {
+                  this.$notify({
+                    title: '添加成功',
+                    message: `添加成功条数：${res.data.successful}`,
+                    type: 'success',
+                    offset: 70,
+                    duration: 3000
+                  })
+                }
+                if (res.data.false !== 0) {
+                  this.$notify({
+                    title: '添加失败',
+                    message: `添加失败条数：${res.data.false}`,
+                    type: 'error',
+                    offset: 140,
+                    duration: 5000
+                  })
+                  this.$notify({
+                    title: '错误详情',
+                    message: res.data.error,
+                    type: 'error',
+                    offset: 210,
+                    duration: 5000
+                  })
+                }
+                console.log(this.params)
+                console.log(this.params.ids)
+
+                delete this.params.ids
+                this.fetchData()
+              }).catch(
+              (error) => {
+                delete this.params.ids
+                this.$notify({
+                  title: '错误详情',
+                  message: error.data,
+                  type: 'error',
+                  offset: 210,
+                  duration: 5000
+                })
+                this.fetchData()
+              }
+            )
           }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
+        }).catch(
+        (error) => {
           this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法审核',
+            title: '修改失败',
+            message: `修改失败：${error.data}`,
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 3000
           })
           this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        setFeedbackWorkOrderExecute(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '设置成功',
-                message: `设置成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 0
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '设置失败',
-                message: `设置失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 0
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 0
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 0
-            })
-          }
-        )
-      }
+        })
     },
     // 审核单据
     handleSetReturn() {
@@ -1623,7 +1689,32 @@ export default {
           this.fetchData()
         })
     },
-
+// 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogWorkOrderManage(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
     resetParams() {
       this.params = {
         page: 1,

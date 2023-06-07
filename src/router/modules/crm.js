@@ -423,7 +423,7 @@ const crmChannelRouter = {
               path: 'orimaintenancesubmit',
               component: () => import('@/views/crm/service/orimaintenance/orimaintenancesubmit'),
               name: 'orimaintenancesubmit',
-              meta: { title: '原始单-提交', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '原始单-提交', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'orimaintenancemanage',
@@ -437,19 +437,19 @@ const crmChannelRouter = {
           path: 'orimaintenancegoods',
           component: () => import('@/views/crm/service/orimaintenancegoods'),
           name: 'orimaintenancegoods',
-          meta: { title: '原始单配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          meta: { title: '原始单配件', roles: ['service.view_maintenance', 'AllPrivileges'] },
           children: [
             {
               path: 'orimaintenancegoodssubmit',
               component: () => import('@/views/crm/service/orimaintenancegoods/submit'),
               name: 'orimaintenancegoodssubmit',
-              meta: { title: '原始单配件-递交', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '原始单配件-递交', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'orimaintenancegoodsmanage',
               component: () => import('@/views/crm/service/orimaintenancegoods/manage'),
               name: 'orimaintenancegoodsmanage',
-              meta: { title: '原始单配件-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '原始单配件-管理', roles: ['service.view_maintenance', 'AllPrivileges'] }
             }
           ]
         },
@@ -489,19 +489,19 @@ const crmChannelRouter = {
           path: 'maintenancegoods',
           component: () => import('@/views/crm/service/maintenancegoods'),
           name: 'maintenancegoods',
-          meta: { title: '维修单配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          meta: { title: '维修单配件', roles: ['service.view_maintenance', 'AllPrivileges'] },
           children: [
             {
               path: 'maintenancegoodssubmit',
               component: () => import('@/views/crm/service/maintenancegoods/submit'),
               name: 'maintenancegoodssubmit',
-              meta: { title: '维修单配件-统计', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '维修单配件-统计', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'maintenancegoodsmanage',
               component: () => import('@/views/crm/service/maintenancegoods/manage'),
               name: 'maintenancegoodsmanage',
-              meta: { title: '维修单配件-管理', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '维修单配件-管理', roles: ['service.view_maintenance', 'AllPrivileges'] }
             }
           ]
         },
@@ -509,19 +509,19 @@ const crmChannelRouter = {
           path: 'mantenancesummary',
           component: () => import('@/views/crm/service/maintenancesummary'),
           name: 'mantenancesummary',
-          meta: { title: '维修单统计', roles: ['service.view_orimaintenance', 'AllPrivileges'] },
+          meta: { title: '维修单统计', roles: ['service.view_maintenance', 'AllPrivileges'] },
           children: [
             {
               path: 'summaryorder',
               component: () => import('@/views/crm/service/maintenancesummary/order'),
               name: 'summaryorder',
-              meta: { title: '非配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '非配件', roles: ['service.view_maintenance', 'AllPrivileges'] }
             },
             {
               path: 'summaryparts',
               component: () => import('@/views/crm/service/maintenancesummary/parts'),
               name: 'summaryparts',
-              meta: { title: '配件', roles: ['service.view_orimaintenance', 'AllPrivileges'] }
+              meta: { title: '配件', roles: ['service.view_maintenance', 'AllPrivileges'] }
             }
           ]
         },

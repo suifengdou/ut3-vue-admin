@@ -10,26 +10,6 @@ export function getWorkOrderManage(params) {
   })
 }
 
-// 创建工单
-export function createWorkOrderManage(data) {
-  return request({
-    url: `/workorder/express/ewomanage/`,
-    method: 'post',
-    data
-  })
-}
-
-// 更新工单
-export function updateWorkOrderManage(id, data) {
-  delete data.created_time
-  delete data.updated_time
-  return request({
-    url: `/workorder/express/ewomanage/${id}/`,
-    method: 'patch',
-    data
-  })
-}
-
 // 导出工单
 export function exportWorkOrderManage(data) {
   return request({
@@ -39,28 +19,10 @@ export function exportWorkOrderManage(data) {
   })
 }
 
-// 导入工单
-export function excelImportWorkOrderManage(data) {
-  return request({
-    url: `/workorder/express/ewomanage/excel_import/`,
-    method: 'post',
-    data
-  })
-}
-
-// 审核工单
-export function checkWorkOrderManage(data) {
-  return request({
-    url: `/workorder/express/ewomanage/check/`,
-    method: 'patch',
-    data
-  })
-}
-
 // 取消工单
-export function rejectWorkOrderManage(data) {
+export function getLogWorkOrderManage(data) {
   return request({
-    url: `/workorder/express/ewomanage/reject/`,
+    url: `/workorder/express/ewomanage/get_log_details/`,
     method: 'patch',
     data
   })

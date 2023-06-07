@@ -1435,119 +1435,6 @@ export default {
       this.selectNum = this.totalNum
       console.log('我是全选的' + this.selectNum)
     },
-    // 校正
-    handleFix() {
-      this.tableLoading = true
-      if (this.params.allSelectTag === 1) {
-        fixLabel(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            delete this.params.allSelectTag
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法校正',
-            type: 'error',
-            offset: 70,
-            duration: 0
-          })
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        fixLabel(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '校正成功',
-                message: `校正成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 5000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '校正失败',
-                message: `校正失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
-          }
-        )
-      }
-    },
     // 锁定单据
     handleSign() {
       this.tableLoading = true
@@ -1676,8 +1563,8 @@ export default {
               res => {
                 if (res.data.successful !== 0) {
                   this.$notify({
-                    title: '审核成功',
-                    message: `审核成功条数：${res.data.successful}`,
+                    title: '添加成功',
+                    message: `添加成功条数：${res.data.successful}`,
                     type: 'success',
                     offset: 70,
                     duration: 3000
@@ -1685,8 +1572,8 @@ export default {
                 }
                 if (res.data.false !== 0) {
                   this.$notify({
-                    title: '审核失败',
-                    message: `审核失败条数：${res.data.false}`,
+                    title: '添加失败',
+                    message: `添加失败条数：${res.data.false}`,
                     type: 'error',
                     offset: 140,
                     duration: 5000
@@ -1731,8 +1618,8 @@ export default {
               res => {
                 if (res.data.successful !== 0) {
                   this.$notify({
-                    title: '审核成功',
-                    message: `审核成功条数：${res.data.successful}`,
+                    title: '添加成功',
+                    message: `添加成功条数：${res.data.successful}`,
                     type: 'success',
                     offset: 70,
                     duration: 3000
@@ -1740,8 +1627,8 @@ export default {
                 }
                 if (res.data.false !== 0) {
                   this.$notify({
-                    title: '审核失败',
-                    message: `审核失败条数：${res.data.false}`,
+                    title: '添加失败',
+                    message: `添加失败条数：${res.data.false}`,
                     type: 'error',
                     offset: 140,
                     duration: 5000

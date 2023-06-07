@@ -58,9 +58,9 @@ export function rejectWorkOrderExecute(data) {
 }
 
 // 设置执行内容
-export function setFeedbackWorkOrderExecute(data) {
+export function batchFeedbackWorkOrderExecute(data) {
   return request({
-    url: `/workorder/express/ewoexecute/set_feedback/`,
+    url: `/workorder/express/ewoexecute/batchtext/`,
     method: 'patch',
     data
   })

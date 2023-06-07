@@ -462,6 +462,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="日志查看"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="备注"
         >
           <template slot-scope="scope">
@@ -517,6 +524,48 @@
 
 
     </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -529,12 +578,8 @@
 <script>
 import {
   getWorkOrderManage,
-  createWorkOrderManage,
-  updateWorkOrderManage,
   exportWorkOrderManage,
-  excelImportWorkOrderManage,
-  checkWorkOrderManage,
-  rejectWorkOrderManage
+  getLogWorkOrderManage
 } from '@/api/wop/express/manage'
 import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
 import { getCompanyList } from '@/api/base/company'
@@ -552,6 +597,8 @@ export default {
       selectNum: 0,
       fileDetails: [],
       checkList: [],
+      logViewVisible: false,
+      logDetails: [],
       tableData: {
       },
       params: {
@@ -1245,7 +1292,32 @@ export default {
         }
       }
     },
-
+// 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogWorkOrderManage(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
     resetParams() {
       this.params = {
         page: 1,
