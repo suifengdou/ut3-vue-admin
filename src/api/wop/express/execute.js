@@ -75,6 +75,15 @@ export function setReturnWorkOrderExecute(data) {
 }
 
 // 设置执行内容
+export function batchSignWorkOrderExecute(data) {
+  return request({
+    url: `/workorder/express/ewoexecute/batch_sign/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 设置执行内容
 export function setReturnTrackIDWorkOrderExecute(data) {
   return request({
     url: `/workorder/express/ewoexecute/set_return_trackid/`,

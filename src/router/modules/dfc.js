@@ -51,6 +51,12 @@ const dfcRouter = {
           meta: { title: '格式输出', roles: ['manualorder.view_manualorderexport', 'AllPrivileges'] }
         },
         {
+          path: 'moexportcheck',
+          component: () => import('@/views/dfc/manualorder/export/check'),
+          name: 'moexportcheck',
+          meta: { title: '发货导入', roles: ['manualorder.view_manualorderexport', 'AllPrivileges'] }
+        },
+        {
           path: 'moexportmanage',
           component: () => import('@/views/dfc/manualorder/export/manage'),
           name: 'moexportmanage',

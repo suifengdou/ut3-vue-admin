@@ -30,6 +30,44 @@
           </div>
 
         </el-col>
+        <el-col :span="2" class="titleBar">
+          <el-select
+            v-model="params.is_fault"
+            filterable
+            default-first-option
+            reserve-keyword
+            clearable
+            placeholder="是否缺陷"
+            @change="fetchData"
+            @clear="fetchData"
+          >
+            <el-option
+              v-for="item in optionsJudgment"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
+        <el-col :span="2" class="titleBar">
+          <el-select
+            v-model="params.is_repeated"
+            filterable
+            default-first-option
+            reserve-keyword
+            clearable
+            placeholder="是否返修"
+            @change="fetchData"
+            @clear="fetchData"
+          >
+            <el-option
+              v-for="item in optionsJudgment"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-col>
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
@@ -205,20 +243,11 @@
           label="判责说明"
           prop="judge_description"
           sortable="custom"
+          width="200px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.judge_description }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="单据状态"
-          prop="order_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -254,14 +283,16 @@
 
         </el-table-column>
         <el-table-column
-          label="店铺"
-          prop="shop"
+          label="标签"
+          prop="add_labels"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.shop.name }}</span>
+            <span>{{ scope.row.add_labels }}</span>
           </template>
         </el-table-column>
+
 
         <el-table-column
           label="货品"
@@ -299,16 +330,7 @@
             <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
-        <el-table-column
-          label="收发仓库"
-          prop="warehouse"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.warehouse.name }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           label="保修类型"
           prop="maintenance_type"
@@ -352,109 +374,12 @@
         <el-table-column
           label="故障描述"
           prop="description"
+          width="180px"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.description }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户姓名"
-          prop="return_name"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件客户手机"
-          prop="return_mobile"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.return_mobile }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="是否在保"
-          prop="is_guarantee"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.is_guarantee }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收费状态"
-          prop="charge_status"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.charge_status }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收费金额"
-          prop="charge_amount"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.charge_amount }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="收费说明"
-          prop="charge_memory"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.charge_memory }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="创建人"
-          prop="ori_creator"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.ori_creator }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="省"
-          prop="province"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.province.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="市"
-          prop="city"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.city.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="原始创建时间"
-          prop="ori_created_time"
-          sortable="custom"
-          :sort-orders="['ascending','descending']"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.ori_created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -477,35 +402,43 @@
             <span>{{ scope.row.finish_time }}</span>
           </template>
         </el-table-column>
-
         <el-table-column
-          label="创建者"
-          prop="creator"
+          label="寄件客户手机"
+          prop="return_mobile"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.creator }}</span>
+            <span>{{ scope.row.return_mobile }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="创建时间"
-          prop="created_time"
+          label="原始创建时间"
+          prop="ori_created_time"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.created_time }}</span>
+            <span>{{ scope.row.ori_created_time }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="更新时间"
-          prop="update_time"
+          label="店铺"
+          prop="shop"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.shop.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="收发仓库"
+          prop="warehouse"
           sortable="custom"
           :sort-orders="['ascending','descending']"
-        >v
+        >
           <template slot-scope="scope">
-            <span>{{ scope.row.updated_time }}</span>
+            <span>{{ scope.row.warehouse.name }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -615,6 +548,10 @@ export default {
         {
           value: 5,
           label: '用户'
+        },
+        {
+          value: 99,
+          label: '其他'
         }
       ],
       optionsJudgment: [
@@ -679,6 +616,9 @@ export default {
           this.params.finish_time_after = moment.parseZone(this.params.finish_timee[0]).local().format('YYYY-MM-DD HH:MM:SS')
           this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
+      }
+      if (typeof (this.params.fault_cause) !== 'undefined') {
+        this.params.fault_cause_range = this.params.fault_cause.toString()
       }
       getMaintenanceJudgmentList(this.params).then(
         res => {
@@ -1184,17 +1124,21 @@ export default {
         row_style = {
           backgroundColor: 'tan'
         }
-      }else if (row.fault_cause.id == 3) {
+      } else if (row.fault_cause.id == 3) {
         row_style = {
           backgroundColor: 'papayawhip'
         }
-      }else if (row.fault_cause.id == 4) {
+      } else if (row.fault_cause.id == 4) {
         row_style = {
           backgroundColor: 'lightgoldenrodyellow'
         }
-      }else if (row.fault_cause.id == 5) {
+      } else if (row.fault_cause.id == 5) {
         row_style = {
           backgroundColor: 'palegreen'
+        }
+      } else if (row.fault_cause.id == 99) {
+        row_style = {
+          backgroundColor: '#ebd842'
         }
       }
       return row_style

@@ -2,31 +2,11 @@ import request from '@/utils/request'
 
 // 原始ERP订单申请单操作API
 // 获取列表
-export function getMOExportList(params) {
+export function getMOExport(params) {
   return request({
     url: '/dfc/manualorder/moexportmanage/',
     method: 'get',
     params
-  })
-}
-
-// 创建工单
-export function createMOExport(data) {
-  return request({
-    url: `/dfc/manualorder/moexportmanage/`,
-    method: 'post',
-    data
-  })
-}
-
-// 更新工单
-export function updateMOExport(id, data) {
-  delete data.created_time
-  delete data.updated_time
-  return request({
-    url: `/dfc/manualorder/moexportmanage/${id}/`,
-    method: 'patch',
-    data
   })
 }
 
@@ -66,3 +46,12 @@ export function rejectMOExport(data) {
   })
 }
 
+
+// 查询日志
+export function getLogMOExport(data) {
+  return request({
+    url: `/dfc/manualorder/moexportmanage/get_log_details/`,
+    method: 'patch',
+    data
+  })
+}

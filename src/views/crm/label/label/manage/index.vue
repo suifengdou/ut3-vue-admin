@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入标签名称 @keyup.enter.native="fetchData">
+              <el-input v-model="params.name" class="grid-content bg-purple" placeholder="请输入标签名" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -70,7 +70,7 @@
                     </el-row>
                     <el-row :gutter="20">
                       <el-col :span="6"><el-form-item label="分组" prop="group">
-                        <<el-select
+                        <el-select
                         v-model="params.group"
                         default-first-option
                         clearable

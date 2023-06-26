@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-invoice-submit-container">
+  <div class="manual-order-export-check-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -10,28 +10,7 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核</el-button></el-dropdown-item>
-                    <el-dropdown-tiem name="setsign" >
-                      <el-dropdown  placement='right-start' >
-                        <el-tooltip class="item" effect="dark" content="一次性最多标记3000条" placement="top-start">
-                          <el-button id="setlabel" type="success" icon="el-icon-star-on" size="mini" round>
-                            标记
-                          </el-button>
-                        </el-tooltip>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('0')">清除标记</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('1')">先不发货</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('2')">等待核实</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('3')">锁定快递</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('4')">已送礼品</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('5')">大菜鸟仓</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('6')">核实退款</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('7')">库房无货</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('8')">专项审核</el-button></el-dropdown-item>
-                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('9')">替换货品</el-button></el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </el-dropdown-tiem>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回到创建</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -51,27 +30,17 @@
           </div>
 
         </el-col>
-        <el-col :span="2" class="titleBar">
-          <el-select
-            v-model="params.sign"
-            filterable
-            default-first-option
-            reserve-keyword
-            clearable
-            placeholder="请选择标签名称"
-            @change="fetchData"
-            @clear="fetchData"
-          >
-            <el-option
-              v-for="item in optionsSign"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-col>
-        <el-col :span="5" class="titleBar">
+        <el-col :span="6" class="titleBar">
           <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="下载500快递单号" placement="top-start">
+              <el-button type="success" @click="getOrderId(params)">下载单号</el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="下载500快递单号" placement="top-start">
+              <el-button type="success" @click="copyOrderId(all_trade_no, $event)">复制到右键</el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="点击弹出导入界面" placement="top-start">
+              <el-button type="success" @click="importExcel">导入</el-button>
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -256,15 +225,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="标记"
-          prop="sign"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.sign.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="网名"
           prop="nickname"
           sortable="custom"
@@ -287,7 +247,6 @@
           label="地址"
           prop="address"
           sortable="custom"
-          width="180px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
@@ -420,7 +379,6 @@
         <el-table-column
           label="买家留言"
           prop="buyer_remark"
-          width="200px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.buyer_remark }}</span>
@@ -474,7 +432,6 @@
 
       </el-table>
     </div>
-    <!--页脚-->
     <!--日志查看模态窗-->
     <el-dialog
       title="日志查看"
@@ -515,6 +472,7 @@
         </el-table>
       </div>
     </el-dialog>
+    <!--页脚-->
     <div class="tableFoots">
       <center>
         <el-pagination background layout="total, prev, pager, next, jumper" :total="totalNum" :page-size="pageSize" @current-change="handleCurrentChange" />
@@ -525,15 +483,14 @@
 
 <script>
 import {
-  getMOExportSubmitList,
-  createMOExportSubmit,
-  updateMOExportSubmit,
-  exportMOExportSubmit,
-  excelImportMOExportSubmit,
-  checkMOExportSubmit,
-  batchSignMOExportSubmit,
-  rejectMOExportSubmit
-} from '@/api/dfc/manualorder/moexport'
+  getMOExportCheck,
+  createMOExportCheck,
+  updateMOExportCheck,
+  exportMOExportCheck,
+  excelImportMOExportCheck,
+  getOrderIdMOExportCheck,
+  rejectMOExportCheck
+} from '@/api/dfc/manualorder/moexportcheck'
 import { getLogMOExport } from "@/api/dfc/manualorder/moexportmanage"
 import { getShopList } from '@/api/base/shop'
 import { getCompanyList } from '@/api/base/company'
@@ -541,8 +498,9 @@ import { getGoodsList } from '@/api/base/goods'
 import { getCityList } from '@/api/utils/geography/city'
 import moment from 'moment'
 import XLSX from 'xlsx'
+import handleClipboard from '@/utils/clipboard'
 export default {
-  name: 'OriInvoiceSubmit',
+  name: 'MOGoodsCheck',
   data() {
     return {
       DataList: [],
@@ -558,52 +516,11 @@ export default {
         allSelectTag: 0
       },
       logViewVisible: false,
+      all_trade_no: '',
       logDetails: [],
       optionsShop: [],
       optionsCity: [],
       optionsGoods: [],
-      optionsSign: [
-        {
-          value: 0,
-          label: '无'
-        },
-        {
-          value: 1,
-          label: '先不发货'
-        },
-        {
-          value: 2,
-          label: '等待核实'
-        },
-        {
-          value: 3,
-          label: '锁定快递'
-        },
-        {
-          value: 4,
-          label: '已送礼品'
-        },
-        {
-          value: 5,
-          label: '大菜鸟仓'
-        },
-        {
-          value: 6,
-          label: '核实退款'
-        },
-        {
-          value: 7,
-          label: '库房无货'
-        },
-        {
-          value: 8,
-          label: '专项审核'
-        },
-        {
-          value: 9,
-          label: '替换货品'
-        }
-      ],
       optionsProcess: [
         {
           value: 0,
@@ -635,7 +552,7 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getMOExportSubmitList(this.params).then(
+      getMOExportCheck(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -676,7 +593,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportMOExportSubmit(this.params).then(
+            exportMOExportCheck(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -752,6 +669,112 @@ export default {
         }
       )
     },
+    getOrderId(params) {
+      getOrderIdMOExportCheck(this.params).then(
+        res => {
+          console.log(res)
+          this.all_trade_no = res.data.map(item => item.erp_order_id)
+          console.log(this.all_trade_no)
+          this.$notify({
+            title: '下载结果',
+            message: "下载成功",
+            type: 'success',
+            offset: 70,
+            duration: 3000
+          })
+        }).catch(
+        (error) => {
+          console.log(error)
+          this.$notify({
+            title: '错误详情',
+            message: error.data,
+            type: 'error',
+            offset: 70,
+            duration: 0
+          })
+        }
+      )
+    },
+    copyOrderId(data, event) {
+      handleClipboard(data, event)
+    },
+    // 导入
+    importExcel() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportMOExportCheck(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        done(false)
+      }).catch(
+        (error) => {
+          console.log(error)
+          done(false)
+        }
+
+      )
+    },
     // 选择器，单选和多选（主表的）
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -772,7 +795,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkMOExportSubmit(this.params).then(
+        checkMOExportCheck(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -827,7 +850,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkMOExportSubmit(this.params).then(
+        checkMOExportCheck(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -873,140 +896,15 @@ export default {
         )
       }
     },
-    // 批量设置标记
-    handleBatchSign(sign) {
-      this.tableLoading = true
-      this.params.set_sign = sign
-      if (this.params.allSelectTag === 1) {
-        batchSignMOExportSubmit(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            delete this.params.allSelectTag
-            delete this.params.set_sign
-            this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            delete this.params.set_sign
-            this.fetchData()
-          }
-        )
-      } else {
-        console.log(this.multipleSelection)
-        if (typeof (this.multipleSelection) === 'undefined') {
-          this.$notify({
-            title: '错误详情',
-            message: '未选择订单无法清除',
-            type: 'error',
-            offset: 70,
-            duration: 5000
-          })
-          delete this.params.set_sign
-          this.fetchData()
-        }
-        const ids = this.multipleSelection.map(item => item.id)
-        this.params.ids = ids
-        batchSignMOExportSubmit(this.params).then(
-          res => {
-            if (res.data.successful !== 0) {
-              this.$notify({
-                title: '标记成功',
-                message: `标记成功条数：${res.data.successful}`,
-                type: 'success',
-                offset: 70,
-                duration: 3000
-              })
-            }
-            if (res.data.false !== 0) {
-              this.$notify({
-                title: '标记失败',
-                message: `标记除失败条数：${res.data.false}`,
-                type: 'error',
-                offset: 140,
-                duration: 5000
-              })
-              this.$notify({
-                title: '错误详情',
-                message: res.data.error,
-                type: 'error',
-                offset: 210,
-                duration: 5000
-              })
-            }
-            console.log(this.params)
-            console.log(this.params.ids)
-            delete this.params.set_sign
-            delete this.params.ids
-            this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
-            delete this.params.ids
-            this.$notify({
-              title: '错误详情',
-              message: error.response.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-            this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            this.$notify({
-              title: '错误详情',
-              message: error.data,
-              type: 'error',
-              offset: 210,
-              duration: 5000
-            })
-          }
-        )
-      }
-    },
-
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
       this.$msgbox({
-        title: '驳回手工单',
+        title: '取消工单',
         message: h('p', null, [
           h('h3', { style: 'color: teal' }, '特别注意：'),
           h('hr', null, ''),
-          h('span', null, '驳回单据到待提交界面，需要联系客服，告知单据驳回！'),
+          h('span', null, '取消工单即为此源单号的开票申请彻底取消！无法再次用此源单号创建开票申请，请慎重选择！'),
           h('hr', null, '')
         ]),
         showCancelButton: true,
@@ -1018,12 +916,12 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectMOExportSubmit(this.params).then(
+              rejectMOExportCheck(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -1031,8 +929,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -1078,12 +976,12 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectMOExportSubmit(this.params).then(
+              rejectMOExportCheck(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
-                      title: '驳回成功',
-                      message: `驳回成功条数：${res.data.successful}`,
+                      title: '取消成功',
+                      message: `取消成功条数：${res.data.successful}`,
                       type: 'success',
                       offset: 70,
                       duration: 3000
@@ -1091,8 +989,8 @@ export default {
                   }
                   if (res.data.false !== 0) {
                     this.$notify({
-                      title: '驳回失败',
-                      message: `驳回败条数：${res.data.false}`,
+                      title: '取消失败',
+                      message: `取消败条数：${res.data.false}`,
                       type: 'error',
                       offset: 140,
                       duration: 0
@@ -1216,6 +1114,32 @@ export default {
         this.options = []
       }
     },
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogMOExport(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
     // 排序
     onSortChange({ prop, order }) {
       console.log(this.GroupList)
@@ -1244,32 +1168,6 @@ export default {
           }
         }
       }
-    },
-    // 查看日志
-    logView(userValue) {
-      this.logDetails = []
-      this.logViewVisible = true
-      const data = {
-        id: userValue.id
-      }
-      getLogMOExport(data).then(
-        res => {
-          this.$notify({
-            title: '查询成功',
-            type: 'success',
-            duration: 1000
-          })
-          this.logDetails = res.data
-        }).catch(
-        (error) => {
-          this.$notify({
-            title: '查询错误',
-            message: error.data,
-            type: 'error',
-            duration: 5000
-          })
-        }
-      )
     },
     // 显示行的颜色变化
     rowStyle({ row, rowIndex}) {
@@ -1346,10 +1244,5 @@ export default {
 }
 #tableBody {
   z-index: 1;
-}
-#setlabel {
-  margin-left: 15px;
-  margin-top: 2px;
-  text-align: center
 }
 </style>

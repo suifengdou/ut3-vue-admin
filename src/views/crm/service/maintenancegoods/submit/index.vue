@@ -416,8 +416,7 @@ export default {
       }
       if (typeof (this.params.finish_time) !== 'undefined') {
         if (this.params.finish_time.length === 2) {
-          this.params.finish_time_after = moment.parseZone(this.params.finish_timee[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.finish_time_range = this.params.finish_time.toString()
         }
       }
       getMaintenanceGoodsSubmit(this.params).then(

@@ -57,7 +57,7 @@ export function handleRepeatedOriMaintenanceBefore(data) {
   })
 }
 
-// 审核工单
+// 批量标记
 export function batchSignOriMaintenanceBefore(data) {
   return request({
     url: `/crm/service/orimaintenancebefore/batch_sign/`,
@@ -66,10 +66,19 @@ export function batchSignOriMaintenanceBefore(data) {
   })
 }
 
-// 取消工单
+// 批量添加处理意见
 export function batchTextOriMaintenanceBefore(data) {
   return request({
     url: `/crm/service/orimaintenancebefore/batchtext/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 解密工单
+export function decryptOriMaintenanceBefore(data) {
+  return request({
+    url: `/crm/service/orimaintenancebefore/decrypt/`,
     method: 'patch',
     data
   })
@@ -92,3 +101,23 @@ export function setRecoverOriMaintenanceBefore(data) {
     data
   })
 }
+
+// 重置预约
+export function createJobOriMaintenanceBefore(data) {
+  return request({
+    url: `/crm/service/orimaintenancebefore/create_job/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 重置预约
+export function appendJobOriMaintenanceBefore(data) {
+  return request({
+    url: `/crm/service/orimaintenancebefore/append_job/`,
+    method: 'patch',
+    data
+  })
+}
+
+

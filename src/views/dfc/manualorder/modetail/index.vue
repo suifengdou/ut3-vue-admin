@@ -60,8 +60,8 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="手机" prop="manual_order">
-                        <el-input v-model="params.manual_order__mobile" type="text" />
+                      <el-col :span="6"><el-form-item label="货品编码" prop="goods_id">
+                        <el-input v-model="params.goods_id" type="text" />
                       </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="UT单号" prop="manual_order">
                         <el-input v-model="params.manual_order__erp_order_id" type="text" />

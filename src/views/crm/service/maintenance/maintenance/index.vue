@@ -259,17 +259,17 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ FaultCause[scope.row.fault_cause] }}</span>
+            <span>{{ scope.row.fault_cause.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="判责说明"
-          prop="memo"
+          prop="judge_description"
           sortable="custom"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.memo }}</span>
+            <span>{{ scope.row.judge_description }}</span>
           </template>
         </el-table-column>
         <el-table-column

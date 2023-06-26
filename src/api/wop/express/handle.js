@@ -75,6 +75,16 @@ export function setLossingWorkOrderHandle(data) {
   })
 }
 
+
+// 设置丢失
+export function batchSignWorkOrderHandle(data) {
+  return request({
+    url: `/workorder/express/ewohandle/batch_sign/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 设置重置
 export function recoverWorkOrderHandle(data) {
   return request({

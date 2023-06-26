@@ -224,12 +224,12 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="错误标签"
-          prop="mistake_tag"
+          label="单据状态"
+          prop="order_status"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.mistake_tag.name }}</span>
+            <span>{{ scope.row.order_status.name }}</span>
           </template>
         </el-table-column>
         <el-table-column

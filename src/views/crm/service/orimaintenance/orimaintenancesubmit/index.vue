@@ -40,8 +40,12 @@
           </div>
 
         </el-col>
+
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
+            <el-tooltip class="item" effect="dark" content="点击弹出导入解密界面" placement="top-start">
+              <el-button type="success" @click="importExcel">解密导入</el-button>
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="点击弹出导出界面" placement="top-start">
               <el-button type="success" @click="exportExcel">导出</el-button>
             </el-tooltip>
@@ -903,6 +907,7 @@ import {
   updateOriMaintenanceSubmit,
   exportOriMaintenanceSubmit,
   checkOriMaintenanceSubmit,
+  excelImportOriMaintenanceSubmit,
   decryptOriMaintenanceSubmit,
   rejectOriMaintenanceSubmit,
   relateGoodsOriMaintenanceSubmit,
@@ -1072,8 +1077,7 @@ export default {
       }
       if (typeof (this.params.finish_time) !== 'undefined') {
         if (this.params.finish_time.length === 2) {
-          this.params.finish_time_after = moment.parseZone(this.params.finish_timee[0]).local().format('YYYY-MM-DD HH:MM:SS')
-          this.params.finish_time_before = moment.parseZone(this.params.finish_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
+          this.params.finish_time_range = this.params.finish_time.toString()
         }
       }
       if (typeof (this.params.sign) !== 'undefined') {
@@ -1163,6 +1167,83 @@ export default {
       // 返回arr数组过滤后的结果，结果为一个数组   过滤条件是对象中的value值，
       // 如果res中没有某个键，就设置这个键的值为1
       return arr.filter((arr) => !res.has(arr.value) && res.set(arr.value, 1))
+    },
+    // 导入
+    importExcel() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '导入解密 Excel',
+        name: 'importmsg',
+        message: h('p', null, [
+          h('h3', { style: 'color: teal' }, '特别注意：'),
+          h('p', null, '针对不同的模块，需要严格按照模板要求进行，无法导入的情况，请联系系统管理员'),
+          h('h4', null, '浏览并选择文件：'),
+          h('input', { attrs: {
+              name: 'importfile',
+              type: 'file'
+            }}, null, '导入文件' ),
+          h('p', null),
+          h('hr', null)
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            const importformData = new FormData()
+            importformData.append('file', document.getElementsByName("importfile")[0].files[0])
+            const config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            excelImportOriMaintenanceSubmit(importformData, config).then(
+              res => {
+                this.$notify({
+                  title: '导入结果',
+                  message: res.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                document.getElementsByName("importfile")[0].type = 'text'
+                document.getElementsByName("importfile")[0].value = ''
+                document.getElementsByName("importfile")[0].type = 'file'
+                this.fetchData()
+                done()
+              },
+              err => {
+                this.$notify({
+                  title: '失败原因',
+                  message: err.data,
+                  type: 'success',
+                  duration: 0
+                })
+                instance.confirmButtonLoading = false
+                this.fetchData()
+                done()
+              }
+            )
+          } else {
+            document.getElementsByName("importfile")[0].type = 'text'
+            document.getElementsByName("importfile")[0].value = ''
+            document.getElementsByName("importfile")[0].type = 'file'
+            this.fetchData()
+            done()
+          }
+        }
+      }).then(action => {
+        console.log(action)
+        done(false)
+      }).catch(
+        (error) => {
+          console.log(error)
+          done(false)
+        }
+
+      )
     },
     // 导出
     exportExcel() {

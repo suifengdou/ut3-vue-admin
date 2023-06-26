@@ -10,10 +10,28 @@
                   选中所有的{{ selectNum }}项
                   <el-dropdown-menu slot="dropdown" trigger="click">
                     <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleBatchFeedback">设置执行内容</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturn">设置返回</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturnTrackID">返单号置为发单号</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核工单</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturn">设置返回类型</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-star-on" size="mini" round @click="handleSetReturnTrackID">置返单为发单</el-button></el-dropdown-item>
+                    <el-dropdown-tiem name="setsign" >
+                      <el-dropdown  placement='right-start' >
+                        <el-button id="setlabel" type="success" icon="el-icon-star-on" size="mini" round>
+                          批量设置标记
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('0')">清标记</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('1')">待截单</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('2')">签复核</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('3')">改地址</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('4')">催派查</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('5')">丢件核</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('6')">纠纷中</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('7')">需理赔</el-button></el-dropdown-item>
+                          <el-dropdown-item><el-button type="success"  size="mini" round @click="handleBatchSign('8')">其他类</el-button></el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </el-dropdown-tiem>
+                    <el-dropdown-item><el-button type="success" icon="el-icon-check" size="mini" round @click="handleCheck">审核快递工单</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="danger" icon="el-icon-close" size="mini" round @click="handleReject">驳回快递工单</el-button></el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-tooltip>
@@ -507,7 +525,8 @@ import {
   rejectWorkOrderExecute,
   batchFeedbackWorkOrderExecute,
   setReturnWorkOrderExecute,
-  setReturnTrackIDWorkOrderExecute
+  setReturnTrackIDWorkOrderExecute,
+  batchSignWorkOrderExecute
 } from '@/api/wop/express/execute'
 import { getLogWorkOrderManage } from "@/api/wop/express/manage"
 import { deleteEWOPhoto } from '@/api/wop/express/ewophoto'
@@ -868,6 +887,130 @@ export default {
           })
           this.fetchData()
         })
+    },
+    // 批量设置标记
+    handleBatchSign(sign) {
+      this.tableLoading = true
+      this.params.set_process_tag = sign
+      if (this.params.allSelectTag === 1) {
+        batchSignWorkOrderExecute(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '标记成功',
+                message: `标记成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '标记失败',
+                message: `标记失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            delete this.params.allSelectTag
+            delete this.params.set_sign
+            this.fetchData()
+          },
+          error => {
+            console.log('我是全选错误返回')
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            delete this.params.set_sign
+            this.fetchData()
+          }
+        )
+      } else {
+        console.log(this.multipleSelection)
+        if (typeof (this.multipleSelection) === 'undefined') {
+          this.$notify({
+            title: '错误详情',
+            message: '未选择订单无法清除',
+            type: 'error',
+            offset: 70,
+            duration: 5000
+          })
+          delete this.params.set_sign
+          this.fetchData()
+        }
+        const ids = this.multipleSelection.map(item => item.id)
+        this.params.ids = ids
+        batchSignWorkOrderExecute(this.params).then(
+          res => {
+            if (res.data.successful !== 0) {
+              this.$notify({
+                title: '标记成功',
+                message: `标记成功条数：${res.data.successful}`,
+                type: 'success',
+                offset: 70,
+                duration: 3000
+              })
+            }
+            if (res.data.false !== 0) {
+              this.$notify({
+                title: '标记失败',
+                message: `标记除失败条数：${res.data.false}`,
+                type: 'error',
+                offset: 140,
+                duration: 5000
+              })
+              this.$notify({
+                title: '错误详情',
+                message: res.data.error,
+                type: 'error',
+                offset: 210,
+                duration: 5000
+              })
+            }
+            console.log(this.params)
+            console.log(this.params.ids)
+            delete this.params.set_sign
+            delete this.params.ids
+            this.fetchData()
+          },
+          error => {
+            console.log('我是单选错误返回')
+            console.log(this)
+            console.log(error.response)
+            delete this.params.ids
+            this.$notify({
+              title: '错误详情',
+              message: error.response.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+            this.fetchData()
+          }
+        ).catch(
+          (error) => {
+            this.$notify({
+              title: '错误详情',
+              message: error.data,
+              type: 'error',
+              offset: 210,
+              duration: 5000
+            })
+          }
+        )
+      }
     },
     // 审核单据
     handleSetReturn() {
@@ -1851,5 +1994,10 @@ export default {
 }
 #tableBody {
   z-index: 1;
+}
+#setlabel {
+  margin-left: 15px;
+  margin-top: 2px;
+  text-align: center
 }
 </style>

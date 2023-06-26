@@ -66,6 +66,16 @@ export function rejectMOExportSubmit(data) {
   })
 }
 
+
+// 取消工单
+export function batchSignMOExportSubmit(data) {
+  return request({
+    url: `/dfc/manualorder/moexport/batch_sign/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 原始ERP订单管理操作API
 // 获取列表
 export function getMOExportManageList(params) {
@@ -75,3 +85,18 @@ export function getMOExportManageList(params) {
     params
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
