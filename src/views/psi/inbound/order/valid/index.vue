@@ -1,5 +1,5 @@
 <template>
-  <div class="ori-inbound-submit-container">
+  <div class="inbound-valid-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.warehouse__name" class="grid-content bg-purple" placeholder="请输入仓库名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -58,37 +58,12 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="验证号" prop="verification">
+                        <el-input v-model="params.verification" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
@@ -127,7 +102,9 @@
         border
         style="width: 100%"
         @sort-change="onSortChange"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column ref="checkall" type="selection" label="选项" />
         <el-table-column
           label="ID"
         >
@@ -136,105 +113,70 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="订单编号"
-          prop="ib_order_id"
+          label="错误列表"
+          prop="mistake_tag"
           sortable="custom"
+          :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ib_order_id.name }}</span>
+            <span>{{ scope.row.mistake_tag.name }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="状态"
-          prop="ib_order_id"
+          label="订单编号"
+          prop="order_id"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ib_order_id.category }}</span>
+            <span>{{ scope.row.code }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="类别"
-          prop="ib_order_id"
+          prop="category"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.ib_order_id.warehouse }}</span>
+            <span>{{ scope.row.category.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="商家编码"
-          prop="goods_id"
+          label="验证号"
+          prop="verification"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
+            <span>{{ scope.row.verification }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="仓库"
+          prop="warehouse"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.warehouse.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
           label="货品"
-          prop="goods_name"
-          sortable="custom"
+          prop="goods_detail"
+          width="330px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
+            <div v-for="(item, i) in scope.row.goods_details">
+              <el-tag type="success" size="mini" effect="dark"><span>{{ item.goods.name }}*{{ item.quantity }}</span></el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
-          label="调整后数量"
-          prop="quantity"
-          sortable="custom"
+          label="日志查看"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.quantity }}</span>
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
-        <el-table-column
-          label="可用数量"
-          prop="valid_quantity"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.valid_quantity }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="备注"
-          prop="memorandum"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.memorandum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="审核入库时间"
-          prop="handle_time"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.handle_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="体积"
-          prop="volume"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.volume }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="重量"
-          prop="weight"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.weight }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column
           label="创建者"
           prop="creator"
@@ -262,6 +204,47 @@
 
       </el-table>
     </div>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -273,19 +256,22 @@
 
 <script>
 import {
-  getInboundDetailValidList,
-  createInboundDetailValid,
-  updateInboundDetailValid,
-  exportInboundDetailValid,
-  excelImportInboundDetailValid,
-  checkInboundDetailValid,
-  rejectInboundDetailValid
-} from '@/api/psi/inbound/inbounddetailvalid'
+  getInboundValid,
+  createInboundValid,
+  updateInboundValid,
+  exportInboundValid,
+  excelImportInboundValid,
+  checkInboundValid,
+  rejectInboundValid
+} from '@/api/psi/inbound/order/valid'
+import {getLogInboundManage} from "@/api/psi/inbound/order/manage"
 import { getCompanyList } from '@/api/base/company'
+import { getGoodsList } from '@/api/base/goods'
+import { getWarehouse } from "@/api/base/warehouse"
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'outboundSubmit',
+  name: 'inboundValid',
   data() {
     return {
       DataList: [],
@@ -299,10 +285,40 @@ export default {
         page: 1,
         allSelectTag: 0
       },
-      dialogVisibleAdd: false,
-      dialogVisibleEdit: false,
-      formAdd: {},
-      formEdit: {},
+      logViewVisible: false,
+      logDetails: [],
+      optionsWarehouse: [],
+      optionsGoods: [],
+      optionsCategory: [
+        {
+          value: 1,
+          label: '采购入库'
+        },
+        {
+          value: 2,
+          label: '调拨入库'
+        },
+        {
+          value: 3,
+          label: '退货入库'
+        },
+        {
+          value: 4,
+          label: '生产入库'
+        },
+        {
+          value: 5,
+          label: '保修入库'
+        },
+        {
+          value: 6,
+          label: '其他入库'
+        },
+        {
+          value: 7,
+          label: '残品入库'
+        },
+      ],
       optionsJudgment: [
         {
           value: true,
@@ -312,7 +328,7 @@ export default {
           value: false,
           label: '否'
         }
-      ]
+      ],
     }
   },
   created() {
@@ -330,7 +346,7 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getInboundDetailValidList(this.params).then(
+      getInboundValid(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -354,6 +370,46 @@ export default {
     handleCurrentChange(val) {
       this.params.page = val
       this.fetchData()
+    },
+    // 货品搜索
+    remoteMethodGoods(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getGoodsList(paramsSearch).then(
+            res => {
+              this.optionsGoods = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsGoods = []
+      }
+    },
+    // 仓库搜索
+    remoteMethodWarehouse(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          console.log(query)
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getWarehouse(paramsSearch).then(
+            res => {
+              this.optionsWarehouse = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsWarehouse = []
+      }
     },
     // 检索用户组选项
     unique(arr) {
@@ -385,41 +441,21 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportInboundDetailValid(this.params).then(
+            exportInboundValid(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.created_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    入库单号: item.shop.name,
+                    仓库: item.company.name,
+                    类别: item.order_id,
+                    验证号: item.order_category.name,
+                    备注: item.title,
+                    体积: item.tax_id,
+                    重量: item.phone,
+                    单据状态: item.bank,
+                    创建时间: item.account,
+                    更新时间: item.address,
+                    创建者: item.remark,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -475,7 +511,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixInboundDetailValid(this.params).then(
+        fixInboundValid(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -531,7 +567,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixInboundDetailValid(this.params).then(
+        fixInboundValid(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -588,15 +624,15 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkInboundDetailValid(this.params).then(
+        checkInboundValid(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                message: `审核条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -605,27 +641,26 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -638,13 +673,13 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkInboundDetailValid(this.params).then(
+        checkInboundValid(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -652,7 +687,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -661,14 +696,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -676,29 +711,22 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
     },
+    // 审核单据
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -719,7 +747,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectInboundDetailValid(this.params).then(
+              rejectInboundValid(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -786,7 +814,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectInboundDetailValid(this.params).then(
+              rejectInboundValid(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -879,7 +907,32 @@ export default {
         }
       }
     },
-
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogInboundManage(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
     resetParams() {
       this.params = {
         page: 1

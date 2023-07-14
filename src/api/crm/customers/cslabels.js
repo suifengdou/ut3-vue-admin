@@ -57,6 +57,14 @@ export function createJobCustomerLabel(data) {
   })
 }
 
+export function createJobForceCustomerLabel(data) {
+  return request({
+    url: `/crm/customers/cslabels/create_job_force/`,
+    method: 'patch',
+    data
+  })
+}
+
 // 取消工单
 export function rejectCustomerLabel(data) {
   return request({

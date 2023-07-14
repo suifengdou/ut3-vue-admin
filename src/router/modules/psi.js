@@ -30,50 +30,63 @@ const psiChannelRouter = {
               path: 'submit',
               component: () => import('@/views/psi/inbound/oriinbound/submit'),
               name: 'erpinboundsubmit',
-              meta: { title: '原始订单提交', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              meta: { title: '原始订单提交', roles: ['inbound.view_oriinbound', 'AllPrivileges'] }
             },
             {
               path: 'manage',
-              component: () => import('@/views/crm/order/oriorder/manage'),
+              component: () => import('@/views/psi/inbound/oriinbound/manage'),
               name: 'erpinboundmanage',
-              meta: { title: '原始订单管理', roles: ['advancepayment.view_account', 'AllPrivileges'] }
+              meta: { title: '原始订单管理', roles: ['inbound.view_oriinbound', 'AllPrivileges'] }
             }
           ]
         },
         {
           path: 'utinbound',
-          component: () => import('@/views/psi/inbound/inbound'),
+          component: () => import('@/views/psi/inbound/'),
           name: 'utinbound',
           meta: { title: '入库管理' },
           children: [
             {
+              path: 'inboundsubmit',
+              component: () => import('@/views/psi/inbound/order/submit'),
+              name: 'inboundsubmit',
+              meta: { title: '入库提交', roles: ['inbound.view_user_inbound', 'AllPrivileges'] }
+            },
+            {
               path: 'inboundcheck',
-              component: () => import('@/views/psi/inbound/inbound/check'),
+              component: () => import('@/views/psi/inbound/order/check'),
               name: 'inboundcheck',
-              meta: { title: '入库审核', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              meta: { title: '入库审核', roles: ['inbound.view_check_inbound', 'AllPrivileges'] }
             },
             {
-              path: 'validinbound',
-              component: () => import('@/views/psi/inbound/inbounddetail/valid'),
-              name: 'validinbound',
-              meta: { title: '可用列表', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              path: 'inboundvalid',
+              component: () => import('@/views/psi/inbound/order/valid'),
+              name: 'inboundvalid',
+              meta: { title: '可用列表', roles: ['inbound.view_check_inbound', 'AllPrivileges'] }
             },
             {
-              path: 'inbounddetail',
-              component: () => import('@/views/psi/inbound/inbounddetail/manage'),
-              name: 'inbounddetail',
-              meta: { title: '入库明细', roles: ['advancepayment.view_user_account', 'AllPrivileges'] }
+              path: 'inboundmanage',
+              component: () => import('@/views/psi/inbound/order/manage'),
+              name: 'inboundmanage',
+              meta: { title: '入库管理', roles: ['inbound.view_check_inbound', 'AllPrivileges'] }
             },
             {
-              path: 'inbountmanage',
-              component: () => import('@/views/crm/order/bmsorder/manage'),
-              name: 'inbountmanage',
-              meta: { title: '入库管理', roles: ['advancepayment.view_account', 'AllPrivileges'] }
+              path: 'inbounddetailvalid',
+              component: () => import('@/views/psi/inbound/details/valid'),
+              name: 'inbounddetailvalid',
+              meta: { title: '可用明细', roles: ['inbound.view_inbound', 'AllPrivileges'] }
+            },
+            {
+              path: 'inbounddetailmanage',
+              component: () => import('@/views/psi/inbound/details/manage'),
+              name: 'inbounddetailmanage',
+              meta: { title: '明细管理', roles: ['inbound.view_inbound', 'AllPrivileges'] }
             }
           ]
         }
       ]
     },
+
     {
       path: 'outbound',
       name: 'outbound',
@@ -119,7 +132,48 @@ const psiChannelRouter = {
           meta: { title: '库存管理', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
         }
       ]
-    }
+    },
+    {
+      path: 'renovation',
+      component: () => import('@/views/psi/renovation'), // Parent router-view
+      name: 'renovation',
+      meta: { title: '翻新管理', roles: ['AllPrivileges'] },
+      redirect: 'noRedirect',
+      children: [
+        {
+          path: 'order',
+          component: () => import('@/views/psi/renovation/order'),
+          name: 'order',
+          meta: { title: '翻新工单' },
+          children: [
+            {
+              path: 'submit',
+              component: () => import('@/views/psi/renovation/order/submit'),
+              name: 'erpinboundsubmit',
+              meta: { title: '原始订单提交', roles: ['inbound.view_oriinbound', 'AllPrivileges'] }
+            },
+            {
+              path: 'manage',
+              component: () => import('@/views/psi/renovation/order/manage'),
+              name: 'erpinboundmanage',
+              meta: { title: '原始订单管理', roles: ['inbound.view_oriinbound', 'AllPrivileges'] }
+            }
+          ]
+        },
+        {
+          path: 'goods',
+          component: () => import('@/views/psi/renovation/goods'),
+          name: 'goods',
+          meta: { title: '翻新配件', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+        {
+          path: 'detail',
+          component: () => import('@/views/psi/renovation/detail'),
+          name: 'detail',
+          meta: { title: '使用详情', roles: ['woinvoice.view_handler_oriinvoice', 'AllPrivileges'] }
+        },
+      ]
+    },
   ]
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="outbound-submit-container">
+  <div class="inbound-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -23,7 +23,7 @@
         <el-col :span="5" class="titleBar">
           <div class="grid-content bg-purple">
             <el-tooltip class="item" effect="dark" content="快捷搜索" placement="top-start">
-              <el-input v-model="params.track_id" class="grid-content bg-purple" placeholder="请输入完整快递单号" @keyup.enter.native="fetchData">
+              <el-input v-model="params.warehouse__name" class="grid-content bg-purple" placeholder="请输入仓库名称" @keyup.enter.native="fetchData">
                 <el-button slot="append" icon="el-icon-search" @click="fetchData" />
               </el-input>
             </el-tooltip>
@@ -69,37 +69,12 @@
                       <el-col :span="6" />
                     </el-row>
                     <el-row :gutter="20">
+                      <el-col :span="6"><el-form-item label="验证号" prop="verification">
+                        <el-input v-model="params.verification" type="text" />
+                      </el-form-item></el-col>
                       <el-col :span="6"><el-form-item label="创建者" prop="creator">
                         <el-input v-model="params.creator" type="text" />
                       </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="初始问题信息" prop="information">
-                        <el-input v-model="params.information" type="text" />
-                      </el-form-item></el-col>
-                      <el-col :span="6" />
-                      <el-col :span="6" />
-                    </el-row>
-                    <el-row :gutter="20">
-                      <el-col :span="6"><el-form-item label="是否理赔">
-                        <el-select v-model="params.is_losing" placeholder="是否理赔">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-                      <el-col :span="6"><el-form-item label="是否返回">
-                        <el-select v-model="params.is_return" placeholder="是否返回">
-                          <el-option
-                            v-for="item in optionsJudgment"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                          />
-                        </el-select>
-                      </el-form-item></el-col>
-
                       <el-col :span="6" />
                       <el-col :span="6" />
                     </el-row>
@@ -145,7 +120,47 @@
           label="ID"
         >
           <template slot-scope="scope">
-              <el-tag type="success"><span>{{ scope.row.id }}</span></el-tag>
+            <el-tooltip class="item" effect="dark" content="点击绿色按钮进入编辑" placement="top-start">
+              <el-tag type="success" @click="handleEdit(scope.row)"><span>{{ scope.row.id }}</span></el-tag>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="错误列表"
+          prop="mistake_tag"
+          sortable="custom"
+          :sort-orders="['ascending','descending']"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.mistake_tag.name }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          label="订单编号"
+          prop="order_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="类别"
+          prop="category"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.category.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="验证号"
+          prop="verification"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.verification }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -159,50 +174,22 @@
         </el-table-column>
         <el-table-column
           label="货品"
-          prop="goods_name"
-          sortable="custom"
+          prop="goods_detail"
+          width="330px"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_name.name }}</span>
+            <div v-for="(item, i) in scope.row.goods_details">
+              <el-tag type="success" size="mini" effect="dark"><span>{{ item.goods.name }}*{{ item.quantity }}</span></el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
-          label="商家编码"
-          prop="goods_id"
-          sortable="custom"
+          label="日志查看"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.goods_id }}</span>
+            <el-button type="danger" size="mini" @click="logView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
-        <el-table-column
-          label="库存"
-          prop="balance"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.balance }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="残品库存"
-          prop="broken"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.broken }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="冻结库存"
-          prop="frozeed"
-          sortable="custom"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.frozeed }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column
           label="创建者"
           prop="creator"
@@ -222,14 +209,365 @@
         </el-table-column>
         <el-table-column
           label="更新时间"
-        >都
+        >
           <template slot-scope="scope">
-            <span>{{ scope.row.updated_time }}</span>
+            <span>{{ scope.row.update_time }}</span>
           </template>
         </el-table-column>
 
       </el-table>
     </div>
+    <!--新建添加模态窗-->
+    <el-dialog
+      title="新增"
+      width="80%"
+      :visible.sync="dialogVisibleAdd"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <el-form
+        ref="handleFormAdd"
+        label-width="88px"
+        size="mini"
+        :rules="rules"
+        :model="formAdd"
+      >
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>订单相关信息</span>
+          </div>
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="仓库" prop="warehouse">
+              <template>
+                <el-select
+                  v-model="formAdd.warehouse"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择仓库"
+                  :remote-method="remoteMethodWarehouse"
+                >
+                  <el-option
+                    v-for="item in optionsWarehouse"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="入库类型" prop="category">
+              <el-select v-model="formAdd.category" placeholder="请选择入库类型">
+                <el-option
+                  v-for="item in optionsCategory"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item></el-col>
+          </el-row>
+
+          <el-row :gutter="20">
+            <el-col :span="8"><el-form-item label="验证号" prop="verification">
+              <el-input v-model="formAdd.verification" placeholder="请输入验证号" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="体积" prop="volume">
+              <el-input v-model="formAdd.volume" placeholder="请输入体积" />
+            </el-form-item></el-col>
+            <el-col :span="8"><el-form-item label="重量" prop="weight">
+              <el-input v-model="formAdd.weight" placeholder="请输入重量" />
+            </el-form-item></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="16"><el-form-item label="备注" prop="memo">
+              <el-input v-model="formAdd.memo" placeholder="请输入备注" />
+            </el-form-item></el-col>
+          </el-row>
+        </el-card>
+
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>货品相关信息</span>
+          </div>
+          <el-row :gutter="20">
+            <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetails">添加</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="success"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteDetails"
+            >删除</el-button></el-col>
+            <el-col :span="2"><el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteAllDetails"
+            >清空</el-button></el-col>
+            <el-col :span="10" />
+            <el-col :span="4" />
+            <el-col :span="4" />
+          </el-row>
+          <el-table
+            ref="tableAdd"
+            border
+            :data="OrderDetailsList"
+            :row-class-name="rowClassName"
+            @selection-change="handleDetailSelectionChange"
+          >
+            <el-table-column type="selection" width="30" align="center" />
+            <el-table-column label="序号" align="center" prop="xh" width="50" />
+            <el-table-column label="名称" width="250" prop="goods">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="OrderDetailsList[scope.row.xh-1].goods"
+                  filterable
+                  default-first-option
+                  remote
+                  reserve-keyword
+                  placeholder="请搜索并选择货品"
+                  :remote-method="remoteMethodGoods"
+                >
+                  <el-option
+                    v-for="item in optionsGoods"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="货品数量" width="250" prop="quantity">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].quantity" type="number" />
+              </template>
+            </el-table-column>
+            <el-table-column label="含税单价" width="250" prop="price">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].price" type="text" />
+              </template>
+            </el-table-column>
+            <el-table-column label="货品备注" width="250" prop="memo">
+              <template slot-scope="scope">
+                <el-input v-model="OrderDetailsList[scope.row.xh-1].memo" type="text" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+        <el-card class="box-card">
+          <el-row :gutter="20">
+            <el-col :span="8" :offset="16"><el-form-item size="large">
+              <div class="btn-warpper">
+                <el-button type="danger" @click="handleCancelAdd">取消</el-button>
+                <el-button type="primary" @click="handleSubmitAdd">立即保存</el-button>
+              </div>
+            </el-form-item></el-col>
+          </el-row>
+        </el-card>
+
+      </el-form>
+    </el-dialog>
+    <!--修改信息模态窗-->
+    <el-dialog
+      title="编辑"
+      width="80%"
+      :visible.sync="dialogVisibleEdit"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <template>
+        <div class="handleFormEdit">
+          <el-form
+            ref="handleFormEdit"
+            label-width="80px"
+            size="mini"
+            :model="formEdit"
+            :rules="rules"
+          >
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>订单相关信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="仓库" prop="warehouse">
+                  <template>
+                    <el-select
+                      v-model="formEdit.warehouse"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择仓库"
+                      :remote-method="remoteMethodWarehouse"
+                    >
+                      <el-option
+                        v-for="item in optionsWarehouse"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="单据类型" prop="category">
+                  <el-select v-model="formEdit.category" placeholder="请选择单据类型">
+                    <el-option
+                      v-for="item in optionsCategory"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item></el-col>
+              </el-row>
+
+              <el-row :gutter="20">
+                <el-col :span="8"><el-form-item label="验证号" prop="verification">
+                  <el-input v-model="formEdit.verification" placeholder="请输入验证号" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="体积" prop="volume">
+                  <el-input v-model="formEdit.volume" placeholder="请输入体积" />
+                </el-form-item></el-col>
+                <el-col :span="8"><el-form-item label="重量" prop="weight">
+                  <el-input v-model="formEdit.weight" placeholder="请输入重量" />
+                </el-form-item></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="16"><el-form-item label="备注" prop="memo">
+                  <el-input v-model="formEdit.memo" placeholder="请输入备注" />
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>货品相关信息</span>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="2"><el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddDetailsEdit">添加</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="success"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteDetailsEdit"
+                >删除</el-button></el-col>
+                <el-col :span="2"><el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="handleDeleteAllDetailsEdit"
+                >清空</el-button></el-col>
+                <el-col :span="10" />
+                <el-col :span="4" />
+                <el-col :span="4" />
+              </el-row>
+              <el-table
+                ref="tableEdit"
+                border
+                :data="OrderDetailsListEdit"
+                :row-class-name="rowClassName"
+                @selection-change="handleDetailSelectionChangeEdit"
+              >
+                <el-table-column type="selection" width="30" align="center" />
+                <el-table-column label="序号" align="center" prop="xh" width="50">
+                  <template slot-scope="scope">
+                    <span>{{ OrderDetailsListEdit[scope.row.xh-1].xh }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="名称" width="250" prop="goods">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="OrderDetailsListEdit[scope.row.xh-1].goods"
+                      filterable
+                      default-first-option
+                      remote
+                      reserve-keyword
+                      placeholder="请搜索并选择货品"
+                      :remote-method="remoteMethodGoods"
+                    >
+                      <el-option
+                        v-for="item in optionsGoods"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="货品数量" width="250" prop="quantity">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsListEdit[scope.row.xh-1].quantity" type="number" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="含税单价" width="250" prop="price">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsListEdit[scope.row.xh-1].price" type="text" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="货品备注" width="250" prop="memo">
+                  <template slot-scope="scope">
+                    <el-input v-model="OrderDetailsListEdit[scope.row.xh-1].memo" type="text" />
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+            <el-card class="box-card">
+              <el-row :gutter="20">
+                <el-col :span="8" :offset="16"><el-form-item size="large">
+                  <div class="btn-warpper">
+                    <el-button type="danger" @click="handleCancelEdit">取消</el-button>
+                    <el-button type="primary" @click="handleSubmitEdit">立即保存</el-button>
+                  </div>
+                </el-form-item></el-col>
+              </el-row>
+            </el-card>
+          </el-form>
+        </div>
+      </template>
+    </el-dialog>
+    <!--日志查看模态窗-->
+    <el-dialog
+      title="日志查看"
+      :visible.sync="logViewVisible"
+      width="50%"
+      border
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div style="margin: auto">
+        <el-table :data="logDetails" border>
+          <el-table-column
+            label="操作人"
+            prop="name"
+            width="120px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作内容"
+            prop="content"
+            width="520px"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.content }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作时间"
+            prop="created_time"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.created_time }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+
+    </el-dialog>
     <!--页脚-->
     <div class="tableFoots">
       <center>
@@ -241,19 +579,22 @@
 
 <script>
 import {
-  getInventoryManageList,
-  createInventoryManage,
-  updateInventoryManage,
-  exportInventoryManage,
-  excelImportInventoryManage,
-  checkInventoryManage,
-  rejectInventoryManage
-} from '@/api/psi/inventory/inventory'
+  getInboundSubmit,
+  createInboundSubmit,
+  updateInboundSubmit,
+  exportInboundSubmit,
+  excelImportInboundSubmit,
+  checkInboundSubmit,
+  rejectInboundSubmit
+} from '@/api/psi/inbound/order/submit'
+import {getLogInboundManage} from "@/api/psi/inbound/order/manage"
 import { getCompanyList } from '@/api/base/company'
+import { getGoodsList } from '@/api/base/goods'
+import { getWarehouse } from "@/api/base/warehouse"
 import moment from 'moment'
 import XLSX from 'xlsx'
 export default {
-  name: 'outboundSubmit',
+  name: 'inboundSubmit',
   data() {
     return {
       DataList: [],
@@ -269,8 +610,45 @@ export default {
       },
       dialogVisibleAdd: false,
       dialogVisibleEdit: false,
-      formAdd: {},
+      logViewVisible: false,
+      logDetails: [],
+      optionsWarehouse: [],
+      optionsGoods: [],
+      formAdd: {
+        category: 2,
+        code: "DTS".concat(new Date().toLocaleDateString().replace(new RegExp('/', 'g'), "-")),
+      },
       formEdit: {},
+      optionsCategory: [
+        {
+          value: 1,
+          label: '采购入库'
+        },
+        {
+          value: 2,
+          label: '调拨入库'
+        },
+        {
+          value: 3,
+          label: '退货入库'
+        },
+        {
+          value: 4,
+          label: '生产入库'
+        },
+        {
+          value: 5,
+          label: '保修入库'
+        },
+        {
+          value: 6,
+          label: '其他入库'
+        },
+        {
+          value: 7,
+          label: '残品入库'
+        },
+      ],
       optionsJudgment: [
         {
           value: true,
@@ -282,58 +660,12 @@ export default {
         }
       ],
       rules: {
-        buyer_nick: [
+        verification: [
           { required: true, message: '请选择客户网名', trigger: 'blur' }
         ],
-        trade_no: [
-          { required: true, message: '请输入订单编号', trigger: 'blur' }
-        ],
-        receiver_name: [
-          { required: true, message: '请选择收件人', trigger: 'blur' }
-        ],
-        receiver_address: [
-          { required: true, message: '请选择收货地址', trigger: 'blur' }
-        ],
-        receiver_mobile: [
-          { required: true, message: '请输入收件人手机', trigger: 'blur' }
-        ],
-        pay_time: [
-          { required: true, message: '请输入付款时间', trigger: 'blur' }
-        ],
-        receiver_area: [
-          { required: true, message: '请输入收货地区', trigger: 'blur' }
-        ],
-        src_tids: [
-          { required: true, message: '请输入原始子订单号', trigger: 'blur' }
-        ],
-        num: [
-          { required: true, message: '请输选择货品数量', trigger: 'blur' }
-        ],
-        price: [
-          { required: true, message: '请输入成交价', trigger: 'blur' }
-        ],
-        share_amount: [
-          { required: true, message: '请输入货品成交总价', trigger: 'blur' }
-        ],
-        goods_name: [
-          { required: true, message: '请输入货品名称', trigger: 'blur' }
-        ],
-        spec_code: [
-          { required: true, message: '请输入商家编码', trigger: 'blur' }
-        ],
-        shop_name: [
-          { required: true, message: '请输入店铺', trigger: 'blur' }
-        ],
-        warehouse_name: [
-          { required: true, message: '请输入仓库', trigger: 'blur' }
-        ],
-        order_category: [
-          { required: true, message: '请输入订单类型', trigger: 'blur' }
-        ],
-        deliver_time: [
-          { required: true, message: '请输入发货时间', trigger: 'blur' }
-        ],
       },
+      OrderDetailsList: [],
+      OrderDetailsListEdit: [],
       checkedDetail: [],
       checkedDetailEdit: []
     }
@@ -353,7 +685,7 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getInventoryManageList(this.params).then(
+      getInboundSubmit(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -381,8 +713,32 @@ export default {
     // 跳出编辑对话框
     handleEdit(values) {
       console.log(values)
-      this.formEdit = { ...values }
+      this.formEdit = JSON.parse(JSON.stringify({...values}))
       this.dialogVisibleEdit = true
+      this.formEdit.category = this.formEdit.category.id
+
+      this.optionsWarehouse = [{ label: this.formEdit.warehouse.name, value: this.formEdit.warehouse.id }]
+      this.formEdit.warehouse = this.formEdit.warehouse.id
+
+      // const currentShop = JSON.parse(JSON.stringify(this.formEdit.shop))
+      // console.log(currentShop)
+      // console.log(this.optionsShop)
+      // console.log(this.formEdit.shop)
+
+      this.optionsGoods = this.formEdit.goods_details.map(item => {
+        return { label: item.goods.name, value: item.goods.id }
+      })
+      console.log(this.optionsGoods)
+
+      this.OrderDetailsListEdit = []
+      let index
+      for (index in this.formEdit.goods_details) {
+        this.formEdit.goods_details[index].xh = index + 1
+        this.formEdit.goods_details[index].goods = this.formEdit.goods_details[index].goods.id
+        this.OrderDetailsListEdit.push(this.formEdit.goods_details[index])
+      }
+      console.log(this.OrderDetailsListEdit)
+      console.log(this.DataList)
     },
     // 提交编辑完成的数据
     handleSubmitEdit() {
@@ -392,7 +748,9 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateInventoryManage(id, data).then(
+      data.goods_details = this.OrderDetailsListEdit
+      console.log(this.formEdit)
+      updateInboundSubmit(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -422,37 +780,146 @@ export default {
       this.$refs.handleFormEdit.resetFields()
       this.handleDeleteAllDetails()
     },
-    // 添加界面
     add() {
       this.dialogVisibleAdd = true
+      console.log(this.formAdd)
     },
     // 关闭添加界面
     handleCancelAdd() {
       this.dialogVisibleAdd = false
       this.$refs.handleFormAdd.resetFields()
     },
+    // 提交添加
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createInventoryManage(this.formAdd).then(
+      console.log(this.OrderDetailsList)
+      this.formAdd.goods_details = this.OrderDetailsList
+      createInboundSubmit(this.formAdd).then(
         () => {
-          this.$notify({
-            title: '创建成功',
-            type: 'success',
-            offset: 0,
-            duration: 0
-          })
           this.fetchData()
           this.handleCancelAdd()
         }
-      ).catch((res) => {
+      ).catch((error) => {
         this.$notify({
-          title: '创建出错',
-          message: res.data,
-          type: 'success',
-          offset: 0,
+          title: '错误详情',
+          message: error.data,
+          type: 'error',
+          offset: 210,
           duration: 0
         })
       })
+
+    },
+    // 货品列表顺序
+    rowClassName({ row, rowIndex }) {
+      row.xh = rowIndex + 1
+    },
+    // 选中新建表单货品项
+    handleDetailSelectionChange(selection) {
+      if (selection.length > 1) {
+        this.$refs.tableAdd.clearSelection()
+        this.$refs.tableAdd.toggleRowSelection(selection.pop())
+      } else {
+        this.checkedDetail = selection
+      }
+    },
+    // 选中编辑表单货品项
+    handleDetailSelectionChangeEdit(selection) {
+      if (selection.length > 1) {
+        this.$refs.tableEdit.clearSelection()
+        this.$refs.tableEdit.toggleRowSelection(selection.pop())
+      } else {
+        this.checkedDetailEdit = selection
+      }
+    },
+    // 删除选中表单货品项
+    handleDeleteDetails() {
+      if (this.checkedDetail.length === 0) {
+        this.$alert('请先选择要删除的数据', '提示', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        this.OrderDetailsList.splice(this.checkedDetail[0].xh - 1, 1)
+      }
+    },
+    // 删除选中编辑表单货品项
+    handleDeleteDetailsEdit() {
+      if (this.checkedDetailEdit.length === 0) {
+        this.$alert('请先选择要删除的数据', '提示', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        this.OrderDetailsListEdit.splice(this.checkedDetailEdit[0].xh - 1, 1)
+      }
+    },
+    // 删除全部表单货品项
+    handleDeleteAllDetails() {
+      this.OrderDetailsList = undefined
+    },
+    // 删除编辑全部表单货品项
+    handleDeleteAllDetailsEdit() {
+      this.OrderDetailsListEdit = undefined
+    },
+    // 添加表单货品项
+    handleAddDetails() {
+      if (this.OrderDetailsList === undefined) {
+        this.OrderDetailsList = []
+      }
+      const obj = {
+        id: 'n'
+      }
+      this.OrderDetailsList.push(obj)
+    },
+    // 添加编辑表单货品项
+    handleAddDetailsEdit() {
+      if (this.OrderDetailsListEdit === undefined) {
+        this.OrderDetailsListEdit = []
+      }
+      const obj = {
+        id: 'n'
+      }
+      this.OrderDetailsListEdit.push(obj)
+      console.log(this.OrderDetailsListEdit)
+    },
+    // 货品搜索
+    remoteMethodGoods(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          // console.log("我是真正的开始检索啦")
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getGoodsList(paramsSearch).then(
+            res => {
+              this.optionsGoods = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsGoods = []
+      }
+    },
+    // 仓库搜索
+    remoteMethodWarehouse(query) {
+      if (query !== '') {
+        // console.log("我准备开始检索啦")
+        setTimeout(() => {
+          console.log(query)
+          const paramsSearch = {}
+          paramsSearch.name = query
+          getWarehouse(paramsSearch).then(
+            res => {
+              this.optionsWarehouse = res.data.results.map(item => {
+                return { label: item.name, value: item.id }
+              })
+            }
+          )
+        }, 200)
+      } else {
+        this.optionsWarehouse = []
+      }
     },
     // 检索用户组选项
     unique(arr) {
@@ -494,7 +961,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportInventoryManage(importformData, config).then(
+            excelImportInboundSubmit(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -558,41 +1025,21 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportInventoryManage(this.params).then(
+            exportInboundSubmit(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
-                    店铺: item.shop.name,
-                    收款开票公司: item.company.name,
-                    源单号: item.order_id,
-                    发票类型: item.order_category.name,
-                    发票抬头: item.title,
-                    纳税人识别号: item.tax_id,
-                    联系电话: item.phone,
-                    银行名称: item.bank,
-                    银行账号: item.account,
-                    地址: item.address,
-                    发票备注: item.remark,
-                    收件人姓名: item.sent_consignee,
-                    收件人手机: item.sent_smartphone,
-                    收件城市: item.sent_city.name,
-                    收件区县: item.sent_district,
-                    收件地址: item.sent_address,
-                    申请税前开票总额: item.amount,
-                    是否发顺丰: item.is_deliver,
-                    申请提交时间: item.submit_time,
-                    开票处理时间: item.handle_time,
-                    开票处理间隔: item.handle_interval,
-                    工单留言: item.message,
-                    工单反馈: item.memorandum,
-                    创建公司: item.sign_company.name,
-                    创建部门: item.sign_department.name,
-                    客户昵称: item.nickname,
-                    创建时间: item.created_time,
-                    更新时间: item.update_time,
-                    创建者: item.creator,
-                    处理标签: item.process_tag.name,
-                    错误原因: item.mistake_tag.name
+                    入库单号: item.shop.name,
+                    仓库: item.company.name,
+                    类别: item.order_id,
+                    验证号: item.order_category.name,
+                    备注: item.title,
+                    体积: item.tax_id,
+                    重量: item.phone,
+                    单据状态: item.bank,
+                    创建时间: item.account,
+                    更新时间: item.address,
+                    创建者: item.remark,
                   }
                 })
                 const ws = XLSX.utils.json_to_sheet(res.data)
@@ -648,7 +1095,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixInventoryManage(this.params).then(
+        fixInboundSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -704,7 +1151,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixInventoryManage(this.params).then(
+        fixInboundSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -761,15 +1208,15 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkInventoryManage(this.params).then(
+        checkInboundSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
                 title: '审核成功',
-                message: `审核成功条数：${res.data.successful}`,
+                message: `审核条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -778,27 +1225,26 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             delete this.params.allSelectTag
             this.fetchData()
-          },
-          error => {
-            console.log('我是全选错误返回')
+          }).catch(
+          (error) => {
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
           }
@@ -811,13 +1257,13 @@ export default {
             message: '未选择订单无法审核',
             type: 'error',
             offset: 70,
-            duration: 0
+            duration: 5000
           })
           this.fetchData()
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkInventoryManage(this.params).then(
+        checkInboundSubmit(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -825,7 +1271,7 @@ export default {
                 message: `审核成功条数：${res.data.successful}`,
                 type: 'success',
                 offset: 70,
-                duration: 0
+                duration: 3000
               })
             }
             if (res.data.false !== 0) {
@@ -834,14 +1280,14 @@ export default {
                 message: `审核失败条数：${res.data.false}`,
                 type: 'error',
                 offset: 140,
-                duration: 0
+                duration: 5000
               })
               this.$notify({
                 title: '错误详情',
                 message: res.data.error,
                 type: 'error',
                 offset: 210,
-                duration: 0
+                duration: 5000
               })
             }
             console.log(this.params)
@@ -849,29 +1295,22 @@ export default {
 
             delete this.params.ids
             this.fetchData()
-          },
-          error => {
-            console.log('我是单选错误返回')
-            console.log(this)
-            console.log(error.response)
+          }).catch(
+          (error) => {
             delete this.params.ids
             this.$notify({
               title: '错误详情',
-              message: error.response.data,
+              message: error.data,
               type: 'error',
               offset: 210,
-              duration: 0
+              duration: 5000
             })
             this.fetchData()
-          }
-        ).catch(
-          (error) => {
-            console.log('######')
-            console.log(error)
           }
         )
       }
     },
+    // 审核单据
     handleReject() {
       const h = this.$createElement
       let resultMessage, resultType
@@ -892,7 +1331,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectInventoryManage(this.params).then(
+              rejectInboundSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -959,7 +1398,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectInventoryManage(this.params).then(
+              rejectInboundSubmit(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1052,7 +1491,32 @@ export default {
         }
       }
     },
-
+    // 查看日志
+    logView(userValue) {
+      this.logDetails = []
+      this.logViewVisible = true
+      const data = {
+        id: userValue.id
+      }
+      getLogInboundManage(data).then(
+        res => {
+          this.$notify({
+            title: '查询成功',
+            type: 'success',
+            duration: 1000
+          })
+          this.logDetails = res.data
+        }).catch(
+        (error) => {
+          this.$notify({
+            title: '查询错误',
+            message: error.data,
+            type: 'error',
+            duration: 5000
+          })
+        }
+      )
+    },
     resetParams() {
       this.params = {
         page: 1

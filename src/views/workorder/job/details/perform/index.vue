@@ -784,7 +784,7 @@
                   <el-input
                     type="textarea"
                     :rows="5"
-                    placeholder="请输入操作内容"
+                    placeholder="请输入任务说明"
                     v-model="formEdit.content">
                   </el-input>
                 </el-form-item></el-col>
@@ -792,7 +792,7 @@
 
               <el-row :gutter="20">
                 <el-col :span="18"><el-form-item label="备注" prop="memo">
-                  <el-input v-model="formEdit.memo" placeholder="请输入收货地址" />
+                  <el-input v-model="formEdit.memo" placeholder="请输入备注" />
                 </el-form-item></el-col>
               </el-row>
             </el-card>

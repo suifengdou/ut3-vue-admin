@@ -1,5 +1,5 @@
 <template>
-  <div class="inbound-check-container">
+  <div class="ori-inbound-submit-container">
     <div class="tableTitle">
       <el-row :gutter="20">
         <el-col :span="7" class="titleBar">
@@ -171,12 +171,30 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="状态"
+          prop="ori_order_status"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_order_status }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="类别"
           prop="category"
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.category.name }}</span>
+            <span>{{ scope.row.category }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="源单号"
+          prop="ori_order_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.ori_order_id }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -185,9 +203,46 @@
           sortable="custom"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.warehouse.name }}</span>
+            <span>{{ scope.row.warehouse }}</span>
           </template>
         </el-table-column>
+        <el-table-column
+          label="经办人"
+          prop="handler"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.handler }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="商家编码"
+          prop="goods_id"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="货品名称"
+          prop="goods_name"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="调整后数量"
+          prop="quantity"
+          sortable="custom"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.quantity }}</span>
+          </template>
+        </el-table-column>
+
         <el-table-column
           label="创建者"
           prop="creator"
@@ -503,14 +558,14 @@
 
 <script>
 import {
-  getInboundCheckList,
-  createInboundCheck,
-  updateInboundCheck,
-  exportInboundCheck,
-  excelImportInboundCheck,
-  checkInboundCheck,
-  rejectInboundCheck
-} from '@/api/psi/inbound/inbound'
+  getOriInboundList,
+  createOriInbound,
+  updateOriInbound,
+  exportOriInbound,
+  excelImportOriInbound,
+  checkOriInbound,
+  rejectOriInbound
+} from '@/api/psi/inbound/oriinbound'
 import { getCompanyList } from '@/api/base/company'
 import moment from 'moment'
 import XLSX from 'xlsx'
@@ -615,7 +670,7 @@ export default {
           this.params.created_time_before = moment.parseZone(this.params.created_time[1]).local().format('YYYY-MM-DD HH:MM:SS')
         }
       }
-      getInboundCheckList(this.params).then(
+      getOriInboundList(this.params).then(
         res => {
           this.DataList = res.data.results
           this.totalNum = res.data.count
@@ -654,7 +709,7 @@ export default {
       for (attrStr in transFieldStr) {
         data[transFieldStr[attrStr]] = data[transFieldStr[attrStr]].id
       }
-      updateInboundCheck(id, data).then(
+      updateOriInbound(id, data).then(
         () => {
           this.$notify({
             title: '修改成功',
@@ -695,7 +750,7 @@ export default {
     },
     handleSubmitAdd() {
       console.log(this.formAdd)
-      createInboundCheck(this.formAdd).then(
+      createOriInbound(this.formAdd).then(
         () => {
           this.$notify({
             title: '创建成功',
@@ -756,7 +811,7 @@ export default {
                 'Content-Type': 'multipart/form-data'
               }
             }
-            excelImportInboundCheck(importformData, config).then(
+            excelImportOriInbound(importformData, config).then(
               res => {
                 this.$notify({
                   title: '导入结果',
@@ -820,7 +875,7 @@ export default {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
-            exportInboundCheck(this.params).then(
+            exportOriInbound(this.params).then(
               res => {
                 res.data = res.data.map(item => {
                   return {
@@ -910,7 +965,7 @@ export default {
     handleFix() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        fixInboundCheck(this.params).then(
+        fixOriInbound(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -966,7 +1021,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        fixInboundCheck(this.params).then(
+        fixOriInbound(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1023,7 +1078,7 @@ export default {
     handleCheck() {
       this.tableLoading = true
       if (this.params.allSelectTag === 1) {
-        checkInboundCheck(this.params).then(
+        checkOriInbound(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1079,7 +1134,7 @@ export default {
         }
         const ids = this.multipleSelection.map(item => item.id)
         this.params.ids = ids
-        checkInboundCheck(this.params).then(
+        checkOriInbound(this.params).then(
           res => {
             if (res.data.successful !== 0) {
               this.$notify({
@@ -1154,7 +1209,7 @@ export default {
             instance.confirmButtonLoading = true
             instance.confirmButtonText = '执行中...'
             if (this.params.allSelectTag === 1) {
-              rejectInboundCheck(this.params).then(
+              rejectOriInbound(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({
@@ -1221,7 +1276,7 @@ export default {
               }
               const ids = this.multipleSelection.map(item => item.id)
               this.params.ids = ids
-              rejectInboundCheck(this.params).then(
+              rejectOriInbound(this.params).then(
                 res => {
                   if (res.data.successful !== 0) {
                     this.$notify({

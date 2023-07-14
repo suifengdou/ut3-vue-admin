@@ -45,38 +45,32 @@ const baseRouter = {
     },
     {
       path: 'goods',
-      component: () => import('@/views/base/goods/goodsroot'), // Parent router-view
+      component: () => import('@/views/base/goods/'), // Parent router-view
       name: 'goods',
       meta: { title: '货品', roles: ['goods.view_goods', 'goods.view_user_goods', 'AllPrivileges'] },
       redirect: 'noRedirect',
       children: [
         {
           path: 'goodscategory',
-          component: () => import('@/views/base/goods/goodscategory'),
+          component: () => import('@/views/base/goods/category'),
           name: '货品类型',
           meta: { title: '货品类型', roles: ['goods.view_goodscategory', 'AllPrivileges'] }
         },
         {
-          path: 'parts',
-          component: () => import('@/views/base/goods/parts'),
-          name: '配件',
-          meta: { title: '配件', roles: ['goods.view_goods', 'AllPrivileges'] }
+          path: 'query',
+          component: () => import('@/views/base/goods/query'),
+          name: '货品查询',
+          meta: { title: '货品查询', roles: ['goods.view_goods', 'AllPrivileges'] }
         },
         {
-          path: 'product',
-          component: () => import('@/views/base/goods/machine'),
-          name: '整机',
-          meta: { title: '整机', roles: ['goods.view_goods', 'AllPrivileges'] }
-        },
-        {
-          path: 'gift',
-          component: () => import('@/views/base/goods/gift'),
-          name: '礼品',
-          meta: { title: '礼品', roles: ['goods.view_goods', 'AllPrivileges'] }
+          path: 'bom',
+          component: () => import('@/views/base/goods/bom'),
+          name: '简易BOM',
+          meta: { title: '简易BOM', roles: ['goods.view_goods', 'AllPrivileges'] }
         },
         {
           path: 'manage',
-          component: () => import('@/views/base/goods/index'),
+          component: () => import('@/views/base/goods/manage'),
           name: '货品管理',
           meta: { title: '货品管理', roles: ['goods.view_user_goods', 'AllPrivileges'] }
         }

@@ -69,3 +69,23 @@ export function updateGoodsCategory(id, data) {
     data
   })
 }
+
+// 查询日志
+export function getLogGoods(data) {
+  return request({
+    url: `/base/goods/get_log_details/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 查询日志
+export function getLogGoodsCategory(data) {
+  return request({
+    url: `/base/goodscategory/get_log_details/`,
+    method: 'patch',
+    data
+  })
+}
+
+

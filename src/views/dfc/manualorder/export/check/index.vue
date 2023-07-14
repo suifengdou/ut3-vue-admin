@@ -247,6 +247,7 @@
           label="地址"
           prop="address"
           sortable="custom"
+          width="180px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
@@ -332,6 +333,7 @@
         <el-table-column
           label="货品名称"
           prop="goods_name"
+          width="150px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.goods_name }}</span>
@@ -379,6 +381,7 @@
         <el-table-column
           label="买家留言"
           prop="buyer_remark"
+          width="200px"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.buyer_remark }}</span>

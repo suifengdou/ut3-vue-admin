@@ -341,6 +341,7 @@
           label="故障描述"
           prop="description"
           sortable="custom"
+          width="200px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
@@ -401,6 +402,7 @@
           label="收费说明"
           prop="charge_memory"
           sortable="custom"
+          width="200px"
           :sort-orders="['ascending','descending']"
         >
           <template slot-scope="scope">
